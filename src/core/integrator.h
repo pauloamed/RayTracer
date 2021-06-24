@@ -21,7 +21,7 @@ namespace  rt3 {
             ~Integrator() = default;
 
             // render function. now taking film as parameter, but only temporarily
-            void render( unique_ptr<Film> &film );
+            void render( Film&, Background& );
     };
 
 

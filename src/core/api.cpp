@@ -35,7 +35,7 @@ Background * API::make_background( const std::string &type, const ParamSet& ps )
 Integrator * API::make_integrator( void )
 {
     std::cout << ">>> Inside API::make_integrator()\n";
-    Integrator *integ{ nullptr };
+    Integrator *integ{ new Integrator };
 
     // Return the newly created integrator
     return integ;
@@ -123,7 +123,7 @@ void API::world_end( void )
 
         //================================================================================
         auto start = std::chrono::steady_clock::now();
-        // the_integrator->render(the_film);
+        the_integrator->render(*the_film, *the_background);
         auto end = std::chrono::steady_clock::now();
         //================================================================================
         auto diff = end - start; //Store the time difference between start and end
