@@ -1,11 +1,11 @@
 #ifndef RT3_BASE_H
-#define RT3_BASE_H 1
+#define RT3_BASE_H
 
 #include "parser.h"
 #include "paramset.h"
 #include "background.h"
 #include "error.h"
-#include "film.h"
+#include "integrator.h"
 #include "image_io.h"
 #include "../ext/lodepng.h"
 

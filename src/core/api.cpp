@@ -21,15 +21,26 @@ Film * API::make_film( const std::string &type, const ParamSet &ps )
     return film;
 }
 
-Background * make_background( const std::string &type, const ParamSet& ps )
+Background * API::make_background( const std::string &type, const ParamSet& ps )
 {
-    std::cout << ">>> Inside API::background()\n";
+    std::cout << ">>> Inside API::make_background()\n";
     Background *bkg{ nullptr };
     bkg = create_color_background( ps );
 
     // Return the newly created background.
     return bkg;
 }
+
+
+Integrator * API::make_integrator( void )
+{
+    std::cout << ">>> Inside API::make_integrator()\n";
+    Integrator *integ{ nullptr };
+
+    // Return the newly created integrator
+    return integ;
+}
+
 
 // ˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆ
 
@@ -80,6 +91,7 @@ void API::world_begin( void )
     curr_state = APIState::WorldBlock;      // correct machine state.
 }
 
+
 void API::world_end( void )
 {
     VERIFY_WORLD_BLOCK("API::world_end");
@@ -89,8 +101,12 @@ void API::world_end( void )
     // At this point, we have the background as a solitary pointer here.
     // In the future, the background will be parte of the scene object.
     unique_ptr<Background> the_background{ make_background(render_opt->bkg_type, render_opt->bkg_ps) };
+    
     // Same with the film, that later on will belong to a camera object.
     unique_ptr<Film> the_film{ make_film(render_opt->film_type, render_opt->film_ps) };
+
+    // Integrator
+    unique_ptr<Integrator> the_integrator{ make_integrator() };
 
     // Run only if we got film and background.
     if ( the_film and the_background )
@@ -107,7 +123,7 @@ void API::world_end( void )
 
         //================================================================================
         auto start = std::chrono::steady_clock::now();
-        render( ); // TODO: This is the ray tracer's  main loop.
+        // the_integrator->render(the_film);
         auto end = std::chrono::steady_clock::now();
         //================================================================================
         auto diff = end - start; //Store the time difference between start and end
