@@ -37,7 +37,7 @@ file( GLOB SOURCE_BASICRT3 ${RT3_SOURCE_DIR}/cameras/*.cpp
                         )
 add_executable(basic_rt3 ${SOURCE_BASICRT3})
 
-target_link_libraries(basic_rt3 PRIVATE ${TinyXML2_LIBRARIES} PRIVATE glog)
+target_link_libraries(basic_rt3 PRIVATE ${TinyXML2_LIBRARIES})
 
 #define C++17 as the standard.
 set_property(TARGET basic_rt3 PROPERTY CXX_STANDARD 17)
