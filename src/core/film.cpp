@@ -21,7 +21,7 @@ namespace rt3 {
     }
 
     /// Add the color to image.
-    void Film::add_sample( const Point2f &pixel_coord, const ColorXYZ &pixel_color )
+    void Film::add( const Point2f &pixel_coord, const ColorXYZ &pixel_color )
     {
         // TODO: add color to the proper location.
     }
