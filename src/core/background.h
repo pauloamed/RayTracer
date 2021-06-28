@@ -17,13 +17,6 @@ namespace rt3 {
     class Background
     {
         public:
-            /// Types of color mapping scheme
-            enum class mapping_t {
-                screen=0,  //!< background is assigned to the image screen
-                spherical  //!< background is assigne to a sphere surrounding the scene.
-            };
-
-        public:
             mapping_t mapping_type; //!< sampling type we use to pick a color.
 
             /// Ctro receiving a single color for the entire background.
@@ -49,9 +42,10 @@ namespace rt3 {
         public:
 
             /// Ctro receives a list of four colors, for each corner.
-            BackgroundColor( )
+            BackgroundColor()
             {
-                // TODO
+                // chamar construtor do pai
+                // criar cores p esse
             }
 
             virtual ~BackgroundColor() { };
