@@ -25,7 +25,7 @@ public:
   }
 
   virtual ~Background(){/* empty */};
-  Color sampleXYZ(const Point2f &pixel_ndc) const { return Color(); }
+  virtual Color sampleXYZ(const Point2f &pixel_ndc) const { return Color(); }
 };
 
 class BackgroundColor : public Background {

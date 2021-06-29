@@ -27,7 +27,6 @@ Color BackgroundColor::sampleXYZ(const Point2f &pixel_ndc) const {
 }
 
 BackgroundColor *create_color_background(const ParamSet &ps) {
-  RT3_MESSAGE("amigo estou aqui");
   Color tl = retrieve( ps, "tl", Color());
   Color bl = retrieve( ps, "bl", Color());
   Color tr = retrieve( ps, "tr", Color());
@@ -37,7 +36,6 @@ BackgroundColor *create_color_background(const ParamSet &ps) {
   
   mapping_t mt = mapping_t::screen;
   if(mtype == "spherical") mt = mapping_t::spherical;
-RT3_MESSAGE("amigo estou agora aqui");
   return new BackgroundColor(mt, bl, tl, tr, br);
 }
 } // namespace rt3
