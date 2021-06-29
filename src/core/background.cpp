@@ -15,9 +15,18 @@ namespace rt3 {
         return Spectrum{0,0,0};
     }
 
+
+    // Factory function pattern.
+    // This is the function that retrieves from the ParamSet object
+    // all the information we need to create a BackgroundColor (Background) object.
     BackgroundColor * create_color_background( const ParamSet &ps )
     {
-        // TODO
+        std::cout << ">>> Inside create_color_background()\n";
+        int yres = retrieve( ps, "y_res", int(720) );
+
+        bg_type_t background_type = retrieve( ps, "y_res", bg_type_t::colors );
+        type="colors" mapping="screen" bl="0 0 51" tl="0 255 51" tr="255 255 51" br="255 0 51"
+        
         return new BackgroundColor();
     }
 }
