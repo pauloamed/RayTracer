@@ -43,9 +43,11 @@ namespace rt3 {
 // wrapper class for structured point values
 template <typename T, int size> class StructuredValues {
 public:
-  StructuredValues() { this.values = array<T, size>(); };
+  array<T, size> values;
 
-  StructuredValues(T _x, T _y) : x(_x), y(_y), z(nullptr) {
+  StructuredValues():values(array<T,size>()){};
+
+  StructuredValues(T _x, T _y){
     if (size != 2) {
       string errorMsg = "Invalid number of arguments!\nIs " +
                         std::to_string(size) + " but should be " +
@@ -57,7 +59,7 @@ public:
     values[1] = _y;
   };
 
-  StructuredValues(T _x, T _y, T _z) : x(_x), y(_y), z(_z) {
+  StructuredValues(T _x, T _y, T _z){
     if (size != 3) {
       string errorMsg = "Invalid number of arguments!\nIs " +
                         std::to_string(size) + " but should be " +
@@ -70,10 +72,15 @@ public:
     values[2] = _z;
   };
 
-  T x;
-  T y;
-  T z;
-  vector<T> values;
+  StructuredValues(const vector<T> &_values){
+    assert(values.size() == size);
+    std::copy_n(_values.begin(), _values.size(), values.begin());
+  }
+
+  T operator[]( const int i ) const{
+      return values[i];
+  }
+
 };
 
 /// Type aliases
