@@ -1,6 +1,7 @@
 #ifndef INTEGRATOR_H
 #define INTEGRATOR_H
 
+#include "background.h"
 #include "film.h"
 
 namespace  rt3 {

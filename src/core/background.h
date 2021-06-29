@@ -25,13 +25,13 @@ public:
   }
 
   virtual ~Background(){/* empty */};
-  Spectrum sampleXYZ(const Point2f &pixel_ndc) const;
+  Color sampleXYZ(const Point2f &pixel_ndc) const { return Color(); }
 };
 
 class BackgroundColor : public Background {
 private:
   /// Each corner has a color associated with.
-  Spectrum corners[4] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+  Color corners[4] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
   /// Corner indices.
   enum Corners_e {
     bl = 0, //!< Bottom left corner.
@@ -42,8 +42,7 @@ private:
 
 public:
   /// Ctro receives a list of four colors, for each corner.
-  BackgroundColor(mapping_t mt, Color bl, Color tl, Color tr, Color br) {
-    Background(mt);
+  BackgroundColor(mapping_t mt, Color bl, Color tl, Color tr, Color br) : Background(mt){
     corners[Corners_e::bl] = bl;
     corners[Corners_e::tl] = tl;
     corners[Corners_e::tr] = tr;
@@ -51,10 +50,14 @@ public:
   }
 
   virtual ~BackgroundColor(){};
+
+  Color sampleXYZ(const Point2f &pixel_ndc) const;
 };
 
 // factory pattern functions.
 BackgroundColor *create_color_background(const ParamSet &ps);
+
+
 
 } // namespace rt3
 #endif

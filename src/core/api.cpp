@@ -26,7 +26,6 @@ Background * API::make_background( const std::string &type, const ParamSet& ps )
     std::cout << ">>> Inside API::make_background()\n";
     Background *bkg{ nullptr };
     bkg = create_color_background( ps );
-
     // Return the newly created background.
     return bkg;
 }

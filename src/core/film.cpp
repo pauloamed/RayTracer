@@ -13,7 +13,8 @@ namespace rt3 {
         m_filename{filename},
         image_type{ imgt }
     {
-        // TODO
+        // m_color_buffer_ptr = make_unique<vector<vector<Color>>>(vector<vector<Color>>(resolution[0], vector<Color>(resolution[1])));
+        m_color_buffer_ptr = make_unique<ColorBuffer>(new ColorBuffer[resolution[0] * resolution[1]]);
     }
 
     Film::~Film()
@@ -21,9 +22,9 @@ namespace rt3 {
     }
 
     /// Add the color to image.
-    void Film::add_sample ( const Point2f &pixel_coord, const ColorXYZ &pixel_color )
+    void Film::add_sample ( const Point2i &pixel_coord, const ColorXYZ &pixel_color )
     {
-        // TODO: add color to the proper location.
+        m_color_buffer_ptr[(int) pixel_color[0] * pixel_coord[1]] = pixel_color;
     }
 
     /// Convert image to RGB, compute final pixel values, write image.
@@ -32,13 +33,13 @@ namespace rt3 {
         bool result = false;
         if(image_type == image_type_e::PPM3)
         {
-            result = save_ppm3( nullptr, width(), height(), 3,  m_filename);
+            result = save_ppm3( m_color_buffer_ptr.get(), width(), height(), 3,  m_filename);
         } else if(image_type == image_type_e::PPM6)
         {
-            result = save_ppm6( nullptr, width(), height(), 3,  m_filename);
+            result = save_ppm6( m_color_buffer_ptr.get(), width(), height(), 3,  m_filename);
         } else if(image_type == image_type_e::PNG)
         {
-            result = save_png( nullptr, width(), height(), 3,  m_filename);
+            result = save_png( m_color_buffer_ptr.get(), width(), height(), 3,  m_filename);
         }
 
         if(!result) RT3_ERROR("Failed to save image.");

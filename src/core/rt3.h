@@ -1,6 +1,6 @@
 #include <stdexcept>
 #ifndef RT3_H
-#define RT3_H 1
+#define RT3_H
 
 #include <cassert>
 #include <cmath>
@@ -81,6 +81,13 @@ public:
       return values[i];
   }
 
+  inline T x() const{ return values[0]; }
+  inline T y() const{ return values[1]; }
+  inline T z() const{ 
+    assert(size == 3);
+    return values[2]; 
+  }
+
 };
 
 /// Type aliases
@@ -95,7 +102,7 @@ using Normal3f = Vector<float, 3>;
 // Other types
 using Color = StructuredValues<float, 3>;
 using ColorXYZ = Color;
-using Spectrum = StructuredValues<float, 3>;
+// using Spectrum = StructuredValues<float, 3>;
 using Ray = StructuredValues<float, 3>;
 
 // List of points
@@ -149,11 +156,11 @@ struct RunningOptions {
   // [row=0] -> X; [row=1] -> Y
   // x0, x1, y0, y1
   real_type crop_window[2][2]; //!< Crop window to render. 1 = 100% of the full
-                               //!< resolition.
+                               //!< resolution.
   std::string filename;        //!< input scene file name.
   std::string outfile;         //!< output image file name.
   bool quick_render; //!< when set, render image with 1/4 of the requested
-                     //!< resolition.
+                     //!< resolution.
 };
 
 /// Lambda expression that returns a lowercase version of the input string.

@@ -12,8 +12,8 @@ void Integrator::render( Film &film, Background &background ) {
     for ( int j = 0 ; j < h; j++ ) {
         for( int i = 0 ; i < w ; i++ ) {
             // Not shooting rays just yet; so let us sample the background.
-            // auto color = background.sampleXYZ( Point2f{float(i)/float(w), float(j)/float(h)} ); // get background color.
-            // film.add_sample( Point2i{i,j}, color ); // set image buffer at position (i,j), accordingly.
+            auto color = background.sampleXYZ( Point2f{float(i)/float(w), float(j)/float(h)} ); // get background color.
+            film.add_sample( Point2i{i,j}, color ); // set image buffer at position (i,j), accordingly.
         }
     }
     // send image color buffer to the output file.
