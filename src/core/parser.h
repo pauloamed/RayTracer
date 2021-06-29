@@ -52,10 +52,14 @@ namespace rt3 {
 
     // === Enumerations
     /// Type of possible paramter types we may read from the input scene file.
-    enum class param_type_e : int { BOOL=0,
-        INT,           //!< Single integet
+    enum class param_type_e : int { 
+        // Primitive types
+        BOOL=0,        //!< Single boolean
+        INT,           //!< Single integer
         UINT,          //!< Single unsigned int
+        STRING,        //!< Single string
         REAL,          //!< Single real number
+        // Custom types
         VEC3F,         //!< Single Vector3f
         VEC3I,         //!< Single Vector3i
         NORMAL3F,      //!< Single Normal3f
@@ -63,7 +67,7 @@ namespace rt3 {
         POINT2I,       //!< Single Point2i
         COLOR,         //!< Single Color
         SPECTRUM,      //!< Single Spectrum
-        STRING,        //!< Single string
+        // Arrays
         ARR_INT,       //!< An array of integers
         ARR_REAL,      //!< An array of real numbers
         ARR_VEC3F,     //!< An array of Vector3f
