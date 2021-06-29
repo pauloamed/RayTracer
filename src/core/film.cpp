@@ -13,7 +13,7 @@ namespace rt3 {
         m_filename{filename},
         image_type{ imgt }
     {
-        // TODO
+        m_color_buffer_ptr = make_unique<ColorBuffer>(ColorBuffer(resolution[0], resolution[1]));
     }
 
     Film::~Film()
@@ -21,15 +21,30 @@ namespace rt3 {
     }
 
     /// Add the color to image.
-    void Film::add_sample( const Point2f &pixel_coord, const ColorXYZ &pixel_color )
+    void Film::add_sample ( const Point2i &pixel_coord, const ColorXYZ &pixel_color )
     {
-        // TODO: add color to the proper location.
+        m_color_buffer_ptr->get(pixel_coord) = pixel_color;
     }
+
+
 
     /// Convert image to RGB, compute final pixel values, write image.
     void Film::write_image(void) const
     {
-        // TODO: call the proper writing function, either PPM or PNG.
+        bool result = false;
+        auto blob_ptr = m_color_buffer_ptr->getBlob();
+        for(int i = 0; i < 100; ++i){
+            cout << blob_ptr[i] << endl;
+        }
+        if(image_type == image_type_e::PPM3){
+            result = save_ppm3( blob_ptr, width(), height(), 3,  m_filename);
+        } else if(image_type == image_type_e::PPM6){
+            result = save_ppm6( blob_ptr, width(), height(), 3,  m_filename);
+        } else if(image_type == image_type_e::PNG){
+            result = save_png( blob_ptr, width(), height(), 3,  m_filename);
+        }
+        // delete blob_ptr;
+        if(!result) RT3_ERROR("Failed to save image.");
     }
     
     // Factory function pattern.
