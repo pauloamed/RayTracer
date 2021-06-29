@@ -16,7 +16,7 @@ using rt3::Point3f;
 using rt3::Vector3f;
 using rt3::Vector3i;
 
-<template T>
+template<typename T>
 T getPrimValue(stringstream &ss){
     if constexpr(std::is_same_v<T, bool>) {
         string boolean;
@@ -36,7 +36,7 @@ T getPrimValue(stringstream &ss){
 }
 
 
-<template T>
+template<typename T>
 vector<T> getMultipleValues(stringstream &ss, int size = -1){
     vector<T> values;
     if(size == -1){
@@ -50,59 +50,66 @@ vector<T> getMultipleValues(stringstream &ss, int size = -1){
 
 
 /// ...
-<template T> 
+template<typename T> 
 void parse_single_prim_attrib( tinyxml2::XMLElement * p_element,
         ParamSet *ps_out, const string &name ){
     
-    const char *attr_val = p_element->Attribute(name);
-    stringstream ss(string(attr_val));
-    (*ps)[name] = new shared_ptr<T>( T (getPrimValue<int>(ss)) );
-    free attr_val;
+    const char *attr_val = p_element->Attribute(name.c_str());
+    auto str = string(attr_val);
+    stringstream ss(str);
+
+    (*ps_out)[name] = make_shared<Value<T>>( Value<T>(getPrimValue<T>(ss)));
+    delete attr_val;
 }
 
 
-<template T_INTERNAL, T, int size> 
+template<typename T_INTERNAL, typename T, int size> 
 void parse_single_composite_attrib( tinyxml2::XMLElement * p_element,
         ParamSet *ps_out, const string &name ){
     
-    const char *attr_val = p_element->Attribute(name);
-    stringstream ss(string(attr_val));
+    const char *attr_val = p_element->Attribute(name.c_str());
+    auto str = string(attr_val);
+    stringstream ss(str);
 
     vector<T_INTERNAL> values = getMultipleValues<T_INTERNAL>(ss, size);
     
-    (*ps)[name] = new shared_ptr<T>( new T (values) );
-    free attr_val;
+    (*ps_out)[name] = make_shared<Value<T>>( Value<T>(T(values)) );
+    delete attr_val;
 }
 
 
-<template T, T_INTERNAL, int internal_size> 
+template<typename T, typename T_INTERNAL, int internal_size> 
 void parse_array_composite_attrib( tinyxml2::XMLElement * p_element,
         ParamSet *ps_out, const string &name ){
     
-    const char *attr_val = p_element->Attribute(name);
-    stringstream ss(string(attr_val));
+    const char *attr_val = p_element->Attribute(name.c_str());
+    auto str = string(attr_val);
+    stringstream ss(str);
 
     vector<T> values;
     while(ss.good()){
         values.push_back(T(getMultipleValues<T_INTERNAL>(ss, internal_size)));
     }
     
-    (*ps)[name] = new shared_ptr<array<T>>( new array<T> (values) );
-    free attr_val;
+    (*ps_out)[name] = make_shared<Value<array<T, values.size()>>>(
+        new array<T, values.size()> (values) 
+    );
+    delete attr_val;
 }
 
 
-<template T> 
+template<typename T> 
 void parse_array_prim_attrib( tinyxml2::XMLElement * p_element,
         ParamSet *ps_out, const string &name ){
     
-    const char *attr_val = p_element->Attribute(name);
-    stringstream ss(string(attr_val));
+    const char *attr_val = p_element->Attribute(name.c_str());
+    auto str = string(attr_val);
+    stringstream ss(str);
 
     vector<T> values = getMultipleValues<T>(ss);
     
-    (*ps)[name] = new shared_ptr<array<T>>( new array<T> (values) );
-    free attr_val;
+    (*ps_out)[name] = make_shared<array<T, values.size()>>( new array<T, values.size()> (values) );
+    delete attr_val;
 }
 
 
@@ -258,7 +265,7 @@ void parse_parameters( tinyxml2::XMLElement * p_element,
                 parse_single_composite_attrib<int, Point2i, int(2)>( p_element, ps_out, name );
                 break;
             case param_type_e::COLOR:
-                parse_single_composite_attrib<int, Color, int(3)>( p_element, ps_out, name );
+                parse_single_composite_attrib<int, ColorXYZ, int(3)>( p_element, ps_out, name );
                 break;
             case param_type_e::SPECTRUM:
                 parse_single_composite_attrib<float, Spectrum, int(3)>( p_element, ps_out, name );

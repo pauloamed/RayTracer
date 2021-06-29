@@ -30,18 +30,18 @@ namespace rt3 {
     void Film::write_image(void) const
     {
         bool result = false;
-        if(imgt == PPM3)
+        if(image_type == image_type_e::PPM3)
         {
-            result = save_ppm3( unsigned char * , width(), height(), 3,  m_filename);
-        } else if(imgt == PPM6)
+            result = save_ppm3( nullptr, width(), height(), 3,  m_filename);
+        } else if(image_type == image_type_e::PPM6)
         {
-            result = save_ppm6( unsigned char * , width(), height(), 3,  m_filename);
-        } else if(imgt == PNG)
+            result = save_ppm6( nullptr, width(), height(), 3,  m_filename);
+        } else if(image_type == image_type_e::PNG)
         {
-            result = save_png( unsigned char * , width(), height(), 3,  m_filename);
+            result = save_png( nullptr, width(), height(), 3,  m_filename);
         }
 
-        if(!result) RT3_ERROR("Failed to save image.")
+        if(!result) RT3_ERROR("Failed to save image.");
     }
     
     // Factory function pattern.

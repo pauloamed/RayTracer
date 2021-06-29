@@ -30,15 +30,15 @@ namespace rt3 {
             
 
             // Create the matrix (or vector) that will hold the image data.
-            std::unique_ptr< ColorBuffer > m_color_buffer_ptr; //!< Reference to the color buffer (image) object.
+            // std::unique_ptr< ColorBuffer > m_color_buffer_ptr; //!< Reference to the color buffer (image) object.
             
-            int width(){ return m_full_resolution[0]; } // maybe its the other way 
-            int height(){ return m_full_resolution[1]; }
+            int width() const { return m_full_resolution[0]; } // maybe its the other way 
+            int height() const { return m_full_resolution[1]; }
 
     };
 
     // Factory pattern. It's not part of this class.
     Film * create_film( const ParamSet &ps );
-}  // namespace rt3
+};  // namespace rt3
 
 #endif  // FILM_H

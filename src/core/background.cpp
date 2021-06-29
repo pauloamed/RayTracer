@@ -25,7 +25,6 @@ namespace rt3 {
         int yres = retrieve( ps, "y_res", int(720) );
 
         bg_type_t background_type = retrieve( ps, "y_res", bg_type_t::colors );
-        type="colors" mapping="screen" bl="0 0 51" tl="0 255 51" tr="255 255 51" br="255 0 51"
         
         return new BackgroundColor();
     }
