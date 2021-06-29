@@ -2,8 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 project (BasicRT3 VERSION 1.0.0 LANGUAGES CXX )
 
 
-
-
+# Set "manually" paths that need to be considered while compiling/linking
 include_directories( cameras
                      integrators
                      core
