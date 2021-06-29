@@ -5,7 +5,6 @@
 #include "rt3.h"
 
 namespace rt3 {
-// TODO: Create a virtual class Background and derive BackgroundColor,
 // BackgroundSphereImage, BackgroundSkyBoxImage.
 /*!
  * A background is basically a rectangle, have a color associated to each
@@ -17,13 +16,6 @@ namespace rt3 {
  * Alternatively, a background might be a regular image.
  */
 class Background {
-public:
-  /// Types of color mapping scheme
-  enum class mapping_t {
-    screen = 0, //!< background is assigned to the image screen
-    spherical   //!< background is assigne to a sphere surrounding the scene.
-  };
-
 public:
   mapping_t mapping_type; //!< sampling type we use to pick a color.
 
@@ -50,8 +42,12 @@ private:
 
 public:
   /// Ctro receives a list of four colors, for each corner.
-  BackgroundColor() {
-    // TODO
+  BackgroundColor(mapping_t mt, Color bl, Color tl, Color tr, Color br) {
+    Background(mt);
+    corners[Corners_e::bl] = bl;
+    corners[Corners_e::tl] = tl;
+    corners[Corners_e::tr] = tr;
+    corners[Corners_e::br] = br;
   }
 
   virtual ~BackgroundColor(){};
@@ -59,5 +55,6 @@ public:
 
 // factory pattern functions.
 BackgroundColor *create_color_background(const ParamSet &ps);
+
 } // namespace rt3
 #endif

@@ -2,7 +2,7 @@
 
 namespace rt3 {
 /*!
- * Samples a color base on spherical interpolation of an image ou colored
+ * Samples a color base on spherical interpolation of an image or colored
  * background.
  *
  * @param pixel_ndc Pixel position in NDC space,  in \f$[0:1]\f$.
