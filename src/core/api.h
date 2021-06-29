@@ -1,6 +1,7 @@
 #ifndef API_H
-#define API_H 1
+#define API_H
 
+#include <chrono>
 #include <string>
 #include "rt3-base.h"
 
@@ -92,6 +93,11 @@ namespace rt3 {
             // === Helper functions.
             ///
             static Film * make_film( const string& name,
+                    const ParamSet& ps );
+
+            static Integrator * make_integrator( void );
+
+            static Background * make_background( const std::string &type,
                     const ParamSet& ps );
 
         public:

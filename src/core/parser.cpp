@@ -16,6 +16,109 @@ using rt3::Point3f;
 using rt3::Vector3f;
 using rt3::Vector3i;
 
+template<typename T>
+T getPrimValue(stringstream &ss){
+    if constexpr(std::is_same_v<T, bool>) {
+        string boolean;
+        ss >> boolean;
+        if(boolean == "true") {
+            return true;
+        } else if(boolean == "false") {
+            return false;
+        } else {
+            // TODO
+        }
+    } else {
+        T ret;
+        ss >> ret;
+        return ret;
+    }
+}
+
+
+template<typename T>
+vector<T> getMultipleValues(stringstream &ss, int size = -1){
+    vector<T> values;
+    if(size == -1){
+        while(ss.good()) values.push_back(getPrimValue<T>(ss));
+    } else {
+        values.resize(size);
+        for(auto &x : values) x = getPrimValue<T>(ss);
+    }
+    return values;
+}
+
+
+/// ...
+template<typename T> 
+void parse_single_prim_attrib( tinyxml2::XMLElement * p_element,
+        ParamSet *ps_out, const string &name ){
+    
+    const char *attr_val = p_element->Attribute(name.c_str());
+    if(attr_val){
+        auto str = string(attr_val);
+        stringstream ss(str);
+
+        (*ps_out)[name] = make_shared<Value<T>>( Value<T>(getPrimValue<T>(ss)));
+    }
+}
+
+
+template<typename T_INTERNAL, typename T, int size> 
+void parse_single_composite_attrib( tinyxml2::XMLElement * p_element,
+        ParamSet *ps_out, const string &name ){
+    
+    const char *attr_val = p_element->Attribute(name.c_str());
+    if(attr_val){
+        auto str = string(attr_val);
+        stringstream ss(str);
+
+        vector<T_INTERNAL> values = getMultipleValues<T_INTERNAL>(ss, size);
+        
+        (*ps_out)[name] = make_shared<Value<T>>( Value<T>(T(values)) );
+    }
+}
+
+
+template<typename T, typename T_INTERNAL, int internal_size> 
+void parse_array_composite_attrib( tinyxml2::XMLElement * p_element,
+        ParamSet *ps_out, const string &name ){
+    
+    const char *attr_val = p_element->Attribute(name.c_str());
+    if(attr_val){
+        auto str = string(attr_val);
+        stringstream ss(str);
+
+        vector<T> values;
+        while(ss.good()){
+            values.push_back(T(getMultipleValues<T_INTERNAL>(ss, internal_size)));
+        }
+        
+        (*ps_out)[name] = make_shared<Value<vector<T>>>(
+            Value<vector<T>>(vector<T>(values))
+        );
+    }
+}
+
+
+template<typename T> 
+void parse_array_prim_attrib( tinyxml2::XMLElement * p_element,
+        ParamSet *ps_out, const string &name ){
+    
+    const char *attr_val = p_element->Attribute(name.c_str());
+    if(attr_val){
+        auto str = string(attr_val);
+        stringstream ss(str);
+
+        vector<T> values = getMultipleValues<T>(ss);
+        
+        (*ps_out)[name] = make_shared<Value<vector<T>>>(
+            Value<vector<T>>(vector<T>(values))
+        );
+    }
+}
+
+
 /// This is the entry function for the parsing process.
 void parse( const char* scene_file_name )
 {
@@ -137,50 +240,62 @@ void parse_parameters( tinyxml2::XMLElement * p_element,
         // This is just a dispatcher to the proper extraction functions.
         switch ( type )
         {
-            // TODO: Provide code or function call to each case you need at this point.
-            //=============================================================================
-            // ATTENTION: We do not parse bool from the XML file because TinyXML2 cannot parse one.
-            // Bools are treated as strings.
-            // case param_type_e::BOOL:
-                // parse_single_BASIC_attrib<bool>( p_element, ps_out, name );
-                // break;
-            //=============================================================================
+            case param_type_e::BOOL:
+                parse_single_prim_attrib<bool>( p_element, ps_out, name );
+                break;
             case param_type_e::UINT:
+                parse_single_prim_attrib<uint>( p_element, ps_out, name );
                 break;
             case param_type_e::INT:
+                parse_single_prim_attrib<int>( p_element, ps_out, name );
                 break;
             case param_type_e::REAL:
+                parse_single_prim_attrib<real_type>( p_element, ps_out, name );
                 break;
             case param_type_e::STRING:
+                parse_single_prim_attrib<string>( p_element, ps_out, name );
                 break;
             case param_type_e::VEC3F:
+                parse_single_composite_attrib<float, Vector3f, int(3)>( p_element, ps_out, name );
                 break;
             case param_type_e::VEC3I:
+                parse_single_composite_attrib<int, Vector3i, int(3)>( p_element, ps_out, name );
                 break;
             case param_type_e::NORMAL3F:
+                parse_single_composite_attrib<float, Normal3f, int(3)>( p_element, ps_out, name );
                 break;
             case param_type_e::POINT3F:
+                parse_single_composite_attrib<float, Point3f, int(3)>( p_element, ps_out, name );
                 break;
-            // case param_type_e::POINT2I:
-                // parse_single_COMPOSITE_attrib<int, Point2i, int(2)>( p_element, ps_out, name );
-                // break;
+            case param_type_e::POINT2I:
+                parse_single_composite_attrib<int, Point2i, int(2)>( p_element, ps_out, name );
+                break;
             case param_type_e::COLOR:
+                parse_single_composite_attrib<float, ColorXYZ, int(3)>( p_element, ps_out, name );
                 break;
-            case param_type_e::SPECTRUM:
-                break;
+            // case param_type_e::SPECTRUM:
+            //     parse_single_composite_attrib<float, Spectrum, int(3)>( p_element, ps_out, name );
+            //     break;
             case param_type_e::ARR_REAL:
+                parse_array_prim_attrib<real_type>( p_element, ps_out, name );
                 break;
             case param_type_e::ARR_INT:
+                parse_array_prim_attrib<int>( p_element, ps_out, name );
                 break;
             case param_type_e::ARR_VEC3F:
+                parse_array_composite_attrib<Vector3f, float, 3>( p_element, ps_out, name );
                 break;
             case param_type_e::ARR_VEC3I:
+                parse_array_composite_attrib<Vector3i, int, 3>( p_element, ps_out, name );
                 break;
             case param_type_e::ARR_NORMAL3F:
+                parse_array_composite_attrib<Normal3f, float, 3>( p_element, ps_out, name );
                 break;
             case param_type_e::ARR_POINT3F:
+                parse_array_composite_attrib<Point3f, float, 3>( p_element, ps_out, name );
                 break;
             case param_type_e::ARR_COLOR:
+                parse_array_composite_attrib<ColorXYZ, float, 3>( p_element, ps_out, name );
                 break;
             default:
                 RT3_WARNING( string{"parse_params(): unkonwn param type received!" } );

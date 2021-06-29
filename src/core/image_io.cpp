@@ -13,7 +13,7 @@
 namespace rt3 {
 
     /// Saves an image as a **binary** PPM file.
-    bool save_ppm6( unsigned char * data, size_t w, size_t h,  size_t d,  const std::string & file_name_ )
+    bool save_ppm6( unsigned char * data, size_t h, size_t w,  size_t d,  const std::string & file_name_ )
     {
         std::ofstream ofs_file( file_name_, std::ios::out | std::ios::binary );
         if ( not ofs_file.is_open() )
@@ -34,7 +34,7 @@ namespace rt3 {
     }
 
     /// Saves an image as a **ascii** PPM file.
-    bool save_ppm3( unsigned char * data, size_t w, size_t h, size_t d,  const std::string & file_name_ )
+    bool save_ppm3( unsigned char * data, size_t h, size_t w, size_t d,  const std::string & file_name_ )
     {
         std::ofstream ofs_file( file_name_, std::ios::out  );
         if ( not ofs_file.is_open() )
@@ -61,7 +61,7 @@ namespace rt3 {
         return result;
     }
 
-    bool save_png( unsigned char * data, size_t w, size_t h, size_t d,  const std::string & file_name_ )
+    bool save_png( unsigned char * data, size_t h, size_t w, size_t d,  const std::string & file_name_ )
     {
 #ifdef LODEPNG
         std::cout << "depth = " << d << std::endl;
