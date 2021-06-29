@@ -73,7 +73,7 @@ void parse_single_composite_attrib( tinyxml2::XMLElement * p_element,
 
     vector<T_INTERNAL> values = getMultipleValues<T_INTERNAL>(ss, size);
     
-    (*ps_out)[name] = make_shared<Value<T>>( Value<T>(T(values)) );
+    (*ps_out)[name] = make_shared<Value<T>>( Value<T>(T()) ); // T(values)
     delete attr_val;
 }
 
@@ -88,11 +88,11 @@ void parse_array_composite_attrib( tinyxml2::XMLElement * p_element,
 
     vector<T> values;
     while(ss.good()){
-        values.push_back(T(getMultipleValues<T_INTERNAL>(ss, internal_size)));
+        values.push_back(T()); // getMultipleValues<T_INTERNAL>(ss, internal_size)
     }
     
-    (*ps_out)[name] = make_shared<Value<array<T, values.size()>>>(
-        new array<T, values.size()> (values) 
+    (*ps_out)[name] = make_shared<Value<vector<T>>>(
+        Value<vector<T>>(vector<T>(values))
     );
     delete attr_val;
 }
@@ -108,7 +108,9 @@ void parse_array_prim_attrib( tinyxml2::XMLElement * p_element,
 
     vector<T> values = getMultipleValues<T>(ss);
     
-    (*ps_out)[name] = make_shared<array<T, values.size()>>( new array<T, values.size()> (values) );
+    (*ps_out)[name] = make_shared<Value<vector<T>>>(
+        Value<vector<T>>(vector<T>(values))
+    );
     delete attr_val;
 }
 
@@ -271,18 +273,25 @@ void parse_parameters( tinyxml2::XMLElement * p_element,
                 parse_single_composite_attrib<float, Spectrum, int(3)>( p_element, ps_out, name );
                 break;
             case param_type_e::ARR_REAL:
+                parse_array_prim_attrib<real_type>( p_element, ps_out, name );
                 break;
             case param_type_e::ARR_INT:
+                parse_array_prim_attrib<int>( p_element, ps_out, name );
                 break;
             case param_type_e::ARR_VEC3F:
+                parse_array_composite_attrib<Vector3f, float, 3>( p_element, ps_out, name );
                 break;
             case param_type_e::ARR_VEC3I:
+                parse_array_composite_attrib<Vector3i, int, 3>( p_element, ps_out, name );
                 break;
             case param_type_e::ARR_NORMAL3F:
+                parse_array_composite_attrib<Normal3f, float, 3>( p_element, ps_out, name );
                 break;
             case param_type_e::ARR_POINT3F:
+                parse_array_composite_attrib<Point3f, float, 3>( p_element, ps_out, name );
                 break;
             case param_type_e::ARR_COLOR:
+                parse_array_composite_attrib<ColorXYZ, float, 3>( p_element, ps_out, name );
                 break;
             default:
                 RT3_WARNING( string{"parse_params(): unkonwn param type received!" } );
