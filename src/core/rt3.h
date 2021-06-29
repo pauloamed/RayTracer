@@ -43,6 +43,7 @@ namespace rt3 {
     using Point3f = std::array< float, 3>;
     // Temporary Vec3, just to compile. TODO: Implement a real one!!!
     using Vector3f = std::array< float, 3>;
+    
     using ColorXYZ = std::array< float, 3>;
     using Spectrum = std::array< float, 3>;
     using Normal3f = std::array< float, 3>;
@@ -68,6 +69,21 @@ namespace rt3 {
         os << "]";
         return os;
     }
+
+    //========= Enums
+    /// Types of color mapping scheme
+    enum class mapping_t {
+        screen=0,  //!< background is assigned to the image screen
+        spherical  //!< background is assigne to a sphere surrounding the scene.
+    };
+
+    // Background type
+    enum class bg_type_t {
+        colors=0
+    };
+
+
+    //==============
 
     // Global Forward Declarations
     class Film;
