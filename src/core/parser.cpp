@@ -73,7 +73,7 @@ void parse_single_composite_attrib( tinyxml2::XMLElement * p_element,
 
     vector<T_INTERNAL> values = getMultipleValues<T_INTERNAL>(ss, size);
     
-    (*ps_out)[name] = make_shared<Value<T>>( Value<T>(T()) ); // T(values)
+    (*ps_out)[name] = make_shared<Value<T>>( Value<T>(T(values)) );
     delete attr_val;
 }
 
@@ -88,7 +88,7 @@ void parse_array_composite_attrib( tinyxml2::XMLElement * p_element,
 
     vector<T> values;
     while(ss.good()){
-        values.push_back(T()); // getMultipleValues<T_INTERNAL>(ss, internal_size)
+        values.push_back(T(getMultipleValues<T_INTERNAL>(ss, internal_size)));
     }
     
     (*ps_out)[name] = make_shared<Value<vector<T>>>(
@@ -252,22 +252,22 @@ void parse_parameters( tinyxml2::XMLElement * p_element,
                 parse_single_prim_attrib<string>( p_element, ps_out, name );
                 break;
             case param_type_e::VEC3F:
-                parse_single_composite_attrib<int, Vector3f, int(3)>( p_element, ps_out, name );
+                parse_single_composite_attrib<float, Vector3f, int(3)>( p_element, ps_out, name );
                 break;
             case param_type_e::VEC3I:
                 parse_single_composite_attrib<int, Vector3i, int(3)>( p_element, ps_out, name );
                 break;
             case param_type_e::NORMAL3F:
-                parse_single_composite_attrib<int, Normal3f, int(3)>( p_element, ps_out, name );
+                parse_single_composite_attrib<float, Normal3f, int(3)>( p_element, ps_out, name );
                 break;
             case param_type_e::POINT3F:
-                parse_single_composite_attrib<int, Point3f, int(3)>( p_element, ps_out, name );
+                parse_single_composite_attrib<float, Point3f, int(3)>( p_element, ps_out, name );
                 break;
             case param_type_e::POINT2I:
                 parse_single_composite_attrib<int, Point2i, int(2)>( p_element, ps_out, name );
                 break;
             case param_type_e::COLOR:
-                parse_single_composite_attrib<int, ColorXYZ, int(3)>( p_element, ps_out, name );
+                parse_single_composite_attrib<float, ColorXYZ, int(3)>( p_element, ps_out, name );
                 break;
             case param_type_e::SPECTRUM:
                 parse_single_composite_attrib<float, Spectrum, int(3)>( p_element, ps_out, name );

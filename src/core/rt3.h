@@ -74,7 +74,7 @@ public:
 
   StructuredValues(const vector<T> &_values){
     assert(values.size() == size);
-    this.values(_values);
+    std::copy_n(_values.begin(), _values.size(), values.begin());
   }
 
   T operator[]( const int i ) const{
