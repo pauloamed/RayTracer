@@ -29,8 +29,8 @@ namespace rt3 {
             image_type_e image_type; //!< Image type, PNG, PPM3, PPM6.
             
 
-            // TODO: Create the matrix (or vector) that will hold the image data.
-            // std::unique_ptr< ColorBuffer > m_color_buffer_ptr; //!< Reference to the color buffer (image) object.
+            // Create the matrix (or vector) that will hold the image data.
+            std::unique_ptr< ColorBuffer > m_color_buffer_ptr; //!< Reference to the color buffer (image) object.
             
             int width(){ return m_full_resolution[0]; } // maybe its the other way 
             int height(){ return m_full_resolution[1]; }

@@ -29,7 +29,19 @@ namespace rt3 {
     /// Convert image to RGB, compute final pixel values, write image.
     void Film::write_image(void) const
     {
-        // TODO: call the proper writing function, either PPM or PNG.
+        bool result = false;
+        if(imgt == PPM3)
+        {
+            result = save_ppm3( unsigned char * , width(), height(), 3,  m_filename);
+        } else if(imgt == PPM6)
+        {
+            result = save_ppm6( unsigned char * , width(), height(), 3,  m_filename);
+        } else if(imgt == PNG)
+        {
+            result = save_png( unsigned char * , width(), height(), 3,  m_filename);
+        }
+
+        if(!result) RT3_ERROR("Failed to save image.")
     }
     
     // Factory function pattern.
