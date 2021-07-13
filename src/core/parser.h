@@ -53,20 +53,33 @@ auto STR_LOWER = [](const char *c_str) -> std::string {
 // === Enumerations
 /// Type of possible paramter types we may read from the input scene file.
 enum class param_type_e : int {
+// PRIMITIVES
   BOOL = 0,
   INT,         //!< Single integet
   UINT,        //!< Single unsigned int
   REAL,        //!< Single real number
+  STRING,      //!< Single string
+// ENUMS
+  MAPPING,
+  BG_TYPE,
+  IMAGE_TYPE,
+  CAMERA_TYPE,
+  INTEGRATOR_TYPE,
+  MATERIAL_TYPE,
+  OBJECT_TYPE,
+// COMPOSITES
   VEC3F,       //!< Single Vector3f
+  SCREEN_WINDOW,       //!< Single Vector3f
   VEC3I,       //!< Single Vector3i
   NORMAL3F,    //!< Single Normal3f
   POINT3F,     //!< Single Point3f
   POINT2I,     //!< Single Point2i
   COLOR,       //!< Single Color
-  // SPECTRUM,    //!< Single Spectrum
-  STRING,      //!< Single string
+  SPECTRUM,    //!< Single Spectrum
+// MULTIPLE PRIMITIVES
   ARR_INT,     //!< An array of integers
   ARR_REAL,    //!< An array of real numbers
+// MULTIPLE COMPOSITES
   ARR_VEC3F,   //!< An array of Vector3f
   ARR_VEC3I,   //!< An array of Vector3i
   ARR_POINT3F, //!< An array of Point3f
