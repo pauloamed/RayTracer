@@ -2,22 +2,28 @@
 
 namespace rt3{
 
-void Integrator::render( Film &film, Background &background ) {
+void Integrator::render( const unique_ptr<Scene> &scene ) {
     // Perform objects initialization here.
     // The Film object holds the memory for the image.
     // ...
-    auto w = film.width(); // Retrieve the image dimensions in pixels.
-    auto h = film.height();
+    auto w = camera->film->width(); // Retrieve the image dimensions in pixels.
+    auto h = camera->film->height();
     // Traverse all pixels to shoot rays from.
-    for ( int j = 0 ; j < h; j++ ) {
-        for( int i = 0 ; i < w ; i++ ) {
-            // Not shooting rays just yet; so let us sample the background.
-            auto color = background.sampleXYZ( Point2f{float(i)/float(w), float(j)/float(h)} ); // get background color.
-            film.add_sample( Point2i{i,j}, color ); // set image buffer at position (i,j), accordingly.
+    for ( int i = 0 ; i < h; i++ ) {
+        for( int j = 0 ; j < w ; j++ ) {
+            
+            Ray ray = camera->generate_ray( i, j );
+            auto color = scene->background->sampleXYZ( Point2f{{float(i)/float(h), float(j)/float(w)}} ); // get background color.
+            
+            if(scene->primitive->intersect_p(ray)){
+                color = ColorXYZ({255,0,0});  // Just paint it red.
+            }
+         
+            camera->film->add_sample( Point2i{{i,j}}, color ); // set image buffer at position (i,j), accordingly.
         }
     }
     // send image color buffer to the output file.
-    film.write_image();
+    camera->film->write_image();
 
 }
 
