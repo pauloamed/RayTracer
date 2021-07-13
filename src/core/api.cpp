@@ -1,51 +1,13 @@
 #include "api.h"
 
 namespace rt3 {
-            
-//=== API's static members declaration and initialization.
-API::APIState API::curr_state = APIState::Uninitialized;
+
+
+API::APIState API::curr_state = API::APIState::Uninitialized;
 RunningOptions API::curr_run_opt;
 unique_ptr< RenderOptions > API::render_opt;
-// GraphicsState API::curr_GS;
-
-// THESE FUNCTIONS ARE NEEDED ONLY IN THIS SOURCE FILE (NO HEADER NECESSARY)
-// ˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇ
-
-Film * API::make_film( const std::string &type, const ParamSet &ps )
-{
-    std::cout << ">>> Inside API::make_film()\n";
-    Film *film{ nullptr };
-    film = create_film( ps );
-
-    // Return the newly created film.
-    return film;
-}
-
-Background * API::make_background( const std::string &type, const ParamSet& ps )
-{
-    std::cout << ">>> Inside API::make_background()\n";
-    Background *bkg{ nullptr };
-    bkg = create_color_background( ps );
-    // Return the newly created background.
-    return bkg;
-}
-
-
-Integrator * API::make_integrator( void )
-{
-    std::cout << ">>> Inside API::make_integrator()\n";
-    Integrator *integ{ new Integrator };
-
-    // Return the newly created integrator
-    return integ;
-}
-
-
-// ˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆ
-
-// END OF THE AUXILIARY FUNCTIONS
-// =========================================================================
-
+GraphicsState API::curr_GS;
+            
 //=== API's public methods implementation
 void API::init_engine( const RunningOptions & opt )
 {
@@ -59,7 +21,7 @@ void API::init_engine( const RunningOptions & opt )
    // Preprare render infrastructure for a new scene.
    render_opt = make_unique< RenderOptions >(); 
    // Create a new initial GS
-   // curr_GS = GraphicsState();
+   curr_GS = GraphicsState();
    RT3_MESSAGE( "[1] Rendering engine initiated.\n" );
 }
 
@@ -97,24 +59,68 @@ void API::world_end( void )
     // The scene has been properly set up and the scene has
     // already been parsed. It's time to render the scene.
 
-    // At this point, we have the background as a solitary pointer here.
-    // In the future, the background will be parte of the scene object.
-    unique_ptr<Background> the_background{ make_background(render_opt->bkg_type, render_opt->bkg_ps) };
-    
-    // Same with the film, that later on will belong to a camera object.
-    unique_ptr<Film> the_film{ make_film(render_opt->film_type, render_opt->film_ps) };
+    unique_ptr<Scene> the_scene;
+    unique_ptr<Integrator> the_integrator;
 
-    // Integrator
-    unique_ptr<Integrator> the_integrator{ make_integrator() };
+    // LOADING SCENE
+    {
+        unique_ptr<Background> the_background{ 
+            make_background(render_opt->bkg_ps) 
+        };
+
+        vector<unique_ptr<Primitive>> the_primitive;
+        for(auto [object_ps, mat] : render_opt->primitives){
+
+            unique_ptr<Shape> shape(make_shape(object_ps));
+
+            the_primitive.push_back(
+                unique_ptr<Primitive>(
+                    make_geometric_primitive(std::move(shape), mat)
+                )
+            );
+        }
+
+        unique_ptr<PrimList> primList = unique_ptr<PrimList>(
+            new PrimList(std::move(the_primitive))
+        );
+
+        the_scene = make_unique<Scene>(
+          std::move(the_background),
+          std::move(primList)
+        );
+
+    }
+
+    
+    // LOADING INTEGRATOR
+    {
+        unique_ptr<Film> the_film{
+            make_film(render_opt->film_ps) 
+        };
+
+
+        // Same with the camera
+        unique_ptr<Camera> the_camera{
+            make_camera(
+                render_opt->camera_ps, render_opt->look_at_ps, std::move(the_film)
+            ) 
+        };
+
+        // Integrator
+        the_integrator = unique_ptr<Integrator>(
+            make_integrator(render_opt->integrator_ps, std::move(the_camera))
+        );
+    }
+
 
     // Run only if we got film and background.
-    if ( the_film and the_background )
+    if ( the_integrator and the_scene )
     {
         RT3_MESSAGE( "    Parsing scene successfuly done!\n" );
         RT3_MESSAGE( "[2] Starting ray tracing progress.\n" );
 
         // Structure biding, c++17.
-        auto res  = the_film->get_resolution();
+        auto res  = the_integrator->camera->film->get_resolution();
         size_t w = res[0];
         size_t h = res[1];
         RT3_MESSAGE( "    Image dimensions in pixels (W x H): " + std::to_string(w) + " x " + std::to_string(h) + ".\n" );
@@ -122,7 +128,7 @@ void API::world_end( void )
 
         //================================================================================
         auto start = std::chrono::steady_clock::now();
-        the_integrator->render(*the_film, *the_background);
+        the_integrator->render(the_scene);
         auto end = std::chrono::steady_clock::now();
         //================================================================================
         auto diff = end - start; //Store the time difference between start and end
@@ -148,27 +154,77 @@ void API::reset_engine(void)
     render_opt.reset( new RenderOptions );
 }
 
-void API::background( const ParamSet& ps )
-{
-    std::cout << ">>> Inside API::background()\n";
-    VERIFY_WORLD_BLOCK("API::background");
 
-    // retrieve type from ps.
-    string type = retrieve( ps, "type", string{"unknown"} );
-    render_opt->bkg_type = type;
-    // Store current background object.
-    render_opt->bkg_ps = ps;
+////////////////////////////////////////////////////////////////////////////
+// SETUP BLOCK
+
+void API::integrator( const ParamSet &ps )
+{
+    std::cout << ">>> Inside API::integrator()\n";
+    VERIFY_SETUP_BLOCK("API::lookat");
+    
+    render_opt->integrator_ps = ps;
 }
+
 
 void API::film( const ParamSet &ps )
 {
     std::cout << ">>> Inside API::film()\n";
     VERIFY_SETUP_BLOCK("API::film");
 
-    // retrieve type from ps.
-    string type = retrieve( ps, "type", string{"unknown"} );
-    render_opt->film_type = type;
     render_opt->film_ps = ps;
+}
+
+
+void API::camera( const ParamSet &ps )
+{
+    std::cout << ">>> Inside API::camera()\n";
+    VERIFY_SETUP_BLOCK("API::camera");
+
+    render_opt->camera_ps = ps;
+}
+
+
+void API::lookat( const ParamSet &ps )
+{
+    std::cout << ">>> Inside API::lookat()\n";
+    VERIFY_SETUP_BLOCK("API::lookat");
+
+    render_opt->look_at_ps = ps;
+}
+
+///////////////////////////////////////////////////////////////////////
+// WORLD BLOCK
+
+
+void API::background( const ParamSet& ps )
+{
+    std::cout << ">>> Inside API::background()\n";
+    VERIFY_WORLD_BLOCK("API::background");
+
+    // Store current background object.
+    render_opt->bkg_ps = ps;
+}
+
+
+void API::material( const ParamSet &ps )
+{
+    std::cout << ">>> Inside API::material()\n";
+    VERIFY_WORLD_BLOCK("API::material");
+
+    shared_ptr<Material> new_material(make_material(ps));
+
+    curr_GS.curr_material = new_material;
+}
+
+
+void API::object( const ParamSet &ps )
+{
+    std::cout << ">>> Inside API::object()\n";
+    VERIFY_WORLD_BLOCK("API::object");
+
+    render_opt->primitives.push_back({ps, curr_GS.curr_material});
+    
 }
 
 }  // namespace rt3
