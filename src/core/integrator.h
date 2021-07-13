@@ -1,16 +1,21 @@
 #ifndef INTEGRATOR_H
 #define INTEGRATOR_H
 
-#include "background.h"
-#include "film.h"
+#include "scene.h"
+#include "camera.h"
 
 namespace  rt3 {
 
     class Integrator
     {
         public:
+
+            unique_ptr<Camera> camera;
+
             // Default init
-            Integrator( void ){ }
+            Integrator( unique_ptr<Camera> &&_camera ){
+                camera = std::move(_camera);
+             }
             
             // Default copy assign
             Integrator& operator=( const Integrator& ) = default;
@@ -22,7 +27,7 @@ namespace  rt3 {
             ~Integrator() = default;
 
             // render function. now taking film as parameter, but only temporarily
-            void render( Film&, Background& );
+            void render( const unique_ptr<Scene>& );
     };
 
 

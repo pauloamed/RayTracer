@@ -31,7 +31,7 @@ public:
 class BackgroundColor : public Background {
 private:
   /// Each corner has a color associated with.
-  Color corners[4] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+  Color corners[4] = {{{0, 0, 0}}, {{0, 0, 0}}, {{0, 0, 0}}, {{0, 0, 0}}};
   /// Corner indices.
   enum Corners_e {
     bl = 0, //!< Bottom left corner.

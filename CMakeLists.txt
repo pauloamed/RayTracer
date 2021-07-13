@@ -28,4 +28,3 @@ target_link_libraries(basic_rt3)
 
 #define C++17 as the standard.
 set_property(TARGET basic_rt3 PROPERTY CXX_STANDARD 17)
-#target_compile_features(run_tests PUBLIC cxx_std_11)

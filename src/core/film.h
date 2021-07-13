@@ -39,11 +39,8 @@ namespace rt3 {
 
         public:
 
-            /// List of support image file formats.
-            enum class image_type_e : int { PNG=0, PPM3, PPM6 };
-
             //=== Film Public Methods
-            Film( const Point2i &resolution, const std::string &filename, image_type_e imgt );
+            Film( const Point2i &resolution, const std::string &filename, image_type_t imgt );
             virtual ~Film();
             
             /// Retrieve original Film resolution.
@@ -55,14 +52,15 @@ namespace rt3 {
             //=== Film Public Data
             const Point2i m_full_resolution;    //!< The image's full resolution values.
             std::string m_filename;       //!< Full path file name + extension.
-            image_type_e image_type; //!< Image type, PNG, PPM3, PPM6.
+            image_type_t image_type; //!< Image type, PNG, PPM3, PPM6.
             
 
             // Create the matrix (or vector) that will hold the image data.
             std::unique_ptr< ColorBuffer > m_color_buffer_ptr; //!< Reference to the color buffer (image) object.
             
-            int height() const { return m_full_resolution[1]; }
-            int width() const { return m_full_resolution[0]; } 
+            int height() const { return m_full_resolution.at(0); }
+            int width() const { return m_full_resolution.at(1); } 
+            real_type get_aspect() const { return ((real_type) height()) / width(); }
             
 
     };
