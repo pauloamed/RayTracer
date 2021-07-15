@@ -1,8 +1,9 @@
 #include "integrator.h"
+#include "material.h"
 
 namespace rt3{
 
-void Integrator::render( const unique_ptr<Scene> &scene ) {
+void SamplerIntegrator::render( const unique_ptr<Scene> &scene ) {
     // Perform objects initialization here.
     // The Film object holds the memory for the image.
     // ...
@@ -13,18 +14,34 @@ void Integrator::render( const unique_ptr<Scene> &scene ) {
         for( int j = 0 ; j < w ; j++ ) {
             
             Ray ray = camera->generate_ray( i, j );
-            auto color = scene->background->sampleXYZ( Point2f{{float(i)/float(h), float(j)/float(w)}} ); // get background color.
+            auto backgroundColor = \
+                scene->background->sampleXYZ( Point2f{
+                    {float(i)/float(h),
+                    float(j)/float(w)}
+                } ); // get background color.
             
-            if(scene->primitive->intersect_p(ray)){
-                color = ColorXYZ({255,0,0});  // Just paint it red.
-            }
+            ColorXYZ pixelColor =  Li(ray, scene, backgroundColor);
          
-            camera->film->add_sample( Point2i{{i,j}}, color ); // set image buffer at position (i,j), accordingly.
+            camera->film->add_sample( Point2i{{i,j}}, pixelColor ); // set image buffer at position (i,j), accordingly.
         }
     }
     // send image color buffer to the output file.
     camera->film->write_image();
+}
 
+ColorXYZ FlatIntegrator::Li(const Ray& ray, const unique_ptr<Scene>& scene, const ColorXYZ backgroundColor) const{
+    
+    Surfel* isect; // Intersection information.  
+    if (!scene->intersect(ray, isect)) {
+        return backgroundColor;
+    }else{
+        // Some form of determining the incoming radiance at the ray's origin.
+        // For this integrator, it might just be:
+        // Polymorphism in action.
+        shared_ptr<FlatMaterial> fm = std::dynamic_pointer_cast<FlatMaterial>( isect->primitive->get_material() );
+        // Assign diffuse color to L.
+        return fm->getColor(); // Call a method present only in FlatMaterial.
+    }
 }
 
 } // namespace rt3
