@@ -60,7 +60,7 @@ namespace rt3 {
             
             int height() const { return m_full_resolution.at(0); }
             int width() const { return m_full_resolution.at(1); } 
-            real_type get_aspect() const { return ((real_type) height()) / width(); }
+            real_type get_aspect() const { return ((real_type) width()) /  height(); }
             
 
     };

@@ -97,9 +97,10 @@ class Shape;
 class Surfel;
 
 
-
 /// This struct holds information provided via command line arguments
 struct RunningOptions {
+
+
   RunningOptions() : filename{""}, outfile{""}, quick_render{false} {
     crop_window[0][0] = 0; //!< x0
     crop_window[0][1] = 1; //!< x1,
@@ -154,10 +155,10 @@ inline T Clamp(T val, U low, V high) {
 }
 
 /// Degrees to radians.
-inline float Radians(float deg) { return ((float)M_PI / 180.f) * deg; }
+inline real_type Radians(real_type deg) { return ((real_type)M_PI / 180.f) * deg; }
 
 /// Radians to degreees.
-inline float Degrees(float rad) { return (180.f / (float)M_PI) * rad; }
+inline real_type Degrees(real_type rad) { return (180.f / (real_type)M_PI) * rad; }
 } // namespace rt3
 
 #endif // RT3_H

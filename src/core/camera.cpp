@@ -93,7 +93,7 @@ PerspectiveCamera* create_perspective_camera(
     }else if(ps_camera.count("fovy")){
         
         real_type aspect = the_film->get_aspect();
-        real_type fovy = retrieve(ps_camera, "fovy", real_type());
+        real_type fovy = Radians(retrieve(ps_camera, "fovy", real_type()));
         real_type h = fabs(tan(fovy / 2));
 
         sw = ScreenWindow(
@@ -103,7 +103,8 @@ PerspectiveCamera* create_perspective_camera(
             h
         );
 
-        std::cout << sw.left << " " << sw.right << " " << sw.top << " " << sw.bottom << std::endl;
+        // std::cout << fovy << " " << tan(fovy/2) << " " << h << " " << aspect << std::endl;
+        // std::cout << sw.left << " " << sw.right << " " << sw.top << " " << sw.bottom << std::endl;
     }else{
         RT3_ERROR("Can't compute screen window with given parameters.");
     }
