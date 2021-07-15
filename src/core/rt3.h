@@ -33,6 +33,7 @@ using std::tuple;
 using std::array;
 
 #include "error.h"
+#include "basic_types.h"
 
 //== Alias to the chosen data structure to implement a dictionary.
 //#define Dictionary std::unordered_map
@@ -40,79 +41,7 @@ using std::array;
 
 //=== Aliases
 namespace rt3 {
-// wrapper class for structured point values
-template <typename T, int size> class StructuredValues {
-public:
-  array<T, size> values;
 
-  StructuredValues():values(array<T,size>()){};
-
-  StructuredValues(T _x, T _y){
-    if (size != 2) {
-      string errorMsg = "Invalid number of arguments!\nIs " +
-                        std::to_string(size) + " but should be " +
-                        std::to_string(2);
-      RT3_ERROR(errorMsg);
-    }
-    StructuredValues();
-    values[0] = _x;
-    values[1] = _y;
-  };
-
-  StructuredValues(T _x, T _y, T _z){
-    if (size != 3) {
-      string errorMsg = "Invalid number of arguments!\nIs " +
-                        std::to_string(size) + " but should be " +
-                        std::to_string(3);
-      RT3_ERROR(errorMsg);
-    }
-    StructuredValues();
-    values[0] = _x;
-    values[1] = _y;
-    values[2] = _z;
-  };
-
-  StructuredValues(const vector<T> &_values){
-    assert(values.size() == size);
-    std::copy_n(_values.begin(), _values.size(), values.begin());
-  }
-
-  T operator[]( const int i ) const{
-      return values[i];
-  }
-
-  inline T x() const{ return values[0]; }
-  inline T y() const{ return values[1]; }
-  inline T z() const{ 
-    assert(size == 3);
-    return values[2]; 
-  }
-
-};
-
-/// Type aliases
-template <typename T, int size> using Point = StructuredValues<T, size>;
-template <typename T, int size> using Vector = Point<T, size>;
-
-// Vector/Normal3f and Point3f
-using Point3f = Point<float, 3>;
-using Vector3f = Vector<float, 3>;
-using Normal3f = Vector<float, 3>;
-
-// Other types
-using Color = StructuredValues<float, 3>;
-using ColorXYZ = Color;
-// using Spectrum = StructuredValues<float, 3>;
-using Ray = StructuredValues<float, 3>;
-
-// List of points
-using ListPoint3f = std::vector<Point3f>;
-
-// Vector3i and PointNi
-using Vector3i = Vector<int, 3>;
-using Point3i = Point<int, 3>;
-using Point2i = Point<int, 2>;
-using Point2f = Point<float, 2>;
 
 template <typename T, size_t S>
 std::ostream &operator<<(std::ostream &os, const std::array<T, S> &v) {
@@ -129,9 +58,31 @@ enum class mapping_t {
   screen = 0, //!< background is assigned to the image screen
   spherical   //!< background is assigne to a sphere surrounding the scene.
 };
+const vector<string> mapping_t_names = {"screen", "spherical"}; 
 
 // Background type
 enum class bg_type_t { colors = 0 };
+const vector<string> bg_type_t_names = {"colors"};
+
+/// List of support image file formats.
+enum class image_type_t : int { PNG=0, PPM3, PPM6 };
+const vector<string> image_type_t_names = {"png", "ppm3", "ppm6"};
+
+/// List of supported camera types
+enum class camera_type_t : int { orthographic, perspective };
+const vector<string> camera_type_t_names = {"orthographic", "perspective"};
+
+/// List of supported integrator types
+enum class integrator_type_t : int { flat };
+const vector<string> integrator_type_t_names = {"flat"};
+
+/// List of supported material types
+enum class material_type_t : int { flat };
+const vector<string> material_type_t_names = {"flat"};
+
+/// List of supported object types
+enum class object_type_t : int { sphere };
+const vector<string> object_type_t_names = {"sphere"};
 
 //==============
 
@@ -139,14 +90,17 @@ enum class bg_type_t { colors = 0 };
 class Film;
 class Background;
 class BackgroundColor;
+class Primitive;
+class Ray;
+class Material;
+class Shape;
+class Surfel;
 
-//=== aliases
-typedef float real_type;
-typedef size_t size_type;
-typedef std::tuple<bool, std::string> result_type;
 
 /// This struct holds information provided via command line arguments
 struct RunningOptions {
+
+
   RunningOptions() : filename{""}, outfile{""}, quick_render{false} {
     crop_window[0][0] = 0; //!< x0
     crop_window[0][1] = 1; //!< x1,
@@ -201,10 +155,10 @@ inline T Clamp(T val, U low, V high) {
 }
 
 /// Degrees to radians.
-inline float Radians(float deg) { return ((float)M_PI / 180.f) * deg; }
+inline real_type Radians(real_type deg) { return ((real_type)M_PI / 180.f) * deg; }
 
 /// Radians to degreees.
-inline float Degrees(float rad) { return (180.f / (float)M_PI) * rad; }
+inline real_type Degrees(real_type rad) { return (180.f / (real_type)M_PI) * rad; }
 } // namespace rt3
 
 #endif // RT3_H

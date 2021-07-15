@@ -8,12 +8,14 @@
 namespace rt3 {
 
     //=== Film Method Definitions
-    Film::Film( const Point2i &resolution, const std::string &filename , image_type_e imgt ) :
+    Film::Film( const Point2i &resolution, const std::string &filename , image_type_t imgt ) :
         m_full_resolution{resolution},
         m_filename{filename},
         image_type{ imgt }
     {
-        m_color_buffer_ptr = make_unique<ColorBuffer>(ColorBuffer(resolution[0], resolution[1]));
+        m_color_buffer_ptr = make_unique<ColorBuffer>(
+            ColorBuffer(resolution.at(0), resolution.at(1))
+        );
     }
 
     Film::~Film()
@@ -33,15 +35,13 @@ namespace rt3 {
     {
         bool result = false;
         auto blob_ptr = m_color_buffer_ptr->getBlob();
-        for(int i = 0; i < 100; ++i){
-            cout << blob_ptr[i] << endl;
-        }
-        if(image_type == image_type_e::PPM3){
-            result = save_ppm3( blob_ptr, width(), height(), 3,  m_filename);
-        } else if(image_type == image_type_e::PPM6){
-            result = save_ppm6( blob_ptr, width(), height(), 3,  m_filename);
-        } else if(image_type == image_type_e::PNG){
-            result = save_png( blob_ptr, width(), height(), 3,  m_filename);
+
+        if(image_type == image_type_t::PPM3){
+            result = save_ppm3( blob_ptr, height(), width(), 3,  m_filename);
+        } else if(image_type == image_type_t::PPM6){
+            result = save_ppm6( blob_ptr, height(), width(), 3,  m_filename);
+        } else if(image_type == image_type_t::PNG){
+            result = save_png( blob_ptr, height(), width(), 3,  m_filename);
         }
         // delete blob_ptr;
         if(!result) RT3_ERROR("Failed to save image.");
@@ -87,11 +87,7 @@ namespace rt3 {
             yres = std::max(1, yres / 4);
         }
 
-
-        // TODO
-        // Read crop window information.
-
         // Note that the image type is fixed here. Must be read from ParamSet, though.
-        return new Film( Point2i{ xres, yres}, filename, Film::image_type_e::PNG );
+        return new Film( Point2i{{yres, xres}}, filename, image_type_t::PNG );
     }
 }  // namespace pbrt

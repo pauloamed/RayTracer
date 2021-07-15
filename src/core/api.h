@@ -4,6 +4,7 @@
 #include <chrono>
 #include <string>
 #include "rt3-base.h"
+#include "primitive.h"
 
 //=== API Macro definitions
 
@@ -46,28 +47,42 @@ namespace rt3 {
         // the Film
         std::string film_type{"image"}; // The only type available.
         ParamSet film_ps;
+        
         /// the Camera
-        string camera_type{"perspective"};
+        camera_type_t camera_type{camera_type_t::perspective};
         ParamSet camera_ps;
-        /// the Bakcground
-        string bkg_type{"solid"}; // "image", "interpolated"
+
+        /// the Look At
+        ParamSet look_at_ps;
+
+        /// the integrator
+        ParamSet integrator_ps;
+        
+        /// the Background
+        bg_type_t bkg_type{bg_type_t::colors}; // "image", "interpolated"
         ParamSet bkg_ps;
+
+        // the objects/primitives
+        vector<pair<ParamSet, shared_ptr<Material>>> primitives;
     };
 
     /// Collection of data related to a Graphics state, such as current material, lib of material, etc.
     struct GraphicsState
     {
-        // Not necessary in Project 01 through Project 07.
+        shared_ptr<Material> curr_material;
     };
 
     /// Static class that manages the render process
     class API
     {
         public:
+            static GraphicsState curr_GS;
+    
             /// Defines the current state the API may be at a given time
             enum class APIState { Uninitialized,    //!< Initial state, before parsing.
                                   SetupBlock,       //!< Parsing the render setup section.
                                   WorldBlock };     //!< Parsing the world's information section.
+
 
             /// Stores the running options collect in main().
             static RunningOptions curr_run_opt;
@@ -92,13 +107,21 @@ namespace rt3 {
         private:
             // === Helper functions.
             ///
-            static Film * make_film( const string& name,
-                    const ParamSet& ps );
+            static Film * make_film( const ParamSet& ps );
 
-            static Integrator * make_integrator( void );
+            static Integrator * make_integrator( const ParamSet& ps, unique_ptr<Camera> &&camera );
 
-            static Background * make_background( const std::string &type,
-                    const ParamSet& ps );
+            static Background * make_background( const ParamSet& ps );
+
+            static Material * make_material( const ParamSet& ps );
+
+            static Shape * make_shape( const ParamSet& ps );
+
+            static Primitive * make_geometric_primitive( 
+                unique_ptr<Shape> &&shape, shared_ptr<Material> material );
+
+            static Camera * make_camera( const ParamSet& ps_camera, 
+                const ParamSet& ps_look_at, unique_ptr<Film>&& the_film );
 
         public:
             //=== API function begins here.
@@ -107,9 +130,16 @@ namespace rt3 {
             static void clean_up( void );
             static void reset_engine( void );
 
+            static void integrator( const ParamSet& ps );
             static void film( const ParamSet& ps );
+            static void lookat( const ParamSet& ps );
             static void camera( const ParamSet& ps );
             static void background( const ParamSet& ps );
+
+            static void material( const ParamSet& ps );
+            static void object( const ParamSet& ps );
+            
+            
             static void world_begin( void );
             static void world_end( void );
     };
