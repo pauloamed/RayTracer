@@ -16,8 +16,10 @@ public:
     Scene(unique_ptr<Background> &&bg, unique_ptr<Primitive> &&prim):
         background(std::move(bg)), primitive(std::move(prim)){}
 
-
     ~Scene() = default;
+
+    bool intersect(const Ray &r, Surfel *isect) const;
+    bool intersect_p(const Ray &r) const;
 };
 
 } // namespace rt3
