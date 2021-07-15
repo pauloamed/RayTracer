@@ -9,12 +9,14 @@ namespace rt3{
 class Material{
 public:
     Material() = default;
+    virtual ~Material() = default;
 };
 
 class FlatMaterial : public Material{
 public:
     Color color;
     FlatMaterial(Color c):color(c){}
+    Color getColor() const{ return color; }
 };
 
 
