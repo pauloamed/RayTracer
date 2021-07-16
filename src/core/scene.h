@@ -18,7 +18,7 @@ public:
 
     ~Scene() = default;
 
-    bool intersect(const Ray &r, Surfel *isect) const;
+    bool intersect(const Ray &r, unique_ptr<Surfel> &isect) const;
     bool intersect_p(const Ray &r) const;
 };
 

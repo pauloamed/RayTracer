@@ -68,13 +68,13 @@ void API::world_end( void )
             make_background(render_opt->bkg_ps) 
         };
 
-        vector<unique_ptr<Primitive>> the_primitive;
+        vector<shared_ptr<Primitive>> the_primitive;
         for(auto [object_ps, mat] : render_opt->primitives){
 
             unique_ptr<Shape> shape(make_shape(object_ps));
 
             the_primitive.push_back(
-                unique_ptr<Primitive>(
+                shared_ptr<Primitive>(
                     make_geometric_primitive(std::move(shape), mat)
                 )
             );

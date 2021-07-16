@@ -1,7 +1,7 @@
 #include "scene.h"
 
 namespace rt3{
-    bool Scene::intersect(const Ray &r, Surfel *isect) const{
+    bool Scene::intersect(const Ray &r, unique_ptr<Surfel> &isect) const{
         return primitive->intersect(r, isect);
     }
 

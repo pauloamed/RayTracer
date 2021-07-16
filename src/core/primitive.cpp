@@ -14,14 +14,17 @@ namespace rt3{
         return shape->intersect_p(r); 
     }
 
-    bool GeometricPrimitive::intersect(const Ray &r, Surfel *sf ) const{
-        return shape->intersect(r, sf); 
+    bool GeometricPrimitive::intersect(const Ray &r, unique_ptr<Surfel> &isect ) const{
+        return shape->intersect(r, isect); 
     }
 
-    bool PrimList::intersect(const Ray &r, Surfel *sf ) const{
+    bool PrimList::intersect(const Ray &r, unique_ptr<Surfel> &isect ) const{
         for(auto &prim : primitives)
         {
-            if(prim->intersect(r, sf)) return true;
+            if(prim->intersect(r, isect)){
+                isect->setPrimitive(prim);
+                return true;
+            }
         }
         return false;
     }
