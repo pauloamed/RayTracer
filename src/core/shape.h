@@ -3,6 +3,7 @@
 
 #include "basic_types.h"
 #include "paramset.h"
+#include "surfel.h"
 
 namespace rt3{
 
@@ -10,11 +11,10 @@ class Shape{
 public:
     bool flip_normals;
 
-    // Shape(bool flip_n): flip_normals(flip_n){}
-    // Shape(bool flip_n): flip_normals(flip_n){}
     ~Shape(){}
 
-    virtual bool intersect_p(Ray r) = 0;
+    virtual bool intersect_p(const Ray &r) const = 0;
+    virtual bool intersect(const Ray &r, Surfel *isect) const = 0;
 };
 
 class Sphere : public Shape{
@@ -28,7 +28,8 @@ public:
 
     ~Sphere(){}
 
-    bool intersect_p(Ray r) override;
+    bool intersect_p(const Ray &r) const override;
+    bool intersect(const Ray &r, Surfel *isect) const override;
 };
 
 

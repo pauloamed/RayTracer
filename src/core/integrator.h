@@ -10,7 +10,7 @@ namespace  rt3 {
 
 class Integrator {
 public:
-    virtual ~Integrator();
+    virtual ~Integrator(){};
     virtual void render( const unique_ptr<Scene>& ) = 0;
 };
 
@@ -18,7 +18,7 @@ public:
 class SamplerIntegrator : public Integrator {
 //=== Public interface
 public:
-    virtual ~SamplerIntegrator();
+    virtual ~SamplerIntegrator(){};
         // Default init    
 
     SamplerIntegrator( unique_ptr<Camera> &&_camera ){
@@ -27,7 +27,7 @@ public:
 
     virtual ColorXYZ Li(const Ray&, const unique_ptr<Scene>&, const ColorXYZ) const = 0;
     virtual void render( const unique_ptr<Scene>& );
-    virtual void preprocess( const unique_ptr<Scene>& );
+    // virtual void preprocess( const unique_ptr<Scene>& );
     
 protected:
     std::unique_ptr<Camera> camera;
@@ -37,7 +37,7 @@ protected:
 
 class FlatIntegrator : public SamplerIntegrator {
 public:
-    virtual ~FlatIntegrator();
+    ~FlatIntegrator(){};
 
 
     FlatIntegrator( unique_ptr<Camera> &&_camera ):

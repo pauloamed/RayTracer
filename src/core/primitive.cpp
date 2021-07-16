@@ -15,10 +15,14 @@ namespace rt3{
     }
 
     bool GeometricPrimitive::intersect(const Ray &r, Surfel *sf ) const{
-        return false;
+        return shape->intersect(r, sf); 
     }
 
     bool PrimList::intersect(const Ray &r, Surfel *sf ) const{
+        for(auto &prim : primitives)
+        {
+            if(prim->intersect(r, sf)) return true;
+        }
         return false;
     }
 
