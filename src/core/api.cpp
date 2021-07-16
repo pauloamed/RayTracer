@@ -120,11 +120,11 @@ void API::world_end( void )
         RT3_MESSAGE( "[2] Starting ray tracing progress.\n" );
 
         // Structure biding, c++17.
-        auto res  = the_integrator->camera->film->get_resolution();
-        size_t w = res[0];
-        size_t h = res[1];
-        RT3_MESSAGE( "    Image dimensions in pixels (W x H): " + std::to_string(w) + " x " + std::to_string(h) + ".\n" );
-        RT3_MESSAGE( "    Ray tracing is usually a slow process, please be patient: \n" );
+        // auto res  = the_integrator->camera->film->get_resolution();
+        // size_t w = res[0];
+        // size_t h = res[1];
+        // RT3_MESSAGE( "    Image dimensions in pixels (W x H): " + std::to_string(w) + " x " + std::to_string(h) + ".\n" );
+        // RT3_MESSAGE( "    Ray tracing is usually a slow process, please be patient: \n" );
 
         //================================================================================
         auto start = std::chrono::steady_clock::now();

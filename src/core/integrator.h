@@ -46,6 +46,8 @@ public:
     ColorXYZ Li(const Ray&, const unique_ptr<Scene>&, const ColorXYZ) const override;
 };
 
+FlatIntegrator* create_flat_integrator(const ParamSet &, unique_ptr<Camera> &&);
+
 
 
 

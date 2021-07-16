@@ -44,5 +44,10 @@ ColorXYZ FlatIntegrator::Li(const Ray& ray, const unique_ptr<Scene>& scene, cons
     }
 }
 
+
+FlatIntegrator* create_flat_integrator(const ParamSet &ps_integrator, unique_ptr<Camera> &&camera){
+    return new FlatIntegrator(std::move(camera));
+}
+
 } // namespace rt3
 
