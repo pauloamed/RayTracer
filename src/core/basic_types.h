@@ -96,6 +96,14 @@ template<typename T, int size> struct Vector :
       return v * (1.0 / norm);
     }
 
+    Vector abs() const{
+      Vector v(*this);
+      for(int i = 0; i < size; ++i){
+        v[i] = fabs(v[i]);
+      }
+      return v;
+    }
+
     Vector cross(const Vector &x) const{
       Vector v(*this);
       v[0] = this->at(1) * x.at(2) - this->at(2) * x.at(1);
