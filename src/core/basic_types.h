@@ -185,7 +185,9 @@ class Ray {
         }
         Point3f o; //!< origin
         Vector3f d; //!< direction
-        Point3f operator()(real_type t) const { return o + d; }
+        Point3f operator()(real_type t) const { 
+          return o + d * t; 
+        }
 };
 
 

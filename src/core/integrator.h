@@ -48,6 +48,9 @@ public:
 
 
 class NormalIntegrator : public SamplerIntegrator {
+private:
+    Color getColorFromNormal(const Vector3f &n) const;
+    int getColorFromCoord(real_type x) const;
 public:
     ~NormalIntegrator(){};
 
@@ -60,17 +63,23 @@ public:
 
 
 class DepthMapIntegrator : public SamplerIntegrator {
+private:
+    real_type zmin, zmax;
+    Color near_color, far_color;
+
+    void preprocess(const unique_ptr<Scene>&);
+
 public:
     ~DepthMapIntegrator(){};
 
-    real_type zmin, zmax;
-    Color near_color, far_color;
+    
 
 
     DepthMapIntegrator( unique_ptr<Camera> &&_camera, real_type z_min, real_type z_max, Color n_color, Color f_color ):
         SamplerIntegrator(std::move(_camera)), zmin(z_min), zmax(z_max), near_color(n_color), far_color(f_color){}
 
     Color Li(const Ray&, const unique_ptr<Scene>&, const Color) const override;
+    void render( const unique_ptr<Scene>& ) override;
 };
 
 

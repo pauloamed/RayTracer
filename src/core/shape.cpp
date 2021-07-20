@@ -17,21 +17,20 @@ namespace rt3{
         Vector3f centerToOrigin = (r.o - origin);
         real_type A = r.d * r.d;
         real_type B = 2 * (centerToOrigin * r.d);
-        real_type C = (centerToOrigin * centerToOrigin) - radius * radius;
-        real_type delta = B * B - 4 * A * C;
-
-        real_type t[2] = {
-            (-B - sqrt(delta)) / (2 * A),
-            (-B + sqrt(delta)) / (2 * A),
-        };
-        if(t[0] > t[1]) swap(t[0], t[1]);
-
-        Point3f contact = r(t[0]);
-
-        Vector3f normal = origin - contact;
-        normal = normal.normalize();
+        real_type C = (centerToOrigin * centerToOrigin) - (radius * radius);
+        real_type delta = (B * B) - (4 * A * C);
 
         if(delta >= -0.0001){
+            real_type t[2] = {
+                (-B - sqrt(delta)) / (2 * A),
+                (-B + sqrt(delta)) / (2 * A),
+            };
+            if(t[0] > t[1]) swap(t[0], t[1]);
+
+            Point3f contact = r(t[0]);
+
+            Vector3f normal = (contact - origin).normalize();
+
             isect = unique_ptr<Surfel>(new Surfel(contact, normal, r.d * -1));
             return true;
         }else{

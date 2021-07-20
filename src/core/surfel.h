@@ -12,8 +12,10 @@ namespace rt3
         // Point2f uv;     //!< Parametric coordinate (u,v) of the hit surface.
         shared_ptr<Primitive> primitive=nullptr; //!< Pointer to the primitive.
 
-        Surfel(const Point3f&p, const Vector3f&n, const Vector3f&wo)
-            : p{p}, n{n}, wo{wo} {};
+        Surfel(const Point3f& _p, const Vector3f& _n, const Vector3f& _wo)
+            : p{_p}, n{_n}, wo{_wo} { 
+                n = n.normalize(); 
+            };
 
         void setPrimitive(const shared_ptr<Primitive> &prim){
             primitive = prim;
