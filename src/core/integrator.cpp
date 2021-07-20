@@ -50,5 +50,19 @@ FlatIntegrator* create_flat_integrator(const ParamSet &ps_integrator, unique_ptr
     return new FlatIntegrator(std::move(camera));
 }
 
+NormalIntegrator* create_normal_integrator(const ParamSet &ps_integrator, unique_ptr<Camera> &&camera){
+    return new NormalIntegrator(std::move(camera));
+}
+
+DepthMapIntegrator* create_depth_map_integrator(const ParamSet &ps_integrator, unique_ptr<Camera> &&camera){
+    return new DepthMapIntegrator(
+        std::move(camera),
+        retrieve(ps_integrator, "zmin", real_type(0)),
+        retrieve(ps_integrator, "zmmax", real_type(1)),
+        retrieve(ps_integrator, "near_color", Color()),
+        retrieve(ps_integrator, "far_color", Color())
+    );
+}
+
 } // namespace rt3
 

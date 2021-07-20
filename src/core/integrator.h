@@ -46,7 +46,38 @@ public:
     Color Li(const Ray&, const unique_ptr<Scene>&, const Color) const override;
 };
 
+
+class NormalIntegrator : public SamplerIntegrator {
+public:
+    ~NormalIntegrator(){};
+
+
+    NormalIntegrator( unique_ptr<Camera> &&_camera ):
+        SamplerIntegrator(std::move(_camera)){}
+
+    Color Li(const Ray&, const unique_ptr<Scene>&, const Color) const override;
+};
+
+
+class DepthMapIntegrator : public SamplerIntegrator {
+public:
+    ~DepthMapIntegrator(){};
+
+    real_type zmin, zmax;
+    Color near_color, far_color;
+
+
+    DepthMapIntegrator( unique_ptr<Camera> &&_camera, real_type z_min, real_type z_max, Color n_color, Color f_color ):
+        SamplerIntegrator(std::move(_camera)), zmin(z_min), zmax(z_max), near_color(n_color), far_color(f_color){}
+
+    Color Li(const Ray&, const unique_ptr<Scene>&, const Color) const override;
+};
+
+
+
 FlatIntegrator* create_flat_integrator(const ParamSet &, unique_ptr<Camera> &&);
+NormalIntegrator* create_normal_integrator(const ParamSet &, unique_ptr<Camera> &&);
+DepthMapIntegrator* create_depth_map_integrator(const ParamSet &, unique_ptr<Camera> &&);
 
 
 

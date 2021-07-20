@@ -236,6 +236,12 @@ void parse_tags(  tinyxml2::XMLElement *p_element, int level )
             vector<std::pair<param_type_e, string>> param_list
             {
                 { param_type_e::INTEGRATOR_TYPE , "type"   },
+
+                // Depth map integrator
+                { param_type_e::REAL , "zmin"   },
+                { param_type_e::REAL , "zmax"   },
+                { param_type_e::COLOR , "near_color"   },
+                { param_type_e::COLOR , "far_color"   },
             };
             parse_parameters( p_element, param_list, &ps );
 
