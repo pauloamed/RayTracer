@@ -168,8 +168,7 @@ using Vector3i = Vector<int, 3>;
 using Normal3f = Vector<float, 3>;
 
 // Other types
-using Color = StructuredValues<float, 3>;
-using ColorXYZ = Color;
+using Color = StructuredValues<int, 3>;
 using Spectrum = StructuredValues<float, 3>;
 
 

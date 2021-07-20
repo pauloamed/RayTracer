@@ -25,7 +25,7 @@ public:
         camera = std::move(_camera);
     }
 
-    virtual ColorXYZ Li(const Ray&, const unique_ptr<Scene>&, const ColorXYZ) const = 0;
+    virtual Color Li(const Ray&, const unique_ptr<Scene>&, const Color) const = 0;
     virtual void render( const unique_ptr<Scene>& );
     // virtual void preprocess( const unique_ptr<Scene>& );
     
@@ -43,7 +43,7 @@ public:
     FlatIntegrator( unique_ptr<Camera> &&_camera ):
         SamplerIntegrator(std::move(_camera)){}
 
-    ColorXYZ Li(const Ray&, const unique_ptr<Scene>&, const ColorXYZ) const override;
+    Color Li(const Ray&, const unique_ptr<Scene>&, const Color) const override;
 };
 
 FlatIntegrator* create_flat_integrator(const ParamSet &, unique_ptr<Camera> &&);

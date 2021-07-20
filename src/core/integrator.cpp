@@ -21,7 +21,7 @@ void SamplerIntegrator::render( const unique_ptr<Scene> &scene ) {
                 } ); // get background color.
             
             
-            ColorXYZ pixelColor =  Li(ray, scene, backgroundColor);
+            Color pixelColor =  Li(ray, scene, backgroundColor);
          
             camera->film->add_sample( Point2i{{i,j}}, pixelColor ); // set image buffer at position (i,j), accordingly.
         }
@@ -30,7 +30,7 @@ void SamplerIntegrator::render( const unique_ptr<Scene> &scene ) {
     camera->film->write_image();
 }
 
-ColorXYZ FlatIntegrator::Li(const Ray& ray, const unique_ptr<Scene>& scene, const ColorXYZ backgroundColor) const{
+Color FlatIntegrator::Li(const Ray& ray, const unique_ptr<Scene>& scene, const Color backgroundColor) const{
     
     unique_ptr<Surfel> isect; // Intersection information.  
     if (!scene->intersect(ray, isect)) {
