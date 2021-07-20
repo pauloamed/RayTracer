@@ -78,6 +78,24 @@ void parse_single_composite_attrib( stringstream &ss, ParamSet *ps_out, const st
 
 }
 
+void parse_color( stringstream &ss, ParamSet *ps_out, const string &name ){
+    
+    string peak(ss.str());
+    vector<int> values;
+    if(peak.find(".") != string::npos){ // eh inteiro
+        vector<real_type> real_values = getMultipleValues<real_type>(ss, 3);
+        for(auto x : real_values){
+            values.push_back(x * 255);
+        }
+    }else{ // eh float
+        values = getMultipleValues<int>(ss, 3);
+    }
+    // for(auto x : values){
+    //     cout << x << endl;
+    // }
+    (*ps_out)[name] = make_shared<Value<Color>>( Value<Color>(Color(values)) );
+}
+
 
 template<typename T, typename T_INTERNAL, int internal_size> 
 void parse_array_composite_attrib( stringstream &ss, ParamSet *ps_out, const string &name ){
@@ -351,7 +369,7 @@ void parse_parameters( tinyxml2::XMLElement * p_element,
                     parse_single_composite_attrib<int, Point2i, int(2)>( ss, ps_out, name );
                     break;
                 case param_type_e::COLOR:
-                    parse_single_composite_attrib<real_type, ColorXYZ, int(3)>( ss, ps_out, name );
+                    parse_color( ss, ps_out, name );
                     break;
                 case param_type_e::SPECTRUM:
                     parse_single_composite_attrib<real_type, Spectrum, int(3)>( ss, ps_out, name );
@@ -379,9 +397,9 @@ void parse_parameters( tinyxml2::XMLElement * p_element,
                 case param_type_e::ARR_POINT3F:
                     parse_array_composite_attrib<Point3f, float, 3>( ss, ps_out, name );
                     break;
-                case param_type_e::ARR_COLOR:
-                    parse_array_composite_attrib<ColorXYZ, float, 3>( ss, ps_out, name );
-                    break;
+                // case param_type_e::ARR_COLOR:
+                //     parse_array_composite_attrib<Color, float, 3>( ss, ps_out, name );
+                //     break;
                 default:
                     RT3_WARNING( string{"parse_params(): unkonwn param type received!" } );
                     break;
