@@ -11,9 +11,10 @@ namespace rt3
         Vector3f wo;      //!< Outgoing direction of light, which is -ray.
         // Point2f uv;     //!< Parametric coordinate (u,v) of the hit surface.
         shared_ptr<Primitive> primitive=nullptr; //!< Pointer to the primitive.
+        real_type t;
 
-        Surfel(const Point3f& _p, const Vector3f& _n, const Vector3f& _wo)
-            : p{_p}, n{_n}, wo{_wo} { 
+        Surfel(const Point3f& _p, const Vector3f& _n, const Vector3f& _wo, real_type _t)
+            : p{_p}, n{_n}, wo{_wo}, t(_t) { 
                 n = n.normalize(); 
             };
 

@@ -65,52 +65,64 @@ Color FlatIntegrator::Li(const Ray& ray, const unique_ptr<Scene>& scene, const C
 }
 
 
-Color DepthMapIntegrator::Li(const Ray& ray, const unique_ptr<Scene>& scene, const Color backgroundColor) const{
-    
-    unique_ptr<Surfel> isect; // Intersection information.  
-    if (!scene->intersect(ray, isect)) {
-        return backgroundColor;
-    }else{
-        // Some form of determining the incoming radiance at the ray's origin.
-        // For this integrator, it might just be:
-        // Polymorphism in action.
-        shared_ptr<FlatMaterial> fm = std::dynamic_pointer_cast<FlatMaterial>( isect->primitive->get_material() );
-        // Assign diffuse color to L.
-        return fm->getColor(); // Call a method present only in FlatMaterial.
-    }
-}
-
 void DepthMapIntegrator::preprocess(const unique_ptr<Scene> &scene){
-    // Perform objects initialization here.
-    // The Film object holds the memory for the image.
-    // ...
     auto w = camera->film->width(); // Retrieve the image dimensions in pixels.
     auto h = camera->film->height();
-    // Traverse all pixels to shoot rays from.
+
     for ( int i = 0 ; i < h; i++ ) {
-        for( int j = 0 ; j < w ; j++ ) {
-            
+        for( int j = 0 ; j < w ; j++ ) {        
             Ray ray = camera->generate_ray( i, j );
-            auto backgroundColor = \
-                scene->background->sampleXYZ( Point2f{
-                    {float(i)/float(h),
-                    float(j)/float(w)}
-                } ); // get background color.
-            
-            
-            Color pixelColor =  Li(ray, scene, backgroundColor);
-         
-            camera->film->add_sample( Point2i{{i,j}}, pixelColor ); // set image buffer at position (i,j), accordingly.
+
+            unique_ptr<Surfel> isect; // Intersection information.  
+            if (scene->intersect(ray, isect)) {
+                scene_tmin = min(scene_tmin, isect->t);
+                scene_tmax = max(scene_tmax, isect->t);
+            }
         }
     }
-    // send image color buffer to the output file.
-    camera->film->write_image();
+
+    t_range = scene_tmax - scene_tmin;
+    // tmin;tmax correspondem a 0;1
+    // zmin;zmax podem nao ser 0;1, mas 0;2
 }
 
 void DepthMapIntegrator::render(const unique_ptr<Scene>& sc){
     preprocess(sc);
     SamplerIntegrator::render(sc);
 }
+
+inline real_type DepthMapIntegrator::normalizeZ(real_type x) const{
+    return (x - zmin) / z_range;
+}
+
+inline real_type DepthMapIntegrator::normalizeT(real_type x) const{
+    return (x - scene_tmin) / t_range;
+}
+
+Color interpolate_color_(const float t, const Color &a, const Color &b){
+  return Color{{
+    (int) Lerp(t, a.x(), b.x()),
+    (int) Lerp(t, a.y(), b.y()),
+    (int) Lerp(t, a.z(), b.z()),
+  }};
+}
+
+Color DepthMapIntegrator::Li(const Ray& ray, const unique_ptr<Scene>& scene, const Color backgroundColor) const{
+    
+    unique_ptr<Surfel> isect; // Intersection information.  
+    if (!scene->intersect(ray, isect)) {
+        return far_color;
+    }else{
+        real_type norm_t = normalizeT(isect->t);
+        if(norm_t < zmin || norm_t > zmax) return far_color;
+
+        real_type norm_z = normalizeZ(norm_t);
+
+        return interpolate_color_(norm_z, near_color, far_color);
+    }
+}
+
+
 
 
 Color NormalIntegrator::Li(const Ray& ray, const unique_ptr<Scene>& scene, const Color backgroundColor) const{
@@ -124,9 +136,7 @@ Color NormalIntegrator::Li(const Ray& ray, const unique_ptr<Scene>& scene, const
 }
 
 
-int NormalIntegrator::getColorFromCoord(real_type x) const{
-    // stringstream ss; ss << x;
-    // RT3_MESSAGE(ss.str());
+int SamplerIntegrator::getColorFromCoord(real_type x) const{
     return x * 255;
 }
 

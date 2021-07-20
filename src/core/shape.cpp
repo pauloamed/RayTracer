@@ -31,7 +31,7 @@ namespace rt3{
 
             Vector3f normal = (contact - origin).normalize();
 
-            isect = unique_ptr<Surfel>(new Surfel(contact, normal, r.d * -1));
+            isect = unique_ptr<Surfel>(new Surfel(contact, normal, r.d * -1, t[0]));
             return true;
         }else{
             return false;
