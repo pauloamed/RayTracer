@@ -139,7 +139,7 @@ void API::world_end( void )
     }
     // [4] Basic clean up
     curr_state = APIState::SetupBlock;      // correct machine state.
-    reset_engine();
+    // reset_engine();
 }
 
 

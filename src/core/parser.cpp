@@ -283,9 +283,20 @@ void parse_tags(  tinyxml2::XMLElement *p_element, int level )
         {
             API::world_end();
         }
+        else if( tag_name == "include" )
+        {
+            parse(p_element->Attribute("filename"));
+        }
+        else if( tag_name == "render_again" )
+        {
+            API::world_begin();
+            API::world_end();
+        }
         else
-        
-         RT3_WARNING( "Undefined tag `" + tag_name + "` found!" );
+        {
+            RT3_WARNING( "Undefined tag `" + tag_name + "` found!" );
+        }       
+         
 
         // Get next (to the right) sibling on this tree level.
         p_element = p_element->NextSiblingElement();

@@ -98,7 +98,7 @@ int main( int argc, char * argv[] )
     // ================================================
     API::init_engine( opt );
     API::run();
-    API::clean_up();
+    // API::clean_up();
 
     RT3_MESSAGE( "\n    Thanks for using RT3!\n\n" );
 
