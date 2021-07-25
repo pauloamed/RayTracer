@@ -15,7 +15,7 @@ DepthMapIntegrator* create_depth_map_integrator(const ParamSet &ps_integrator, u
     return new DepthMapIntegrator(
         std::move(camera),
         retrieve(ps_integrator, "zmin", real_type(0)),
-        retrieve(ps_integrator, "zmmax", real_type(1)),
+        retrieve(ps_integrator, "zmax", real_type(1)),
         retrieve(ps_integrator, "near_color", Color()),
         retrieve(ps_integrator, "far_color", Color())
     );
@@ -99,6 +99,15 @@ inline real_type DepthMapIntegrator::normalizeT(real_type x) const{
     return (x - scene_tmin) / t_range;
 }
 
+
+Color clampColor(Color x){
+    return Color({
+        Clamp<int, int, int>(x.at(0), 0, 255),
+        Clamp<int, int, int>(x.at(1), 0, 255),
+        Clamp<int, int, int>(x.at(2), 0, 255),        
+    });
+}
+
 Color interpolate_color_(const float t, const Color &a, const Color &b){
   return Color{{
     (int) Lerp(t, a.x(), b.x()),
@@ -114,11 +123,9 @@ Color DepthMapIntegrator::Li(const Ray& ray, const unique_ptr<Scene>& scene, con
         return far_color;
     }else{
         real_type norm_t = normalizeT(isect->t);
-        if(norm_t < zmin || norm_t > zmax) return far_color;
-
         real_type norm_z = normalizeZ(norm_t);
 
-        return interpolate_color_(norm_z, near_color, far_color);
+        return clampColor(interpolate_color_(norm_z, near_color, far_color));
     }
 }
 
@@ -136,6 +143,8 @@ Color NormalIntegrator::Li(const Ray& ray, const unique_ptr<Scene>& scene, const
 }
 
 
+
+
 int SamplerIntegrator::getColorFromCoord(real_type x) const{
     return x * 255;
 }
@@ -143,11 +152,11 @@ int SamplerIntegrator::getColorFromCoord(real_type x) const{
 
 Color NormalIntegrator::getColorFromNormal(const Vector3f &n) const{
     Vector3f inRange = (n + Vector3f({1, 1, 1})) * real_type(0.5);
-    return Color({
-        getColorFromCoord(Clamp<real_type, real_type, real_type>(inRange.at(0), 0.0, 1.0)),
-        getColorFromCoord(Clamp<real_type, real_type, real_type>(inRange.at(1), 0.0, 1.0)),
-        getColorFromCoord(Clamp<real_type, real_type, real_type>(inRange.at(2), 0.0, 1.0)),
-    });
+    return clampColor(Color({
+        getColorFromCoord(inRange.at(0)),
+        getColorFromCoord(inRange.at(1)),
+        getColorFromCoord(inRange.at(2)),
+    }));
 }
 
 
