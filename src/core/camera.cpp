@@ -15,12 +15,21 @@ pair<real_type, real_type> Camera::get_uv_pos(int i, int j){
 Camera::Camera(unique_ptr<Film> &&_film, Point3f _eye, Point3f _center, Vector3f _up, ScreenWindow _sw):
     film(std::move(_film)), eye(_eye), sw(_sw){
         Vector3f gaze = _center - _eye; 
+
+
+        // std::cout << "eye " << _eye.toString() << std::endl;
+        // std::cout << "center " << _center.toString() << std::endl;
+        // std::cout << "gaze " << gaze.toString() << std::endl;
+        // std::cout << "up " << _up.toString() << std::endl;
+
+
+        
         w = gaze.normalize();
-        std::cout << w.toString() << std::endl;
+        // std::cout << "w " << w.toString() << std::endl;
         u = _up.cross(w).normalize();
-        std::cout << u.toString() << std::endl;
-        v = u.cross(w).normalize().abs();
-        std::cout << v.toString() << std::endl;
+        // std::cout << "u " << u.toString() << std::endl;
+        v = u.cross(w).normalize();
+        // std::cout << "v " << v.toString() << std::endl;
     }
 
 
@@ -75,16 +84,16 @@ PerspectiveCamera* create_perspective_camera(
     if( ps_camera.count("screen_window")){
         sw = retrieve(ps_camera, "screen_window", ScreenWindow());
     }else if(ps_camera.count("fovy")){
-        
-        real_type aspect = the_film->get_aspect();
         real_type fovy = Radians(retrieve(ps_camera, "fovy", real_type()));
+
+        real_type aspect = the_film->get_aspect();
         real_type h = fabs(tan(fovy / 2));
 
         sw = ScreenWindow(
-            h * aspect * -1,
-            h * aspect,
-            h * -1,
-            h
+            h * aspect * -1,    // left
+            h * aspect,         // right
+            h * -1,             // bottom
+            h                   // top
         );
 
         // std::cout << fovy << " " << tan(fovy/2) << " " << h << " " << aspect << std::endl;
