@@ -2,229 +2,189 @@
 
 namespace rt3 {
 
-
 API::APIState API::curr_state = API::APIState::Uninitialized;
 RunningOptions API::curr_run_opt;
-unique_ptr< RenderOptions > API::render_opt;
+unique_ptr<RenderOptions> API::render_opt;
 GraphicsState API::curr_GS;
-            
+
 //=== API's public methods implementation
-void API::init_engine( const RunningOptions & opt )
-{
-   // Save running option sent from the main().
-   curr_run_opt = opt;
-   // Check current machine state.
-   if ( curr_state != APIState::Uninitialized )
-       RT3_ERROR( "API::init_engine() has already been called! ");
-   // Set proper machine state
-   curr_state = APIState::SetupBlock;
-   // Preprare render infrastructure for a new scene.
-   render_opt = make_unique< RenderOptions >(); 
-   // Create a new initial GS
-   curr_GS = GraphicsState();
-   RT3_MESSAGE( "[1] Rendering engine initiated.\n" );
+void API::init_engine(const RunningOptions &opt) {
+  // Save running option sent from the main().
+  curr_run_opt = opt;
+  // Check current machine state.
+  if (curr_state != APIState::Uninitialized)
+    RT3_ERROR("API::init_engine() has already been called! ");
+  // Set proper machine state
+  curr_state = APIState::SetupBlock;
+  // Preprare render infrastructure for a new scene.
+  render_opt = make_unique<RenderOptions>();
+  // Create a new initial GS
+  curr_GS = GraphicsState();
+  RT3_MESSAGE("[1] Rendering engine initiated.\n");
 }
 
-void API::clean_up( void )
-{
-    // Check for correct machine state
-    if ( curr_state == APIState::Uninitialized )
-        RT3_ERROR("API::clean_up() called before engine initialization.");
-    else if ( curr_state == APIState::WorldBlock )
-        RT3_ERROR("API::clean_up() called inside world definition section.");
-    curr_state = APIState::Uninitialized;
+void API::clean_up(void) {
+  // Check for correct machine state
+  if (curr_state == APIState::Uninitialized)
+    RT3_ERROR("API::clean_up() called before engine initialization.");
+  else if (curr_state == APIState::WorldBlock)
+    RT3_ERROR("API::clean_up() called inside world definition section.");
+  curr_state = APIState::Uninitialized;
 
-    RT3_MESSAGE( "[4] Rendering engine clean up concluded. Shutting down...\n" );
+  RT3_MESSAGE("[4] Rendering engine clean up concluded. Shutting down...\n");
 }
 
-void API::run( void )
-{
-    // Try to load and parse the scene from a file.
-    RT3_MESSAGE( "[2] Beginning scene file parsing...\n" );
-    // Recall that the file name comes from the running option struct.
-    parse( curr_run_opt.filename.c_str() );
+void API::run(void) {
+  // Try to load and parse the scene from a file.
+  RT3_MESSAGE("[2] Beginning scene file parsing...\n");
+  // Recall that the file name comes from the running option struct.
+  parse(curr_run_opt.filename.c_str());
 }
 
-
-void API::world_begin( void )
-{
-    VERIFY_SETUP_BLOCK("API::world_begin");      // check for correct machine state.
-    curr_state = APIState::WorldBlock;      // correct machine state.
+void API::world_begin(void) {
+  VERIFY_SETUP_BLOCK("API::world_begin"); // check for correct machine state.
+  curr_state = APIState::WorldBlock;      // correct machine state.
 }
 
+void API::world_end(void) {
+  VERIFY_WORLD_BLOCK("API::world_end");
+  // The scene has been properly set up and the scene has
+  // already been parsed. It's time to render the scene.
 
-void API::world_end( void )
-{
-    VERIFY_WORLD_BLOCK("API::world_end");
-    // The scene has been properly set up and the scene has
-    // already been parsed. It's time to render the scene.
+  unique_ptr<Scene> the_scene;
+  unique_ptr<Integrator> the_integrator;
 
-    unique_ptr<Scene> the_scene;
-    unique_ptr<Integrator> the_integrator;
+  // LOADING SCENE
+  {
+    unique_ptr<Background> the_background{make_background(render_opt->bkg_ps)};
 
-    // LOADING SCENE
-    {
-        unique_ptr<Background> the_background{ 
-            make_background(render_opt->bkg_ps) 
-        };
+    vector<shared_ptr<Primitive>> the_primitive;
+    for (auto [object_ps, mat] : render_opt->primitives) {
 
-        vector<shared_ptr<Primitive>> the_primitive;
-        for(auto [object_ps, mat] : render_opt->primitives){
+      unique_ptr<Shape> shape(make_shape(object_ps));
 
-            unique_ptr<Shape> shape(make_shape(object_ps));
-
-            the_primitive.push_back(
-                shared_ptr<Primitive>(
-                    make_geometric_primitive(std::move(shape), mat)
-                )
-            );
-        }
-
-        unique_ptr<PrimList> primList = unique_ptr<PrimList>(
-            new PrimList(std::move(the_primitive))
-        );
-
-        the_scene = make_unique<Scene>(
-          std::move(the_background),
-          std::move(primList)
-        );
-
+      the_primitive.push_back(shared_ptr<Primitive>(
+          make_geometric_primitive(std::move(shape), mat)));
     }
 
-    
-    // LOADING INTEGRATOR
-    {
-        unique_ptr<Film> the_film{
-            make_film(render_opt->film_ps) 
-        };
+    unique_ptr<PrimList> primList =
+        unique_ptr<PrimList>(new PrimList(std::move(the_primitive)));
 
+    the_scene =
+        make_unique<Scene>(std::move(the_background), std::move(primList));
+  }
 
-        // Same with the camera
-        unique_ptr<Camera> the_camera{
-            make_camera(
-                render_opt->camera_ps, render_opt->look_at_ps, std::move(the_film)
-            ) 
-        };
+  // LOADING INTEGRATOR
+  {
+    unique_ptr<Film> the_film{make_film(render_opt->film_ps)};
 
-        // Integrator
-        the_integrator = unique_ptr<Integrator>(
-            make_integrator(render_opt->integrator_ps, std::move(the_camera))
-        );
-    }
+    // Same with the camera
+    unique_ptr<Camera> the_camera{make_camera(
+        render_opt->camera_ps, render_opt->look_at_ps, std::move(the_film))};
 
+    // Integrator
+    the_integrator = unique_ptr<Integrator>(
+        make_integrator(render_opt->integrator_ps, std::move(the_camera)));
+  }
 
-    // Run only if we got film and background.
-    if ( the_integrator and the_scene )
-    {
-        RT3_MESSAGE( "    Parsing scene successfuly done!\n" );
-        RT3_MESSAGE( "[2] Starting ray tracing progress.\n" );
+  // Run only if we got film and background.
+  if (the_integrator and the_scene) {
+    RT3_MESSAGE("    Parsing scene successfuly done!\n");
+    RT3_MESSAGE("[2] Starting ray tracing progress.\n");
 
-        // Structure biding, c++17.
-        // auto res  = the_integrator->camera->film->get_resolution();
-        // size_t w = res[0];
-        // size_t h = res[1];
-        // RT3_MESSAGE( "    Image dimensions in pixels (W x H): " + std::to_string(w) + " x " + std::to_string(h) + ".\n" );
-        // RT3_MESSAGE( "    Ray tracing is usually a slow process, please be patient: \n" );
+    // Structure biding, c++17.
+    // auto res  = the_integrator->camera->film->get_resolution();
+    // size_t w = res[0];
+    // size_t h = res[1];
+    // RT3_MESSAGE( "    Image dimensions in pixels (W x H): " +
+    // std::to_string(w) + " x " + std::to_string(h) + ".\n" ); RT3_MESSAGE( "
+    // Ray tracing is usually a slow process, please be patient: \n" );
 
-        //================================================================================
-        auto start = std::chrono::steady_clock::now();
-        the_integrator->render(the_scene);
-        auto end = std::chrono::steady_clock::now();
-        //================================================================================
-        auto diff = end - start; //Store the time difference between start and end
-        // Seconds
-        auto diff_sec = std::chrono::duration_cast<std::chrono::seconds>(diff);
-        RT3_MESSAGE( "    Time elapsed: " + std::to_string(diff_sec.count()) + " seconds (" +
-                 std::to_string( std::chrono::duration <double, std::milli> (diff).count() ) +  " ms) \n" );
-    }
-    // [4] Basic clean up
-    curr_state = APIState::SetupBlock;      // correct machine state.
-    // reset_engine();
+    //================================================================================
+    auto start = std::chrono::steady_clock::now();
+    the_integrator->render(the_scene);
+    auto end = std::chrono::steady_clock::now();
+    //================================================================================
+    auto diff = end - start; // Store the time difference between start and end
+    // Seconds
+    auto diff_sec = std::chrono::duration_cast<std::chrono::seconds>(diff);
+    RT3_MESSAGE("    Time elapsed: " + std::to_string(diff_sec.count()) +
+                " seconds (" +
+                std::to_string(
+                    std::chrono::duration<double, std::milli>(diff).count()) +
+                " ms) \n");
+  }
+  // [4] Basic clean up
+  curr_state = APIState::SetupBlock; // correct machine state.
 }
 
-
-
-/// This api function is called when we need to re-render the *same* scene (i.e. objects, lights, materials, etc) , maybe with different integrator, and camera setup.
-/// Hard reset on the engine. User needs to setup all entities, such as camera, integrator, accelerator, etc.
-void API::reset_engine(void)
-{
-    // curr_GS = GraphicsState();
-    // This will delete all information on integrator, cameras, filters,
-    // acceleration structures, etc., that has been set previously.
-    render_opt.reset( new RenderOptions );
+/// This api function is called when we need to re-render the *same* scene (i.e.
+/// objects, lights, materials, etc) , maybe with different integrator, and
+/// camera setup. Hard reset on the engine. User needs to setup all entities,
+/// such as camera, integrator, accelerator, etc.
+void API::reset_engine(void) {
+  // curr_GS = GraphicsState();
+  // This will delete all information on integrator, cameras, filters,
+  // acceleration structures, etc., that has been set previously.
+  render_opt.reset(new RenderOptions);
 }
-
 
 ////////////////////////////////////////////////////////////////////////////
 // SETUP BLOCK
 
-void API::integrator( const ParamSet &ps )
-{
-    std::cout << ">>> Inside API::integrator()\n";
-    VERIFY_SETUP_BLOCK("API::lookat");
-    
-    render_opt->integrator_ps = ps;
+void API::integrator(const ParamSet &ps) {
+  std::cout << ">>> Inside API::integrator()\n";
+  VERIFY_SETUP_BLOCK("API::lookat");
+
+  render_opt->integrator_ps = ps;
 }
 
+void API::film(const ParamSet &ps) {
+  std::cout << ">>> Inside API::film()\n";
+  VERIFY_SETUP_BLOCK("API::film");
 
-void API::film( const ParamSet &ps )
-{
-    std::cout << ">>> Inside API::film()\n";
-    VERIFY_SETUP_BLOCK("API::film");
-
-    render_opt->film_ps = ps;
+  render_opt->film_ps = ps;
 }
 
+void API::camera(const ParamSet &ps) {
+  std::cout << ">>> Inside API::camera()\n";
+  VERIFY_SETUP_BLOCK("API::camera");
 
-void API::camera( const ParamSet &ps )
-{
-    std::cout << ">>> Inside API::camera()\n";
-    VERIFY_SETUP_BLOCK("API::camera");
-
-    render_opt->camera_ps = ps;
+  render_opt->camera_ps = ps;
 }
 
+void API::lookat(const ParamSet &ps) {
+  std::cout << ">>> Inside API::lookat()\n";
+  VERIFY_SETUP_BLOCK("API::lookat");
 
-void API::lookat( const ParamSet &ps )
-{
-    std::cout << ">>> Inside API::lookat()\n";
-    VERIFY_SETUP_BLOCK("API::lookat");
-
-    render_opt->look_at_ps = ps;
+  render_opt->look_at_ps = ps;
 }
 
 ///////////////////////////////////////////////////////////////////////
 // WORLD BLOCK
 
+void API::background(const ParamSet &ps) {
+  std::cout << ">>> Inside API::background()\n";
+  VERIFY_WORLD_BLOCK("API::background");
 
-void API::background( const ParamSet& ps )
-{
-    std::cout << ">>> Inside API::background()\n";
-    VERIFY_WORLD_BLOCK("API::background");
-
-    // Store current background object.
-    render_opt->bkg_ps = ps;
+  // Store current background object.
+  render_opt->bkg_ps = ps;
 }
 
+void API::material(const ParamSet &ps) {
+  std::cout << ">>> Inside API::material()\n";
+  VERIFY_WORLD_BLOCK("API::material");
 
-void API::material( const ParamSet &ps )
-{
-    std::cout << ">>> Inside API::material()\n";
-    VERIFY_WORLD_BLOCK("API::material");
+  shared_ptr<Material> new_material(make_material(ps));
 
-    shared_ptr<Material> new_material(make_material(ps));
-
-    curr_GS.curr_material = new_material;
+  curr_GS.curr_material = new_material;
 }
 
+void API::object(const ParamSet &ps) {
+  std::cout << ">>> Inside API::object()\n";
+  VERIFY_WORLD_BLOCK("API::object");
 
-void API::object( const ParamSet &ps )
-{
-    std::cout << ">>> Inside API::object()\n";
-    VERIFY_WORLD_BLOCK("API::object");
-
-    render_opt->primitives.push_back({ps, curr_GS.curr_material});
-    
+  render_opt->primitives.push_back({ps, curr_GS.curr_material});
 }
 
-}  // namespace rt3
+} // namespace rt3
