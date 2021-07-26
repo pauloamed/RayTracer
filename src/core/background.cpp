@@ -11,9 +11,9 @@ namespace rt3 {
 
 Color interpolate_color(const float t, const Color &a, const Color &b){
   return Color{{
-    Lerp(t, a.x(), b.x()),
-    Lerp(t, a.y(), b.y()),
-    Lerp(t, a.z(), b.z()),
+    (int) Lerp(t, a.x(), b.x()),
+    (int) Lerp(t, a.y(), b.y()),
+    (int) Lerp(t, a.z(), b.z()),
   }};
 }
 

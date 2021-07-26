@@ -96,10 +96,18 @@ template<typename T, int size> struct Vector :
       return v * (1.0 / norm);
     }
 
+    Vector abs() const{
+      Vector v(*this);
+      for(int i = 0; i < size; ++i){
+        v[i] = fabs(v[i]);
+      }
+      return v;
+    }
+
     Vector cross(const Vector &x) const{
       Vector v(*this);
       v[0] = this->at(1) * x.at(2) - this->at(2) * x.at(1);
-      v[1] = this->at(0) * x.at(2) - this->at(2) * x.at(0);
+      v[1] = this->at(2) * x.at(0) - this->at(0) * x.at(2);
       v[2] = this->at(0) * x.at(1) - this->at(1) * x.at(0);
       return v;
     }
@@ -168,8 +176,7 @@ using Vector3i = Vector<int, 3>;
 using Normal3f = Vector<float, 3>;
 
 // Other types
-using Color = StructuredValues<float, 3>;
-using ColorXYZ = Color;
+using Color = StructuredValues<int, 3>;
 using Spectrum = StructuredValues<float, 3>;
 
 
@@ -179,27 +186,24 @@ using ListPoint3f = std::vector<Point3f>;
 
 class Ray {
     public:
-        Ray (const Point3f& _o, const Vector3f& _d ) : o{_o}, d{_d} {
-          assert(d.at(2) == _d.at(2));
-          assert(d.at(1) == _d.at(1));
-          assert(d.at(0) == _d.at(0));
+        Ray (const Point3f& _o, const Vector3f& _d ) : o{_o}, d{_d.normalize()} {
         }
         Point3f o; //!< origin
         Vector3f d; //!< direction
-    private:
-
-        Point3f operator()(real_type t) const { return o + d; }
+        Point3f operator()(real_type t) const { 
+          return o + d * t; 
+        }
 };
 
 
 struct ScreenWindow{
     real_type left, right;
-    real_type top, bottom;
+    real_type bottom, top;
 
     ScreenWindow() = default;
 
-    ScreenWindow(real_type l, real_type r, real_type t, real_type b):
-    left(l), right(r), top(t), bottom(b){}
+    ScreenWindow(real_type l, real_type r, real_type b, real_type t):
+    left(l), right(r), bottom(b), top(t){}
 
     ScreenWindow(const vector<real_type> &vals):
       ScreenWindow(vals[0], vals[1], vals[2], vals[3]){}

@@ -73,8 +73,8 @@ enum class camera_type_t : int { orthographic, perspective };
 const vector<string> camera_type_t_names = {"orthographic", "perspective"};
 
 /// List of supported integrator types
-enum class integrator_type_t : int { flat };
-const vector<string> integrator_type_t_names = {"flat"};
+enum class integrator_type_t : int { flat, depth_map, normal_map };
+const vector<string> integrator_type_t_names = {"flat", "depth_map", "normal_map"};
 
 /// List of supported material types
 enum class material_type_t : int { flat };

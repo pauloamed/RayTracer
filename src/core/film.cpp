@@ -23,7 +23,7 @@ namespace rt3 {
     }
 
     /// Add the color to image.
-    void Film::add_sample ( const Point2i &pixel_coord, const ColorXYZ &pixel_color )
+    void Film::add_sample ( const Point2i &pixel_coord, const Color &pixel_color )
     {
         m_color_buffer_ptr->get(pixel_coord) = pixel_color;
     }
