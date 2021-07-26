@@ -46,7 +46,7 @@ namespace rt3 {
             /// Retrieve original Film resolution.
             Point2i get_resolution() const { return m_full_resolution; };
             /// Takes a sample `p` and its radiance `L` and updates the image.
-            void add_sample( const Point2i &, const ColorXYZ & );
+            void add_sample( const Point2i &, const Color & );
             void write_image() const;
 
             //=== Film Public Data

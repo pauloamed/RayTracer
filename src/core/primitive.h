@@ -12,7 +12,7 @@ class Primitive {
 public:
 	
 	virtual ~Primitive(){};
-	virtual bool intersect( const Ray& r, Surfel *sf ) const = 0;
+	virtual bool intersect( const Ray& r, unique_ptr<Surfel> &isect ) const = 0;
 	
 	virtual bool intersect_p( const Ray& r ) const = 0;
 	virtual shared_ptr<Material> get_material() const = 0;
@@ -33,7 +33,7 @@ public:
 
 	bool intersect_p( const Ray& r ) const override;
 
-	bool intersect( const Ray& r, Surfel *sf ) const override;
+	bool intersect( const Ray& r, unique_ptr<Surfel> &isect ) const override;
 
 	shared_ptr<Material> get_material() const override{ 
 		return material;
@@ -53,16 +53,16 @@ public:
 
 class PrimList : public AggregatePrimitive{
 public:
-	vector<unique_ptr<Primitive>> primitives;
+	vector<shared_ptr<Primitive>> primitives;
 
-	PrimList(vector<unique_ptr<Primitive>> &&prim):
+	PrimList(vector<shared_ptr<Primitive>> &&prim):
 		primitives(std::move(prim)){}
 
 	~PrimList(){};
 
 	bool intersect_p( const Ray& r ) const override;
 
-	bool intersect( const Ray& r, Surfel *sf ) const override;
+	bool intersect( const Ray& r, unique_ptr<Surfel> &isect ) const override;
 
 	using AggregatePrimitive::get_material;
 

@@ -53,8 +53,19 @@ Integrator * API::make_integrator( const ParamSet &ps_integrator,
         unique_ptr<Camera> &&camera )
 {
     std::cout << ">>> Inside API::make_integrator()\n";
-    Integrator *integ{ new Integrator(std::move(camera)) };
+    Integrator* integ = nullptr;
 
+    integrator_type_t type = retrieve(ps_integrator, "type", integrator_type_t::flat);
+    if(type == integrator_type_t::flat){
+        integ = create_flat_integrator(ps_integrator, std::move(camera));
+    }else if(type == integrator_type_t::depth_map){
+        integ = create_depth_map_integrator(ps_integrator, std::move(camera));
+    }else if(type == integrator_type_t::normal_map){
+        integ = create_normal_integrator(ps_integrator, std::move(camera));
+    }else{
+        RT3_ERROR("Integrator type unknown.");
+    }
+    
     // Return the newly created integrator
     return integ;
 }
