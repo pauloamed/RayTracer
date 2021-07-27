@@ -64,6 +64,7 @@ enum class param_type_e : int {
   BG_TYPE,
   IMAGE_TYPE,
   CAMERA_TYPE,
+  LIGHT_TYPE,
   INTEGRATOR_TYPE,
   MATERIAL_TYPE,
   OBJECT_TYPE,
@@ -75,7 +76,6 @@ enum class param_type_e : int {
   POINT3F,     //!< Single Point3f
   POINT2I,     //!< Single Point2i
   COLOR,       //!< Single Color
-  SPECTRUM,    //!< Single Spectrum
 // MULTIPLE PRIMITIVES
   ARR_INT,     //!< An array of integers
   ARR_REAL,    //!< An array of real numbers

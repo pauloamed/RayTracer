@@ -22,6 +22,35 @@ typedef float real_type;
 typedef size_t size_type;
 typedef std::tuple<bool, std::string> result_type;
 
+/*! Linear interpolation.
+ * \param t The parameter, in [0,1].
+ * \param v1 The initial interpolation value.
+ * \param v2 The final interpolation value.
+ * \return The interpolated value.
+ */
+//
+inline float Lerp(float t, float v1, float v2) {
+  return (1.f - t) * v1 + t * v2;
+}
+
+/// Clamp T to [low,high].
+template <typename T, typename U, typename V>
+inline T Clamp(T val, U low, V high) {
+  if (val < low)
+    return low;
+  else if (val > high)
+    return high;
+  else
+    return val;
+}
+
+/// Degrees to radians.
+inline real_type Radians(real_type deg) { return ((real_type)M_PI / 180.f) * deg; }
+
+/// Radians to degreees.
+inline real_type Degrees(real_type rad) { return (180.f / (real_type)M_PI) * rad; }
+
+
 
 // wrapper class for structured point values
 template <typename T, int size> class StructuredValues {
@@ -175,24 +204,68 @@ using Vector3f = Vector<float, 3>;
 using Vector3i = Vector<int, 3>;
 using Normal3f = Vector<float, 3>;
 
-// Other types
-using Color = StructuredValues<int, 3>;
-using Spectrum = StructuredValues<float, 3>;
-
-
 // List of points
 using ListPoint3f = std::vector<Point3f>;
 
+// Other types
+
+class Color : public StructuredValues<real_type, 3>{
+public:
+
+  Color():StructuredValues<real_type,3>(){}
+
+  Color(const vector<real_type> &v):StructuredValues<real_type, 3>(v){}
+
+  static inline Color make_color_from_real(const vector<real_type> &v){
+    return Color(v);
+  }
+
+  static inline Color make_color_from_int(vector<real_type> v){
+    for(auto &x : v) x /= 255;
+    return Color(v);
+  }
+
+  Color clamp(){
+    Color newColor(*this);
+    for(auto &x : newColor.values){
+      x = Clamp<real_type, real_type, real_type>(x, 0, 1);
+    }
+    return newColor;
+  }
+
+  static inline Color interpolate_color(const float t, const Color &a, const Color &b){
+    return Color{{
+      (real_type) Lerp(t, a.x(), b.x()),
+      (real_type) Lerp(t, a.y(), b.y()),
+      (real_type) Lerp(t, a.z(), b.z()),
+    }};
+  }
+};
+
+class ColorInt : public StructuredValues<int, 3>{
+public:
+
+  ColorInt():StructuredValues<int,3>(){}
+
+  ColorInt(const Color &c):ColorInt(){
+    for(int i = 0; i < 3; ++i){
+      values[i] = c.at(i) * 255;
+    }
+  }
+};
+
+
+
+
 
 class Ray {
-    public:
-        Ray (const Point3f& _o, const Vector3f& _d ) : o{_o}, d{_d.normalize()} {
-        }
-        Point3f o; //!< origin
-        Vector3f d; //!< direction
-        Point3f operator()(real_type t) const { 
-          return o + d * t; 
-        }
+public:
+    Ray (const Point3f& _o, const Vector3f& _d ) : o{_o}, d{_d.normalize()} {}
+    Point3f o; //!< origin
+    Vector3f d; //!< direction
+    Point3f operator()(real_type t) const { 
+      return o + d * t; 
+    }
 };
 
 

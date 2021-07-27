@@ -80,19 +80,12 @@ void parse_single_composite_attrib(stringstream &ss, ParamSet *ps_out,
 void parse_color(stringstream &ss, ParamSet *ps_out, const string &name) {
 
   string peak(ss.str());
-  vector<int> values;
-  if (peak.find(".") != string::npos) { // eh inteiro
-    vector<real_type> real_values = getMultipleValues<real_type>(ss, 3);
-    for (auto x : real_values) {
-      values.push_back(x * 255);
-    }
-  } else { // eh float
-    values = getMultipleValues<int>(ss, 3);
+  vector<real_type> values = getMultipleValues<real_type>(ss, 3);
+  if(peak.find(".") != string::npos){ // eh real
+    (*ps_out)[name] = make_shared<Value<Color>>(Value<Color>(Color::make_color_from_real(values)));
+  }else{
+    (*ps_out)[name] = make_shared<Value<Color>>(Value<Color>(Color::make_color_from_int(values)));
   }
-  // for(auto x : values){
-  //     cout << x << endl;
-  // }
-  (*ps_out)[name] = make_shared<Value<Color>>(Value<Color>(Color(values)));
 }
 
 template <typename T, typename T_INTERNAL, int internal_size>
@@ -253,6 +246,33 @@ void parse_tags(tinyxml2::XMLElement *p_element, int level) {
       parse_parameters(p_element, param_list, &ps);
 
       API::object(ps);
+    } else if (tag_name == "light_source") {
+      ParamSet ps;
+
+      vector<std::pair<param_type_e, string>> param_list{
+          {param_type_e::LIGHT_TYPE, "type"},
+
+          // ambient and directional
+          {param_type_e::COLOR, "L"},
+
+          // point and spot
+          {param_type_e::COLOR, "I"},
+
+          // directional, point and spot
+          {param_type_e::POINT3F, "scale"},
+          {param_type_e::POINT3F, "from"},
+
+          // direction and spot
+          {param_type_e::POINT3F, "to"},
+
+          // spot
+          {param_type_e::REAL, "cutoff"},
+          {param_type_e::REAL, "falloff"},
+
+      };
+      parse_parameters(p_element, param_list, &ps);
+
+      API::object(ps);
     } else if (tag_name == "world_begin") {
       // We should get only one `world` tag per scene file.
       API::world_begin();
@@ -366,10 +386,6 @@ void parse_parameters(tinyxml2::XMLElement *p_element,
         break;
       case param_type_e::COLOR:
         parse_color(ss, ps_out, name);
-        break;
-      case param_type_e::SPECTRUM:
-        parse_single_composite_attrib<real_type, Spectrum, int(3)>(ss, ps_out,
-                                                                   name);
         break;
       case param_type_e::SCREEN_WINDOW:
         parse_single_composite_attrib<real_type, ScreenWindow, int(4)>(

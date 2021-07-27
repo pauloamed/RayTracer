@@ -11,7 +11,7 @@ Color DepthMapIntegrator::Li(const Ray& ray, const unique_ptr<Scene>& scene, con
         real_type norm_t = normalizeT(isect->t);
         real_type norm_z = normalizeZ(norm_t);
 
-        return clampColor(interpolate_color(norm_z, near_color, far_color));
+        return Color::interpolate_color(norm_z, near_color, far_color).clamp();
     }
 }
 
@@ -52,8 +52,8 @@ DepthMapIntegrator* create_depth_map_integrator(const ParamSet &ps_integrator, u
         std::move(camera),
         retrieve(ps_integrator, "zmin", real_type(0)),
         retrieve(ps_integrator, "zmax", real_type(1)),
-        retrieve(ps_integrator, "near_color", Color()),
-        retrieve(ps_integrator, "far_color", Color())
+        retrieve(ps_integrator, "near_color", Color({0, 0, 0})),
+        retrieve(ps_integrator, "far_color", Color({0, 0, 0}))
     );
 }
 

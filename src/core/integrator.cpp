@@ -30,9 +30,5 @@ void SamplerIntegrator::render( const unique_ptr<Scene> &scene ) {
     camera->film->write_image();
 }
 
-int SamplerIntegrator::getColorFromCoord(real_type x) const{
-    return x * 255;
-}
-
 } // namespace rt3
 

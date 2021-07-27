@@ -11,15 +11,15 @@ namespace rt3 {
     class Film {
         struct ColorBuffer{
             
-            vector<vector<Color>> data;
+            vector<vector<ColorInt>> data;
             int height, width;
 
 
             ColorBuffer(int _height, int _width): height(_height), width(_width){
-                data = vector<vector<Color>>(height, vector<Color>(width));
+                data = vector<vector<ColorInt>>(height, vector<ColorInt>(width));
             }
 
-            Color& get(Point2i coord){
+            ColorInt& at(Point2i coord){
                 return data[coord[0]][coord[1]];
             }
 

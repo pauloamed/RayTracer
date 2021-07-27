@@ -132,50 +132,6 @@ auto STR_LOWERCASE = [](const string &t) -> std::string {
 
 //=== Global Inline Functions
 
-/*! Linear interpolation.
- * \param t The parameter, in [0,1].
- * \param v1 The initial interpolation value.
- * \param v2 The final interpolation value.
- * \return The interpolated value.
- */
-//
-inline float Lerp(float t, float v1, float v2) {
-  return (1.f - t) * v1 + t * v2;
-}
-
-/// Clamp T to [low,high].
-template <typename T, typename U, typename V>
-inline T Clamp(T val, U low, V high) {
-  if (val < low)
-    return low;
-  else if (val > high)
-    return high;
-  else
-    return val;
-}
-
-/// Degrees to radians.
-inline real_type Radians(real_type deg) { return ((real_type)M_PI / 180.f) * deg; }
-
-/// Radians to degreees.
-inline real_type Degrees(real_type rad) { return (180.f / (real_type)M_PI) * rad; }
-
-
-inline Color interpolate_color(const float t, const Color &a, const Color &b){
-  return Color{{
-    (int) Lerp(t, a.x(), b.x()),
-    (int) Lerp(t, a.y(), b.y()),
-    (int) Lerp(t, a.z(), b.z()),
-  }};
-}
-
-inline Color clampColor(Color x){
-    return Color({
-        Clamp<int, int, int>(x.at(0), 0, 255),
-        Clamp<int, int, int>(x.at(1), 0, 255),
-        Clamp<int, int, int>(x.at(2), 0, 255),        
-    });
-}
 
 } // namespace rt3
 

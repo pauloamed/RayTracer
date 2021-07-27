@@ -5,11 +5,11 @@ namespace rt3{
 
 Color NormalIntegrator::getColorFromNormal(const Vector3f &n) const{
     Vector3f inRange = (n + Vector3f({1, 1, 1})) * real_type(0.5);
-    return clampColor(Color({
-        getColorFromCoord(inRange.at(0)),
-        getColorFromCoord(inRange.at(1)),
-        getColorFromCoord(inRange.at(2)),
-    }));
+    return Color({
+        inRange.at(0),
+        inRange.at(1),
+        inRange.at(2),
+    }).clamp();
 }
 
 Color NormalIntegrator::Li(const Ray& ray, const unique_ptr<Scene>& scene, const Color backgroundColor) const{

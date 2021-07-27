@@ -9,21 +9,13 @@ namespace rt3 {
  * \return The interpolated color.
  */
 
-// Color interpolate_color(const float t, const Color &a, const Color &b){
-//   return Color{{
-//     (int) Lerp(t, a.x(), b.x()),
-//     (int) Lerp(t, a.y(), b.y()),
-//     (int) Lerp(t, a.z(), b.z()),
-//   }};
-// }
-
 Color BackgroundColor::sampleXYZ(const Point2f &pixel_ndc) const {
   float t_ver = pixel_ndc.x();
   float t_hor = pixel_ndc.y();
-  Color top = interpolate_color(t_hor, corners[Corners_e::tl], corners[Corners_e::tr]);
-  Color bottom = interpolate_color(t_hor, corners[Corners_e::bl], corners[Corners_e::br]);
+  Color top = Color::interpolate_color(t_hor, corners[Corners_e::tl], corners[Corners_e::tr]);
+  Color bottom = Color::interpolate_color(t_hor, corners[Corners_e::bl], corners[Corners_e::br]);
 
-  return interpolate_color(t_ver, top, bottom);
+  return Color::interpolate_color(t_ver, top, bottom);
 }
 
 
