@@ -11,16 +11,6 @@ public:
     Material() = default;
     virtual ~Material() = default;
 };
-
-class FlatMaterial : public Material{
-public:
-    Color color;
-    FlatMaterial(Color c):color(c){}
-    Color getColor() const{ return color; }
-};
-
-
-FlatMaterial * create_flat_material( const ParamSet &ps );
     
 }; // namespace rt3
 

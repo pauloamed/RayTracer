@@ -159,6 +159,24 @@ inline real_type Radians(real_type deg) { return ((real_type)M_PI / 180.f) * deg
 
 /// Radians to degreees.
 inline real_type Degrees(real_type rad) { return (180.f / (real_type)M_PI) * rad; }
+
+
+inline Color interpolate_color(const float t, const Color &a, const Color &b){
+  return Color{{
+    (int) Lerp(t, a.x(), b.x()),
+    (int) Lerp(t, a.y(), b.y()),
+    (int) Lerp(t, a.z(), b.z()),
+  }};
+}
+
+inline Color clampColor(Color x){
+    return Color({
+        Clamp<int, int, int>(x.at(0), 0, 255),
+        Clamp<int, int, int>(x.at(1), 0, 255),
+        Clamp<int, int, int>(x.at(2), 0, 255),        
+    });
+}
+
 } // namespace rt3
 
 #endif // RT3_H

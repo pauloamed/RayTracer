@@ -1,4 +1,12 @@
 #include "api.h"
+#include "../cameras/orthographic.h"
+#include "../cameras/perspective.h"
+
+#include "../integrators/flat.h"
+#include "../integrators/depth_map.h"
+#include "../integrators/normal_map.h"
+
+#include "../materials/flat.h"
 
 namespace rt3 {
 

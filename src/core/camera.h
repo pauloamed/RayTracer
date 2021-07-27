@@ -22,36 +22,6 @@ public:
 };
 
 
-class PerspectiveCamera : public Camera {
-public:
-    PerspectiveCamera(unique_ptr<Film> &&_film, Point3f _eye, Point3f _center, Vector3f _up, ScreenWindow sw);
-    ~PerspectiveCamera();
-    
-    Ray generate_ray(int x, int y);
-};
-
-
-class OrthographicCamera : public Camera {
-public:
-    OrthographicCamera(unique_ptr<Film> &&_film, Point3f _eye, Point3f _center, Vector3f _up, ScreenWindow sw);
-    ~OrthographicCamera();
-    
-    Ray generate_ray(int x, int y);
-};
-
-
-OrthographicCamera* create_orthographic_camera(
-    const ParamSet& ps_camera,
-    const ParamSet& ps_look_at, unique_ptr<Film>&& the_film
-);
-
-
-PerspectiveCamera* create_perspective_camera(
-    const ParamSet& ps_camera,
-    const ParamSet& ps_look_at, unique_ptr<Film>&& the_film
-);
-
-
 } // namespace rt3
 
 #endif
