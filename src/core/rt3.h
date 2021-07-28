@@ -73,16 +73,20 @@ enum class camera_type_t : int { orthographic, perspective };
 const vector<string> camera_type_t_names = {"orthographic", "perspective"};
 
 /// List of supported integrator types
-enum class integrator_type_t : int { flat, depth_map, normal_map };
-const vector<string> integrator_type_t_names = {"flat", "depth_map", "normal_map"};
+enum class integrator_type_t : int { flat, depth_map, normal_map, blinn_phong };
+const vector<string> integrator_type_t_names = {"flat", "depth_map", "normal_map", "blinn_phong"};
 
 /// List of supported material types
-enum class material_type_t : int { flat };
-const vector<string> material_type_t_names = {"flat"};
+enum class material_type_t : int { flat, blinn_phong };
+const vector<string> material_type_t_names = {"flat", "blinn_phong"};
 
 /// List of supported object types
 enum class object_type_t : int { sphere };
 const vector<string> object_type_t_names = {"sphere"};
+
+/// List of supported light types
+enum class light_type_t : int { point, directional, ambient, spot };
+const vector<string> light_type_t_names = {"point", "directional", "ambient", "spot"};
 
 //==============
 
