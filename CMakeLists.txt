@@ -6,6 +6,7 @@ project (BasicRT3 VERSION 1.0.0 LANGUAGES CXX )
 include_directories( cameras
                      integrators
                      materials
+                     lights
                      core
                      ext )
 
@@ -23,6 +24,7 @@ file( GLOB SOURCE_BASICRT3 ${RT3_SOURCE_DIR}/cameras/*.cpp
                            ${RT3_SOURCE_DIR}/integrators/*.cpp
                            ${RT3_SOURCE_DIR}/main/*.cpp
                            ${RT3_SOURCE_DIR}/materials/*.cpp
+                           ${RT3_SOURCE_DIR}/lights/*.cpp
                         )
 add_executable(basic_rt3 ${SOURCE_BASICRT3})
 
