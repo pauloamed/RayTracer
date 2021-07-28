@@ -216,6 +216,9 @@ void parse_tags(tinyxml2::XMLElement *p_element, int level) {
       vector<std::pair<param_type_e, string>> param_list{
           {param_type_e::INTEGRATOR_TYPE, "type"},
 
+          // Blinn Phong
+          {param_type_e::INT, "depth"},
+
           // Depth map integrator
           {param_type_e::REAL, "zmin"},
           {param_type_e::REAL, "zmax"},
@@ -230,7 +233,17 @@ void parse_tags(tinyxml2::XMLElement *p_element, int level) {
 
       vector<std::pair<param_type_e, string>> param_list{
           {param_type_e::MATERIAL_TYPE, "type"},
+
+          // Flat
           {param_type_e::COLOR, "color"},
+
+          // Blinn Phong
+          {param_type_e::COLOR, "ambient"},
+          {param_type_e::COLOR, "diffuse"},
+          {param_type_e::COLOR, "specular"},
+          {param_type_e::COLOR, "mirror"},
+          {param_type_e::INT, "glossiness"},
+
       };
       parse_parameters(p_element, param_list, &ps);
 
@@ -364,6 +377,9 @@ void parse_parameters(tinyxml2::XMLElement *p_element,
         break;
       case param_type_e::OBJECT_TYPE:
         parse_enum_attrib<object_type_t>(ss, ps_out, name, object_type_t_names);
+        break;
+      case param_type_e::LIGHT_TYPE:
+        parse_enum_attrib<light_type_t>(ss, ps_out, name, light_type_t_names);
         break;
       // COMPOSITES
       case param_type_e::VEC3F:
