@@ -13,10 +13,10 @@ class Scene{
 public:
     unique_ptr<Background> background;
     unique_ptr<Primitive> primitive;
-    vector<shared_ptr<Light>> lights;
+    vector<unique_ptr<Light>> lights;
 
-    Scene(unique_ptr<Background> &&bg, unique_ptr<Primitive> &&prim):
-        background(std::move(bg)), primitive(std::move(prim)){}
+    Scene(unique_ptr<Background> &&bg, unique_ptr<Primitive> &&prim, vector<unique_ptr<Light>> &&sceneLights):
+        background(std::move(bg)), primitive(std::move(prim)), lights(std::move(sceneLights)){}
 
     ~Scene() = default;
 
