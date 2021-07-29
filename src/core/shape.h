@@ -14,7 +14,7 @@ public:
     ~Shape(){}
 
     virtual bool intersect_p(const Ray &r) const = 0;
-    virtual bool intersect(const Ray &r, unique_ptr<Surfel> &isect) const = 0;
+    virtual bool intersect(const Ray &r, shared_ptr<Surfel> &isect) const = 0;
 };
 
 class Sphere : public Shape{
@@ -29,7 +29,7 @@ public:
     ~Sphere(){}
 
     bool intersect_p(const Ray &r) const override;
-    bool intersect(const Ray &r, unique_ptr<Surfel> &isect) const override;
+    bool intersect(const Ray &r, shared_ptr<Surfel> &isect) const override;
 };
 
 

@@ -13,7 +13,7 @@ namespace rt3{
         return delta >= -0.0001;
     }
 
-    bool Sphere::intersect(const Ray &r, unique_ptr<Surfel> &isect) const{
+    bool Sphere::intersect(const Ray &r, shared_ptr<Surfel> &isect) const{
         Vector3f centerToOrigin = (r.o - origin);
         real_type A = r.d * r.d;
         real_type B = 2 * (centerToOrigin * r.d);

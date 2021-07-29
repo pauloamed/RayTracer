@@ -12,7 +12,7 @@ class Primitive {
 public:
 	
 	virtual ~Primitive(){};
-	virtual bool intersect( const Ray& r, unique_ptr<Surfel> &isect ) const = 0;
+	virtual bool intersect( const Ray& r, shared_ptr<Surfel> &isect ) const = 0;
 	
 	virtual bool intersect_p( const Ray& r ) const = 0;
 	virtual shared_ptr<Material> get_material() const = 0;
@@ -33,7 +33,7 @@ public:
 
 	bool intersect_p( const Ray& r ) const override;
 
-	bool intersect( const Ray& r, unique_ptr<Surfel> &isect ) const override;
+	bool intersect( const Ray& r, shared_ptr<Surfel> &isect ) const override;
 
 	shared_ptr<Material> get_material() const override{ 
 		return material;
@@ -62,7 +62,7 @@ public:
 
 	bool intersect_p( const Ray& r ) const override;
 
-	bool intersect( const Ray& r, unique_ptr<Surfel> &isect ) const override;
+	bool intersect( const Ray& r, shared_ptr<Surfel> &isect ) const override;
 
 	using AggregatePrimitive::get_material;
 
