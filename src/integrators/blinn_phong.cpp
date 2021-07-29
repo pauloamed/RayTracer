@@ -1,33 +1,52 @@
 #include "blinn_phong.h"
 
 #include "../lights/ambient.h"
+#include "../materials/blinn_phong.h"
 
 namespace rt3{
+
+Vector3f computeHalfVector(const Vector3f &viewDir, const Vector3f &lightDir){
+    auto h = viewDir + lightDir;
+    return h.normalize();
+}
 
 Color BlinnPhongIntegrator::Li(const Ray& ray, const unique_ptr<Scene>& scene, const Color backgroundColor) const{
     shared_ptr<Surfel> isect; // Intersection information.  
     if (!scene->intersect(ray, isect)) {
         return backgroundColor;
     }else{
-        shared_ptr<Material> material = isect->primitive->get_material();
+        shared_ptr<BlinnPhongMaterial> material = \
+            std::dynamic_pointer_cast<BlinnPhongMaterial>(isect->primitive->get_material());
 
         Color color;
 
         for(auto &light : scene->lights){
             if(typeid(light) == typeid(AmbientLight)){
-                
+                // TODO
             }else{
                 shared_ptr<SamplerLight> samplerLight = std::dynamic_pointer_cast<SamplerLight>(light);
 
-                auto [lightColor, visTester, dir] = samplerLight->Li(isect);
+                auto [lightColor, visTester, lightDir] = samplerLight->Li(isect);
 
                 if(visTester->unoccluded(scene)){
                     // difuse
-                    Color diffuseContrib = lightColor * max(real_type(0), isect->n * dir);
+                    {
+                        real_type coef = max(real_type(0), isect->n * lightDir);
+                        Color diffuseContrib = material->diffuse * lightColor * coef;
+                        
+                        color = color + diffuseContrib;
+                    }
+                    
                     // specular
-                    Color specularContrib = lightColor * fastExp(max(real_type(0), isect->n * dir), 1);
+                    {
+                        auto h = computeHalfVector(ray.d, lightDir);
 
-                    color = color + diffuseContrib + specularContrib;
+                        real_type coef = max(real_type(0), isect->n * h);
+                        coef = fastExp(coef, material->glossiness);
+                        Color specularContrib = material->specular * lightColor * coef;
+                    
+                        color = color + specularContrib;
+                    }
                 }
             }
         }
