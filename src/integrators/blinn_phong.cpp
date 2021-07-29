@@ -22,7 +22,7 @@ Color BlinnPhongIntegrator::Li(const Ray& ray, const unique_ptr<Scene>& scene, c
 
         for(auto &light : scene->lights){
             if(typeid(light) == typeid(AmbientLight)){
-                // TODO
+                // TODO AMBIENT LIGHT
             }else{
                 shared_ptr<SamplerLight> samplerLight = std::dynamic_pointer_cast<SamplerLight>(light);
 

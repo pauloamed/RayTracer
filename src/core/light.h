@@ -23,6 +23,8 @@ public:
     virtual ~Light(){};
     Light();
     virtual void preprocess( const Scene & ) {};
+
+    Color color;
 };
 
 class SamplerLight : public Light {
