@@ -184,7 +184,7 @@ Point<T, size> operator+(const Point<T, size> x, const Vector<T,size> y){
 
 
 template<typename T, int size>
-Vector<T, size> operator+(const Vector<T, size> x, const Vector<T,size> y){
+Vector<T, size> operator+(const Vector<T, size> &x, const Vector<T,size> &y){
     Vector<T, size> v;
     for(int i = 0; i < size; ++i){
         v[i] = x.at(i) + y.at(i);
@@ -216,15 +216,6 @@ public:
 
   Color(const vector<real_type> &v):StructuredValues<real_type, 3>(v){}
 
-  static inline Color make_color_from_real(const vector<real_type> &v){
-    return Color(v);
-  }
-
-  static inline Color make_color_from_int(vector<real_type> v){
-    for(auto &x : v) x /= 255;
-    return Color(v);
-  }
-
   Color clamp(){
     Color newColor(*this);
     for(auto &x : newColor.values){
@@ -240,7 +231,40 @@ public:
       (real_type) Lerp(t, a.z(), b.z()),
     }};
   }
+
+  static inline Color make_color_from_real(const vector<real_type> &v){
+    return Color(v);
+  }
+
+  static inline Color make_color_from_int(vector<real_type> v){
+    for(auto &x : v) x /= 255;
+    return make_color_from_real(v);
+  }
 };
+
+Color operator+(const Color &x, const Color &y){
+    Color v;
+    for(int i = 0; i < 3; ++i){
+        v[i] = x.at(i) + y.at(i);
+    }
+    return v;
+}
+
+Color operator*(const Color &x, const Color &y){
+    Color v;
+    for(int i = 0; i < 3; ++i){
+        v[i] = x.at(i) * y.at(i);
+    }
+    return v;
+}
+
+Color operator*(const Color &x, real_type y){
+    Color v;
+    for(int i = 0; i < 3; ++i){
+        v[i] = x.at(i) * y;
+    }
+    return v;
+}
 
 class ColorInt : public StructuredValues<int, 3>{
 public:
@@ -284,6 +308,19 @@ struct ScreenWindow{
     real_type width() const { return right - left; }
     real_type height() const { return top - bottom; }
 };
+
+
+
+template<typename T>
+T fastExp(T x, int exp){
+    T ans = T(1);
+    while(expo > 0){
+        if(expo%2) ans = ans * base; 
+        expo >>= 1;
+        base = base * base;
+    }
+    return ans;
+}
 
 
 } // namespace rt3
