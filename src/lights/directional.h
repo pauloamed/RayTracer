@@ -8,6 +8,7 @@ namespace rt3{
 class DirectionalLight : public SamplerLight{
 public:
     Vector3f direction;
+    real_type mininumFreeDist = 10;
 
     DirectionalLight(const Color &c, const Vector3f &scl, const Vector3f &lightDirection):
         SamplerLight(c, scl), direction(lightDirection){}

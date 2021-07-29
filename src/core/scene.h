@@ -13,15 +13,15 @@ class Scene{
 public:
     unique_ptr<Background> background;
     unique_ptr<Primitive> primitive;
-    vector<unique_ptr<Light>> lights;
+    vector<shared_ptr<Light>> lights;
 
-    Scene(unique_ptr<Background> &&bg, unique_ptr<Primitive> &&prim, vector<unique_ptr<Light>> &&sceneLights):
+    Scene(unique_ptr<Background> &&bg, unique_ptr<Primitive> &&prim, vector<shared_ptr<Light>> &&sceneLights):
         background(std::move(bg)), primitive(std::move(prim)), lights(std::move(sceneLights)){}
 
     ~Scene() = default;
 
-    bool intersect(const Ray &r, shared_ptr<Surfel> &isect) const;
-    bool intersect_p(const Ray &r) const;
+    bool intersect(const Ray &r, shared_ptr<ObjSurfel> &isect) const;
+    bool intersect_p(const Ray &r, real_type maxT) const;
 };
 
 } // namespace rt3

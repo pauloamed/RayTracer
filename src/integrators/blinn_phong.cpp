@@ -11,7 +11,7 @@ Vector3f computeHalfVector(const Vector3f &viewDir, const Vector3f &lightDir){
 }
 
 Color BlinnPhongIntegrator::Li(const Ray& ray, const unique_ptr<Scene>& scene, const Color backgroundColor) const{
-    shared_ptr<Surfel> isect; // Intersection information.  
+    shared_ptr<ObjSurfel> isect; // Intersection information.  
     if (!scene->intersect(ray, isect)) {
         return backgroundColor;
     }else{

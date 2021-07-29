@@ -3,25 +3,34 @@
 
 #include "rt3.h"
 
-namespace rt3
-{
-    struct Surfel{
-        Point3f p;        //!< Contact point.
-        Vector3f n;       //!< The surface normal.
-        Vector3f wo;      //!< Outgoing direction of light, which is -ray.
-        // Point2f uv;     //!< Parametric coordinate (u,v) of the hit surface.
-        shared_ptr<Primitive> primitive=nullptr; //!< Pointer to the primitive.
-        real_type t;
+namespace rt3{
 
-        Surfel(const Point3f& _p, const Vector3f& _n, const Vector3f& _wo, real_type _t)
-            : p{_p}, n{_n}, wo{_wo}, t(_t) { 
-                n = n.normalize(); 
-            };
+struct Surfel{
+    Point3f p;        //!< Contact point.
+    Vector3f wo;      //!< Outgoing direction of light, which is -ray.
+    
+    // se o ray veio de um obj ou camera, t tem eh o coef q multiplica o raio saindo do obj ou camera ate surfel
+    // se o ray veio da luz, t eh o coef do raio saindo da luz (mas note q o surfel eh a luz, nao a intersect)
+    real_type t; 
+    
 
-        void setPrimitive(const shared_ptr<Primitive> &prim){
-            primitive = prim;
-        }
-    };
+    Surfel(const Point3f& _p, const Vector3f& _wo, real_type _t):p(_p), wo(_wo), t(_t){}
+};
+
+struct ObjSurfel : public Surfel{
+    Vector3f n;       //!< The surface normal.
+    shared_ptr<GeometricPrimitive> primitive=nullptr; //!< Pointer to the primitive.
+    
+
+    ObjSurfel(const Point3f& _p, const Vector3f& _n, const Vector3f& _wo, real_type _t)
+        : Surfel(_p, _wo, _t), n{_n}{ 
+            n = n.normalize(); 
+        };
+
+    void setPrimitive(const shared_ptr<GeometricPrimitive> &prim){
+        primitive = prim;
+    }
+};
 
 } // namespace rt3
 
