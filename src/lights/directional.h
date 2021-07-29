@@ -5,9 +5,9 @@
 
 namespace rt3{
 
-class DirectionalLight : public Light{
+class DirectionalLight : public SamplerLight{
 
-Color sample_Li(const Surfel& hit, Vector3f *wi, VisibilityTester *vis) override;
+virtual tuple<Color, unique_ptr<VisibilityTester>, Vector3f> Li(const shared_ptr<Surfel>& hit) override;
 
 };
 

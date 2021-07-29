@@ -5,6 +5,10 @@
 
 namespace rt3{
 
+class AmbientLight : public Light{
+
+};
+
 }
 
 
