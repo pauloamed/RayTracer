@@ -285,7 +285,7 @@ void parse_tags(tinyxml2::XMLElement *p_element, int level) {
       };
       parse_parameters(p_element, param_list, &ps);
 
-      API::object(ps);
+      API::light(ps);
     } else if (tag_name == "world_begin") {
       // We should get only one `world` tag per scene file.
       API::world_begin();

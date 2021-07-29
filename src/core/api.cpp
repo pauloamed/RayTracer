@@ -187,4 +187,11 @@ void API::object(const ParamSet &ps) {
   render_opt->primitives.push_back({ps, curr_GS.curr_material});
 }
 
+void API::light(const ParamSet &ps) {
+  std::cout << ">>> Inside API::light()\n";
+  VERIFY_WORLD_BLOCK("API::light");
+
+  render_opt->lights.push_back(ps);
+}
+
 } // namespace rt3

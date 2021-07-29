@@ -18,19 +18,21 @@ public:
     bool unoccluded(const unique_ptr<Scene>& scene);    
 };
 
-class Light {
+class Light {  
 public:
-    virtual ~Light(){};
-    Light();
-    virtual void preprocess( const Scene & ) {};
+    Color colorIntensity;
+    Vector3f scale;
+    
+    Light(const Color &c, const Vector3f &scl):colorIntensity(c), scale(scl){};
+    virtual void preprocess( const Scene & ) = 0;
 
-    Color color;
+    virtual ~Light(){};
 };
 
 class SamplerLight : public Light {
 public:
+    SamplerLight(const Color &c, const Vector3f &scl):Light(c, scl){}
     virtual ~SamplerLight(){};
-    SamplerLight();
     /// Retorna a intensidade da luz, direção e o teste oclusão.
     // funcao em que vai ser passado o surfel que queremos saber se esta iluminado
     // o surfel diz o ponto 3d P

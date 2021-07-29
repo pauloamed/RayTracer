@@ -8,6 +8,8 @@
 
 #include "../materials/flat.h"
 
+#include "../lights/directional.h"
+
 namespace rt3 {
 
 Film * API::make_film( const ParamSet &ps )
@@ -76,6 +78,29 @@ Integrator * API::make_integrator( const ParamSet &ps_integrator,
     
     // Return the newly created integrator
     return integ;
+}
+
+
+Light * API::make_light( const ParamSet &ps_light )
+{
+    std::cout << ">>> Inside API::make_light()\n";
+    Light* light = nullptr;
+
+    light_type_t type = retrieve(ps_light, "type", light_type_t::ambient);
+    if(type == light_type_t::ambient){
+        // light = create_ambient_light(ps_light);
+    }else if(type == light_type_t::directional){
+        light = create_directional_light(ps_light);
+    }else if(type == light_type_t::point){
+        // light = create_point_light(ps_light);
+    }else if(type == light_type_t::spot){
+        // light = create_spot_light(ps_light);
+    }else{
+        RT3_ERROR("Light type unknown.");
+    }
+    
+    // Return the newly created integrator
+    return light;
 }
 
 

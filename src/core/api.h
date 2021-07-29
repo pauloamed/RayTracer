@@ -64,6 +64,9 @@ namespace rt3 {
 
         // the objects/primitives
         vector<pair<ParamSet, shared_ptr<Material>>> primitives;
+
+        // the lights
+        vector<ParamSet> lights;
     };
 
     /// Collection of data related to a Graphics state, such as current material, lib of material, etc.
@@ -117,6 +120,8 @@ namespace rt3 {
 
             static Shape * make_shape( const ParamSet& ps );
 
+            static Light * make_light( const ParamSet& ps );
+
             static Primitive * make_geometric_primitive( 
                 unique_ptr<Shape> &&shape, shared_ptr<Material> material );
 
@@ -138,6 +143,7 @@ namespace rt3 {
 
             static void material( const ParamSet& ps );
             static void object( const ParamSet& ps );
+            static void light( const ParamSet& ps );
             
             
             static void world_begin( void );
