@@ -3,6 +3,8 @@
 #define RT3_H
 
 #include <cassert>
+#include <tuple>
+#include <typeinfo>
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
