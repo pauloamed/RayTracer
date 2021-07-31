@@ -14,7 +14,7 @@ Color NormalIntegrator::getColorFromNormal(const Vector3f &n) const{
 
 Color NormalIntegrator::Li(const Ray& ray, const unique_ptr<Scene>& scene, const Color backgroundColor) const{
     
-    unique_ptr<Surfel> isect; // Intersection information.  
+    shared_ptr<ObjSurfel> isect; // Intersection information.  
     if (!scene->intersect(ray, isect)) {
         return backgroundColor;
     }else{

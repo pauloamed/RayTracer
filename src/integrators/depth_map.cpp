@@ -4,7 +4,7 @@ namespace rt3{
 
 Color DepthMapIntegrator::Li(const Ray& ray, const unique_ptr<Scene>& scene, const Color backgroundColor) const{
     
-    unique_ptr<Surfel> isect; // Intersection information.  
+    shared_ptr<ObjSurfel> isect; // Intersection information.  
     if (!scene->intersect(ray, isect)) {
         return far_color;
     }else{
@@ -31,7 +31,7 @@ void DepthMapIntegrator::preprocess(const unique_ptr<Scene> &scene){
         for( int j = 0 ; j < w ; j++ ) {        
             Ray ray = camera->generate_ray( i, j );
 
-            unique_ptr<Surfel> isect; // Intersection information.  
+            shared_ptr<ObjSurfel> isect; // Intersection information.  
             if (scene->intersect(ray, isect)) {
                 scene_tmin = min(scene_tmin, isect->t);
                 scene_tmax = max(scene_tmax, isect->t);
