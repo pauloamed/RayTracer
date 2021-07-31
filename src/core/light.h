@@ -17,9 +17,7 @@ public:
     // vai iterar por todos objs ta cena vendo se tem contato
     bool unoccluded(const unique_ptr<Scene>& scene){
         Ray lightRay = Ray(lightContact->p, lightContact->wo);
-        if(scene->intersect_p(lightRay, lightContact->t)){
-            return false;
-        }else return true;
+        return not scene->intersect_p(lightRay, lightContact->t - EPS);
     }
 };
 

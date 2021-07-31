@@ -17,7 +17,7 @@ public:
 };
 
 
-BlinnPhongIntegrator* create_blinn_phong_integrator(const ParamSet &, unique_ptr<Camera> &&, int);
+BlinnPhongIntegrator* create_blinn_phong_integrator(const ParamSet &, unique_ptr<Camera> &&);
 
 
 };

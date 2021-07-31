@@ -43,7 +43,7 @@ using std::array;
 
 //=== Aliases
 namespace rt3 {
-
+const real_type EPS = 1e-5;
 
 template <typename T, size_t S>
 std::ostream &operator<<(std::ostream &os, const std::array<T, S> &v) {
@@ -80,7 +80,7 @@ const vector<string> integrator_type_t_names = {"flat", "depth_map", "normal_map
 
 /// List of supported material types
 enum class material_type_t : int { flat, blinn_phong };
-const vector<string> material_type_t_names = {"flat", "blinn_phong"};
+const vector<string> material_type_t_names = {"flat", "blinn"};
 
 /// List of supported object types
 enum class object_type_t : int { sphere };
@@ -97,10 +97,13 @@ class Film;
 class Background;
 class BackgroundColor;
 class Primitive;
+class GeometricPrimitive;
 class Ray;
 class Material;
 class Shape;
 class Surfel;
+class Scene;
+class Light;
 
 
 /// This struct holds information provided via command line arguments
