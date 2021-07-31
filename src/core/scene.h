@@ -4,7 +4,6 @@
 #include "rt3.h"
 #include "background.h"
 #include "primitive.h"
-#include "light.h"
 
 
 namespace rt3{

@@ -70,12 +70,9 @@ void API::world_end(void) {
     unique_ptr<PrimList> primList =
         unique_ptr<PrimList>(new PrimList(std::move(the_primitive)));
 
-    vector<unique_ptr<Light>> the_lights;
+    vector<shared_ptr<Light>> the_lights;
     for (auto light_ps : render_opt->lights) {
-
-      unique_ptr<Light> light();
-
-      the_lights.push_back(unique_ptr<Light>(make_light(light_ps)));
+      the_lights.push_back(shared_ptr<Light>(make_light(light_ps)));
     }
 
     the_scene =

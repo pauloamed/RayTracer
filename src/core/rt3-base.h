@@ -16,5 +16,6 @@
 
 
 #include "scene.h"
+#include "light.h"
 
 #endif // RT3-BASE_H
