@@ -11,6 +11,10 @@ Vector3f computeHalfVector(const Vector3f &viewDir, const Vector3f &lightDir){
 }
 
 Color BlinnPhongIntegrator::Li(const Ray& ray, const unique_ptr<Scene>& scene, const Color backgroundColor) const{
+    return recursiveLi(ray, scene, backgroundColor, 0);
+}
+
+Color BlinnPhongIntegrator::recursiveLi(const Ray& ray, const unique_ptr<Scene>& scene, const Color backgroundColor, int currRecurStep) const{
     shared_ptr<ObjSurfel> isect; // Intersection information.  
     if (!scene->intersect(ray, isect)) {
         return backgroundColor;
@@ -28,18 +32,14 @@ Color BlinnPhongIntegrator::Li(const Ray& ray, const unique_ptr<Scene>& scene, c
 
                 auto [lightColor, visTester, lightDir] = samplerLight->Li(isect);
 
-                if(visTester->unoccluded(scene)){
+
+                if(visTester->unoccluded(scene)){ // 
                     // difuse
                     {
                         real_type coef = max(real_type(0), isect->n * (lightDir * -1));
                         Color diffuseContrib = material->diffuse * lightColor * coef;
                         
                         color = color + diffuseContrib;
-
-                        // std::stringstream ss;
-                        // ss << isect->n.toString() << " " << lightDir.toString() << " " << coef << "\n";
-
-                        // RT3_MESSAGE(ss.str());
                     }
                     
                     // specular
@@ -54,6 +54,11 @@ Color BlinnPhongIntegrator::Li(const Ray& ray, const unique_ptr<Scene>& scene, c
                     }
                 }
             }
+        }
+
+        if(currRecurStep < maxRecursionSteps){
+            Vector3f newDir = ray.d + (isect->n * (-2 * (ray.d * isect->n)));
+            color = color + material->mirror * recursiveLi(Ray(isect->p, newDir), scene, backgroundColor, currRecurStep + 1);
         }
 
         return color;

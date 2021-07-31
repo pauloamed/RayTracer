@@ -14,6 +14,7 @@ public:
         SamplerIntegrator(std::move(_camera)), maxRecursionSteps(depth){}
 
     Color Li(const Ray&, const unique_ptr<Scene>&, const Color) const override;
+    Color recursiveLi(const Ray&, const unique_ptr<Scene>&, const Color, int currRecurStep) const;
 };
 
 

@@ -43,7 +43,7 @@ using std::array;
 
 //=== Aliases
 namespace rt3 {
-const real_type EPS = 1e-5;
+const real_type EPS = 0.01;
 
 template <typename T, size_t S>
 std::ostream &operator<<(std::ostream &os, const std::array<T, S> &v) {

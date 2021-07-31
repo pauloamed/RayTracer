@@ -58,7 +58,7 @@ protected:
   array<T, size> values;
 
 public:
-  StructuredValues() = default;
+  StructuredValues(){ values = array<T,size>();}
   StructuredValues(const StructuredValues &clone) = default;
 
   StructuredValues(const vector<T> &_values){
