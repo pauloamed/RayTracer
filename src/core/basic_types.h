@@ -248,6 +248,8 @@ Color operator*(const Color &x, const Color &y);
 
 Color operator*(const Color &x, real_type y);
 
+const Color BLACK = Color({0, 0, 0});
+
 class ColorInt : public StructuredValues<int, 3>{
 public:
 
