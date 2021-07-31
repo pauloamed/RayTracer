@@ -242,29 +242,11 @@ public:
   }
 };
 
-Color operator+(const Color &x, const Color &y){
-    Color v;
-    for(int i = 0; i < 3; ++i){
-        v[i] = x.at(i) + y.at(i);
-    }
-    return v;
-}
+Color operator+(const Color &x, const Color &y);
 
-Color operator*(const Color &x, const Color &y){
-    Color v;
-    for(int i = 0; i < 3; ++i){
-        v[i] = x.at(i) * y.at(i);
-    }
-    return v;
-}
+Color operator*(const Color &x, const Color &y);
 
-Color operator*(const Color &x, real_type y){
-    Color v;
-    for(int i = 0; i < 3; ++i){
-        v[i] = x.at(i) * y;
-    }
-    return v;
-}
+Color operator*(const Color &x, real_type y);
 
 class ColorInt : public StructuredValues<int, 3>{
 public:
@@ -314,10 +296,10 @@ struct ScreenWindow{
 template<typename T>
 T fastExp(T x, int exp){
     T ans = T(1);
-    while(expo > 0){
-        if(expo%2) ans = ans * base; 
-        expo >>= 1;
-        base = base * base;
+    while(exp > 0){
+        if(exp%2) ans = ans * x; 
+        exp >>= 1;
+        x = x * x;
     }
     return ans;
 }
