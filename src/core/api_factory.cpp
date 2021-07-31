@@ -5,8 +5,10 @@
 #include "../integrators/flat.h"
 #include "../integrators/depth_map.h"
 #include "../integrators/normal_map.h"
+#include "../integrators/blinn_phong.h"
 
 #include "../materials/flat.h"
+#include "../materials/blinn_phong.h"
 
 #include "../lights/directional.h"
 
@@ -72,6 +74,8 @@ Integrator * API::make_integrator( const ParamSet &ps_integrator,
         integ = create_depth_map_integrator(ps_integrator, std::move(camera));
     }else if(type == integrator_type_t::normal_map){
         integ = create_normal_integrator(ps_integrator, std::move(camera));
+    }else if(type == integrator_type_t::blinn_phong){
+        integ = create_blinn_phong_integrator(ps_integrator, std::move(camera));
     }else{
         RT3_ERROR("Integrator type unknown.");
     }
@@ -112,6 +116,8 @@ Material * API::make_material( const ParamSet &ps_material)
     Material *material = nullptr;
     if(type == material_type_t::flat){
         material = create_flat_material(ps_material);
+    }else if(type == material_type_t::blinn_phong){
+        material = create_blinn_phong_material(ps_material);
     }else{
         RT3_ERROR("Uknown material type.");
     }
