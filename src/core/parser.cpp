@@ -304,7 +304,7 @@ void parse_tags(tinyxml2::XMLElement *p_element, int level) {
     p_element = p_element->NextSiblingElement();
   }
 
-  API::reset_engine();
+  // API::reset_engine();
 }
 
 /// Universal parameters parser.

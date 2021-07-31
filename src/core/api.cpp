@@ -23,6 +23,11 @@ void API::init_engine(const RunningOptions &opt) {
   RT3_MESSAGE("[1] Rendering engine initiated.\n");
 }
 
+void API::clean_world_elements(void){
+  render_opt->primitives.clear();
+  render_opt->lights.clear();
+}
+
 void API::clean_up(void) {
   // Check for correct machine state
   if (curr_state == APIState::Uninitialized)
@@ -121,6 +126,7 @@ void API::world_end(void) {
   }
   // [4] Basic clean up
   curr_state = APIState::SetupBlock; // correct machine state.
+  clean_world_elements();
 }
 
 /// This api function is called when we need to re-render the *same* scene (i.e.

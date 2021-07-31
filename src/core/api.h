@@ -133,6 +133,7 @@ namespace rt3 {
             static void init_engine( const RunningOptions& );
             static void run( void );
             static void clean_up( void );
+            static void clean_world_elements( void );
             static void reset_engine( void );
 
             static void integrator( const ParamSet& ps );
