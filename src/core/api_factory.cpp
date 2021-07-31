@@ -11,6 +11,7 @@
 #include "../materials/blinn_phong.h"
 
 #include "../lights/directional.h"
+#include "../lights/point.h"
 
 namespace rt3 {
 
@@ -96,7 +97,7 @@ Light * API::make_light( const ParamSet &ps_light )
     }else if(type == light_type_t::directional){
         light = create_directional_light(ps_light);
     }else if(type == light_type_t::point){
-        // light = create_point_light(ps_light);
+        light = create_point_light(ps_light);
     }else if(type == light_type_t::spot){
         // light = create_spot_light(ps_light);
     }else{
