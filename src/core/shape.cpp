@@ -16,7 +16,9 @@ namespace rt3{
                 (-B + sqrt(delta)) / (2 * A),
             };
             if(t[0] > t[1]) swap(t[0], t[1]);
-            return t[0] <= maxT;
+            if(t[0] > 0) return t[0] < maxT;
+            else if(t[1] > 0) return t[1] < maxT;
+            else return false;
         }else return false;
     }
 
@@ -34,7 +36,11 @@ namespace rt3{
             };
             if(t[0] > t[1]) swap(t[0], t[1]);
 
-            Point3f contact = r(t[0]);
+            Point3f contact;
+
+            if(t[0] > 0) contact = r(t[0]);
+            else if(t[1] > 0) contact = r(t[1]);
+            else return false;
 
             Vector3f normal = (contact - origin).normalize();
 
