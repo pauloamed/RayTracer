@@ -5,8 +5,7 @@ namespace rt3{
 tuple<Color, unique_ptr<VisibilityTester>, Vector3f> SpotlightLight::Li(const shared_ptr<Surfel>& hit){
 
     Vector3f direction = hit->p - position;
-    real_type cosAngle = (lightDirection) * direction.normalize();
-    real_type angle = Degrees(acos(cosAngle));
+    real_type angleCos = abs(lightDirection * direction.normalize());
 
     shared_ptr<Surfel> lightSurfel = make_shared<Surfel>(
         position,  // p
@@ -14,16 +13,11 @@ tuple<Color, unique_ptr<VisibilityTester>, Vector3f> SpotlightLight::Li(const sh
         direction.getNorm()
     );
 
-
     Color finalColor;
-    if(angle > cutoff){
+    if(angleCos < cutoff){
         finalColor = BLACK;
-    }else if(angle > falloff){
-        // std::cout << angle << " " << falloff << " " << cutoff << " ";
-        // std::cout << angle - falloff << " " << angleInterval << " " << (angle - falloff) / angleInterval << "\n";
-        finalColor = Color::interpolate_color(
-            (angle - falloff) / angleInterval, colorIntensity, BLACK
-        );
+    }else if(angleCos < falloff){
+        finalColor = colorIntensity * (1 - ((falloff - angleCos) / cosInterval));
     }else{
         finalColor = colorIntensity;
     }
