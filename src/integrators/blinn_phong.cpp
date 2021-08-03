@@ -11,7 +11,7 @@ Vector3f computeHalfVector(const Vector3f &viewDir, const Vector3f &lightDir){
 }
 
 Color BlinnPhongIntegrator::Li(const Ray& ray, const unique_ptr<Scene>& scene, const Color backgroundColor) const{
-    return recursiveLi(ray, scene, backgroundColor, 0);
+    return recursiveLi(ray, scene, backgroundColor, 1);
 }
 
 Color BlinnPhongIntegrator::recursiveLi(const Ray& ray, const unique_ptr<Scene>& scene, const Color backgroundColor, int currRecurStep) const{
@@ -42,7 +42,7 @@ Color BlinnPhongIntegrator::recursiveLi(const Ray& ray, const unique_ptr<Scene>&
                     }
                     
                     // specular
-                    {
+                    if(material->glossiness){
                         auto h = computeHalfVector(ray.d, lightDir);
 
                         real_type coef = max(real_type(0), isect->n * h);
