@@ -23,10 +23,9 @@ Color BlinnPhongIntegrator::recursiveLi(const Ray& ray, const unique_ptr<Scene>&
             std::dynamic_pointer_cast<BlinnPhongMaterial>(isect->primitive->get_material());
 
         Color color;
-
         for(auto &light : scene->lights){
-            if(typeid(light) == typeid(AmbientLight)){
-                // TODO AMBIENT LIGHT
+            if(typeid(*light) == typeid(AmbientLight)){
+                color = color + light->colorIntensity * material->ambient;
             }else{
                 shared_ptr<SamplerLight> samplerLight = std::dynamic_pointer_cast<SamplerLight>(light);
 

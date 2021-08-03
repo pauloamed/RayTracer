@@ -11,6 +11,7 @@
 #include "../materials/blinn_phong.h"
 
 #include "../lights/directional.h"
+#include "../lights/ambient.h"
 #include "../lights/spotlight.h"
 #include "../lights/point.h"
 
@@ -94,7 +95,7 @@ Light * API::make_light( const ParamSet &ps_light )
 
     light_type_t type = retrieve(ps_light, "type", light_type_t::ambient);
     if(type == light_type_t::ambient){
-        // light = create_ambient_light(ps_light);
+        light = create_ambient_light(ps_light);
     }else if(type == light_type_t::directional){
         light = create_directional_light(ps_light);
     }else if(type == light_type_t::point){
