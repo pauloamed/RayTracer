@@ -73,6 +73,7 @@ namespace rt3 {
     struct GraphicsState
     {
         shared_ptr<Material> curr_material;
+        map<string,shared_ptr<Material>> named_materials;
     };
 
     /// Static class that manages the render process
@@ -142,6 +143,9 @@ namespace rt3 {
             static void camera( const ParamSet& ps );
             static void background( const ParamSet& ps );
 
+            static void create_named_material( const ParamSet& ps );
+            static void named_material( const ParamSet& ps );
+            
             static void material( const ParamSet& ps );
             static void object( const ParamSet& ps );
             static void light( const ParamSet& ps );

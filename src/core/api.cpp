@@ -174,6 +174,15 @@ void API::lookat(const ParamSet &ps) {
 ///////////////////////////////////////////////////////////////////////
 // WORLD BLOCK
 
+void API::create_named_material(const ParamSet &ps) {
+  std::cout << ">>> Inside API::create_named_material()\n";
+  VERIFY_WORLD_BLOCK("API::create_named_material");
+
+  string material_name = retrieve(ps, "name", string());
+
+  curr_GS.named_materials[material_name] = shared_ptr<Material>(make_material(ps));
+}
+
 void API::background(const ParamSet &ps) {
   std::cout << ">>> Inside API::background()\n";
   VERIFY_WORLD_BLOCK("API::background");
@@ -189,6 +198,14 @@ void API::material(const ParamSet &ps) {
   shared_ptr<Material> new_material(make_material(ps));
 
   curr_GS.curr_material = new_material;
+}
+
+void API::named_material(const ParamSet &ps) {
+  std::cout << ">>> Inside API::named_material()\n";
+  VERIFY_WORLD_BLOCK("API::named_material");
+
+  string material_name = retrieve(ps, "name", string());
+  curr_GS.curr_material = curr_GS.named_materials[material_name];
 }
 
 void API::object(const ParamSet &ps) {
