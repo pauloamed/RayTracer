@@ -14,9 +14,9 @@ struct TriangleMesh {
   vector< int > uvcoord_indices; //!< The list of indices to the UV coord list, for each individual triangle.
 
   // Here comes the data associated with each vertex. WARNING: The length of the vectors below may differ.
-  vector< Point3f > vertices;  //!< The 3D geometric coordinates
-  vector< Normal3f > normals;  //!< The 3D normals.
-  vector< Point2f > uvcoords; //!< The 2D texture coordinates.
+  vector< shared_ptr<Point3f> > vertices;  //!< The 3D geometric coordinates
+  vector< shared_ptr<Normal3f> > normals;  //!< The 3D normals.
+  vector< shared_ptr<Point2f> > uvcoords; //!< The 2D texture coordinates.
 
   // Regular constructor (almost all data is imported via move semantics).
   TriangleMesh(){/*empty*/};

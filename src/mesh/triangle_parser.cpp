@@ -106,9 +106,14 @@ void retrieve_normals(const tinyobj::attrib_t& attrib, bool compute_normals, boo
             << static_cast<double>(attrib.normals[3 * idx_n + 2]) << " )\n";
 
         // Store the normal.
-        md->normals.push_back( Normal3f{{ attrib.normals[ 3 * idx_n + 0 ] * flip,
-                                        attrib.normals[ 3 * idx_n + 1 ] * flip,
-                                        attrib.normals[ 3 * idx_n + 2 ] * flip }} );
+        auto normal = make_shared<Normal3f>(Normal3f{{ 
+            attrib.normals[ 3 * idx_n + 0 ] * flip,
+            attrib.normals[ 3 * idx_n + 1 ] * flip,
+            attrib.normals[ 3 * idx_n + 2 ] * flip 
+        }});
+
+
+        md->normals.push_back(normal);
     }
   }
 }
@@ -124,11 +129,14 @@ void retrieve_vertices(const tinyobj::attrib_t& attrib, shared_ptr<TriangleMesh>
             << static_cast<double>(attrib.vertices[3 * idx_v + 2]) << " )\n";
 
       // Store the vertex in the mesh data structure.
-      md->vertices.push_back( Point3f{{ 
-        attrib.vertices[ 3 * idx_v + 0 ],
-        attrib.vertices[ 3 * idx_v + 1 ],
-        attrib.vertices[ 3 * idx_v + 2 ] 
-      }});
+
+    auto vertex = make_shared<Point3f>(Point3f{{ 
+    attrib.vertices[ 3 * idx_v + 0 ],
+    attrib.vertices[ 3 * idx_v + 1 ],
+    attrib.vertices[ 3 * idx_v + 2 ] 
+    }});
+
+    md->vertices.push_back(vertex);
   }
 }
 
@@ -136,13 +144,18 @@ void retrieve_vertices(const tinyobj::attrib_t& attrib, shared_ptr<TriangleMesh>
 void retrieve_textures(const tinyobj::attrib_t& attrib, shared_ptr<TriangleMesh> md){
   auto n_texcoords{ attrib.texcoords.size()/2 };
   for ( auto idx_tc{0u} ; idx_tc < n_texcoords; idx_tc++){
-      cout << "   t[" << static_cast<long>(idx_tc) << "] = ( "
-            << static_cast<double>(attrib.texcoords[2 * idx_tc + 0]) << ", "
-            << static_cast<double>(attrib.texcoords[2 * idx_tc + 1]) << " )\n";
+    cout << "   t[" << static_cast<long>(idx_tc) << "] = ( "
+        << static_cast<double>(attrib.texcoords[2 * idx_tc + 0]) << ", "
+        << static_cast<double>(attrib.texcoords[2 * idx_tc + 1]) << " )\n";
 
-      // Store the texture coords.
-      md->uvcoords.push_back( Point2f{{ attrib.texcoords[ 2 * idx_tc + 0 ],
-                                        attrib.texcoords[ 2 * idx_tc + 1 ] }} );
+    // Store the texture coords.
+
+    auto texture = make_shared<Point2f>(Point2f{{ 
+        attrib.texcoords[ 2 * idx_tc + 0 ],
+        attrib.texcoords[ 2 * idx_tc + 1 ]
+    }});    
+
+    md->uvcoords.push_back( texture );
   }
 }
 
