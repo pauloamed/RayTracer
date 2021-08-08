@@ -15,6 +15,8 @@
 #include "../lights/spotlight.h"
 #include "../lights/point.h"
 
+#include "../shapes/sphere.h"
+
 namespace rt3 {
 
 Film * API::make_film( const ParamSet &ps )
