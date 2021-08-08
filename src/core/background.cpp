@@ -20,13 +20,20 @@ Color BackgroundColor::sampleXYZ(const Point2f &pixel_ndc) const {
 
 
 BackgroundColor *create_color_background(const ParamSet &ps) {
-  Color tl = retrieve( ps, "tl", Color());
-  Color bl = retrieve( ps, "bl", Color());
-  Color tr = retrieve( ps, "tr", Color());
-  Color br = retrieve( ps, "br", Color());
+
+  BackgroundColor* background = nullptr;
 
   mapping_t mtype = retrieve( ps, "mapping", mapping_t::screen);
-
-  return new BackgroundColor(mtype, bl, tl, tr, br);
+  if(ps.count("color")){
+    Color c = retrieve( ps, "color", Color());
+    background = new BackgroundColor(mtype, c, c, c, c);
+  }else{
+    Color tl = retrieve( ps, "tl", Color());
+    Color bl = retrieve( ps, "bl", Color());
+    Color tr = retrieve( ps, "tr", Color());
+    Color br = retrieve( ps, "br", Color());
+    background = new BackgroundColor(mtype, bl, tl, tr, br);
+  }
+  return background; 
 }
 } // namespace rt3
