@@ -6,6 +6,8 @@
 #include "rt3-base.h"
 #include "primitive.h"
 
+#include "../mesh/triangle_parser.h"
+
 //=== API Macro definitions
 
 /// Check whether the current state has been intialized.
@@ -64,6 +66,7 @@ namespace rt3 {
 
         // the objects/primitives
         vector<pair<ParamSet, shared_ptr<Material>>> primitives;
+        vector<pair<shared_ptr<TriangleMesh>, shared_ptr<Material>>> mesh_primitives;
 
         // the lights
         vector<ParamSet> lights;

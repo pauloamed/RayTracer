@@ -212,7 +212,31 @@ void API::object(const ParamSet &ps) {
   std::cout << ">>> Inside API::object()\n";
   VERIFY_WORLD_BLOCK("API::object");
 
-  render_opt->primitives.push_back({ps, curr_GS.curr_material});
+  auto type = retrieve(ps, "type", object_type_t::trianglemesh);
+
+  if(type == object_type_t::trianglemesh){
+    if(ps.count("filename")){
+      shared_ptr<TriangleMesh> md{make_shared<TriangleMesh>(TriangleMesh())};
+
+      auto status = load_mesh_data(
+        retrieve(ps, "filename", string()), 
+        retrieve(ps, "reverse_vertex_order", false), 
+        retrieve(ps, "compute_normals", false), 
+        retrieve(ps, "backface_cull", false), 
+        md
+      );
+
+      if(status){
+        render_opt->mesh_primitives.push_back({md, curr_GS.curr_material});
+      }else{
+        RT3_ERROR("Couldn't load obj file");
+      }
+    }else{
+      // load xml triangle mesh
+    }
+  }else{
+    render_opt->primitives.push_back({ps, curr_GS.curr_material});
+  }  
 }
 
 void API::light(const ParamSet &ps) {

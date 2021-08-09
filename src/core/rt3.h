@@ -83,8 +83,8 @@ enum class material_type_t : int { flat, blinn_phong };
 const vector<string> material_type_t_names = {"flat", "blinn"};
 
 /// List of supported object types
-enum class object_type_t : int { sphere };
-const vector<string> object_type_t_names = {"sphere"};
+enum class object_type_t : int { sphere, trianglemesh };
+const vector<string> object_type_t_names = {"sphere", "trianglemesh"};
 
 /// List of supported light types
 enum class light_type_t : int { point, directional, ambient, spot };

@@ -14,8 +14,9 @@
 #include "material.h"
 #include "shape.h"
 
-
 #include "scene.h"
 #include "light.h"
+
+#include "../mesh/triangle_mesh.h"
 
 #endif // RT3-BASE_H
