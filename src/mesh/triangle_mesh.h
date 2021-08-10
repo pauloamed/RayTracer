@@ -27,10 +27,11 @@ struct TriangleMesh {
   TriangleMesh(
     int n,
     shared_ptr<vector<int>> indexes,
+    shared_ptr<vector<int>> uv_indexes,
     shared_ptr<vector<shared_ptr<Point3f>>> vertexes,
     shared_ptr<vector<shared_ptr<Normal3f>>> normal,
     shared_ptr<vector<shared_ptr<Point2f>>> uvcrds
-  ):n_triangles(n), vertex_indices(indexes), normal_indices(indexes), uvcoord_indices(indexes), 
+  ):n_triangles(n), vertex_indices(indexes), normal_indices(indexes), uvcoord_indices(uv_indexes), 
   vertices(vertexes), normals(normal), uvcoords(uvcrds){}
 
 
