@@ -107,7 +107,7 @@ void parse_ptr_array_ptr_composite_attrib(stringstream &ss, ParamSet *ps_out,
 
   using e_type = shared_ptr<T>;
   using vec_type = vector<e_type>;
-  using final_type = shared_ptr<vec_type>
+  using final_type = shared_ptr<vec_type>;
 
   vec_type values;
   while (ss.good()) {
@@ -128,6 +128,22 @@ void parse_array_prim_attrib(stringstream &ss, ParamSet *ps_out,
 
   (*ps_out)[name] =
       make_shared<Value<vector<T>>>(Value<vector<T>>(vector<T>(values)));
+}
+
+template <typename T>
+void parse_ptr_array_prim_attrib(stringstream &ss, ParamSet *ps_out,
+                             const string &name) {
+
+  using vec_type = vector<T>;
+  using final_type = shared_ptr<vec_type>;
+
+  vec_type values = getMultipleValues<T>(ss);
+  final_type val = make_shared<vec_type>(values);
+
+  auto value = Value<final_type>(val);
+
+  (*ps_out)[name] =
+      make_shared<Value<final_type>>(value);
 }
 
 /// This is the entry function for the parsing process.
@@ -313,7 +329,7 @@ void parse_tags(tinyxml2::XMLElement *p_element, int level) {
           {param_type_e::STRING, "filename"},
 
           {param_type_e::INT, "ntriangles"},
-          {param_type_e::ARR_INT, "indices"},
+          {param_type_e::PTR_ARR_INT, "indices"},
           {param_type_e::PTR_ARR_PTR_POINT3F, "vertices"},
           {param_type_e::PTR_ARR_PTR_NORMAL3F, "normals"},
           {param_type_e::PTR_ARR_PTR_POINT2F, "uv"},
@@ -499,6 +515,9 @@ void parse_parameters(tinyxml2::XMLElement *p_element,
         break;
       case param_type_e::PTR_ARR_PTR_POINT3F:
         parse_ptr_array_ptr_composite_attrib<Point3f, float, 3>(ss, ps_out, name);
+        break;
+      case param_type_e::PTR_ARR_INT:
+        parse_ptr_array_prim_attrib<int>(ss, ps_out, name);
         break;
       default:
         RT3_WARNING(string{"parse_params(): unkonwn param type received!"});
