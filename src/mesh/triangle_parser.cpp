@@ -95,9 +95,9 @@ void retrieve_normals(const tinyobj::attrib_t& attrib, bool compute_normals, boo
 
   // Do we need to compute the normals? Yes only if the user requeste or there are no normals in the file.
   if (compute_normals || n_normals == 0){
-      // TODO: COmpute normals here.
-      // compute_normals();
-  }else {// Read normals from file. This corresponds to the entire 'for' below.
+      RT3_ERROR("Not implemented.");
+  }else {
+    // Read normals from file. This corresponds to the entire 'for' below.
     // Traverse the normals read from the OBJ file.
     for ( auto idx_n{0u} ; idx_n < n_normals; idx_n++){
         cout << "   n[" << static_cast<long>(idx_n) << "] = ( "

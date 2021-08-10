@@ -221,8 +221,8 @@ void API::object(const ParamSet &ps) {
       auto status = load_mesh_data(
         retrieve(ps, "filename", string()), 
         retrieve(ps, "reverse_vertex_order", false), 
-        retrieve(ps, "compute_normals", false), 
-        retrieve(ps, "backface_cull", false), 
+        retrieve(ps, "compute_normals", true),
+        retrieve(ps, "reverse_vertex_order", false), 
         md
       );
 
