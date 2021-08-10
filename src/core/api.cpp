@@ -232,7 +232,9 @@ void API::object(const ParamSet &ps) {
         RT3_ERROR("Couldn't load obj file");
       }
     }else{
-      // load xml triangle mesh
+      render_opt->mesh_primitives.push_back({
+        shared_ptr<TriangleMesh>(create_triangle_mesh(ps)), 
+        curr_GS.curr_material});
     }
   }else{
     render_opt->primitives.push_back({ps, curr_GS.curr_material});
