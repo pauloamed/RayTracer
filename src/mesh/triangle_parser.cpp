@@ -73,15 +73,15 @@ void extract_obj_data( const tinyobj::attrib_t& attrib,
   cout << "This is the list of indices: \n";
 
   cout << "   + Vertices [ ";
-  std::copy( md->vertex_indices.begin(), md->vertex_indices.end(), std::ostream_iterator< int > ( std::cout, " " ) );
+  std::copy( md->vertex_indices->begin(), md->vertex_indices->end(), std::ostream_iterator< int > ( std::cout, " " ) );
   cout << "]\n";
 
   cout << "   + Normals [ ";
-  std::copy( md->normal_indices.begin(), md->normal_indices.end(), std::ostream_iterator< int > ( std::cout, " " ) );
+  std::copy( md->normal_indices->begin(), md->normal_indices->end(), std::ostream_iterator< int > ( std::cout, " " ) );
   cout << "]\n";
 
   cout << "   + UV coords [ ";
-  std::copy( md->uvcoord_indices.begin(), md->uvcoord_indices.end(), std::ostream_iterator< int > ( std::cout, " " ) );
+  std::copy( md->uvcoord_indices->begin(), md->uvcoord_indices->end(), std::ostream_iterator< int > ( std::cout, " " ) );
   cout << "]\n";
   }
 }
@@ -113,7 +113,7 @@ void retrieve_normals(const tinyobj::attrib_t& attrib, bool compute_normals, boo
         }});
 
 
-        md->normals.push_back(normal);
+        md->normals->push_back(normal);
     }
   }
 }
@@ -136,7 +136,7 @@ void retrieve_vertices(const tinyobj::attrib_t& attrib, shared_ptr<TriangleMesh>
     attrib.vertices[ 3 * idx_v + 2 ] 
     }});
 
-    md->vertices.push_back(vertex);
+    md->vertices->push_back(vertex);
   }
 }
 
@@ -155,7 +155,7 @@ void retrieve_textures(const tinyobj::attrib_t& attrib, shared_ptr<TriangleMesh>
         attrib.texcoords[ 2 * idx_tc + 1 ]
     }});    
 
-    md->uvcoords.push_back( texture );
+    md->uvcoords->push_back( texture );
   }
 }
 
@@ -196,9 +196,9 @@ void retrieve_shapes(const std::vector<tinyobj::shape_t>& shapes, bool rvo, shar
                   cout << "    face[" << idx_f << "].v[" << v << "].indices = "
                       << idx.vertex_index << "/" << idx.normal_index << "/" << idx.texcoord_index << '\n';
                   // Add the indices to the global list of indices we need to pass on to the mesh object.
-                  md->vertex_indices.push_back( idx.vertex_index );
-                  md->normal_indices.push_back( idx.normal_index );
-                  md->uvcoord_indices.push_back( idx.texcoord_index );
+                  md->vertex_indices->push_back( idx.vertex_index );
+                  md->normal_indices->push_back( idx.normal_index );
+                  md->uvcoord_indices->push_back( idx.texcoord_index );
               }
           }
           else { // Keep the original vertex order
@@ -210,9 +210,9 @@ void retrieve_shapes(const std::vector<tinyobj::shape_t>& shapes, bool rvo, shar
                       << idx.vertex_index << "/" << idx.normal_index << "/" << idx.texcoord_index << '\n';
                   // Add the indices to the global list of indices we need to pass on to the mesh object.
                   // This goes to the mesh data structure.
-                  md->vertex_indices.push_back( idx.vertex_index );
-                  md->normal_indices.push_back( idx.normal_index );
-                  md->uvcoord_indices.push_back( idx.texcoord_index );
+                  md->vertex_indices->push_back( idx.vertex_index );
+                  md->normal_indices->push_back( idx.normal_index );
+                  md->uvcoord_indices->push_back( idx.texcoord_index );
               }
           }
 

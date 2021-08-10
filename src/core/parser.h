@@ -82,10 +82,12 @@ enum class param_type_e : int {
 // MULTIPLE COMPOSITES
   ARR_VEC3F,   //!< An array of Vector3f
   ARR_VEC3I,   //!< An array of Vector3i
+  ARR_COLOR,   //!< An array of Color
   ARR_POINT3F, //!< An array of Point3f
   ARR_POINT2F, //!< An array of Point3f
-  ARR_COLOR,   //!< An array of Color
-  ARR_NORMAL3F //!< An array of Normal3f
+  PTR_ARR_PTR_NORMAL3F, //!< An array of Normal3f
+  PTR_ARR_PTR_POINT2F, //!< An array of Point3f
+  PTR_ARR_PTR_POINT3F //!< An array of Normal3f
 };
 // === parsing functions.
 void parse(const char *);

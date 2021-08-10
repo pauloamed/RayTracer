@@ -101,6 +101,25 @@ void parse_array_composite_attrib(stringstream &ss, ParamSet *ps_out,
       make_shared<Value<vector<T>>>(Value<vector<T>>(vector<T>(values)));
 }
 
+template <typename T, typename T_INTERNAL, int internal_size>
+void parse_ptr_array_ptr_composite_attrib(stringstream &ss, ParamSet *ps_out,
+                                  const string &name) {
+
+  using e_type = shared_ptr<T>;
+  using vec_type = vector<e_type>;
+  using final_type = shared_ptr<vec_type>
+
+  vec_type values;
+  while (ss.good()) {
+    auto element = getMultipleValues<T_INTERNAL>(ss, internal_size);
+    values.push_back(make_shared<T>(element));
+  }
+
+  final_type val = make_shared<vec_type>(values);
+  auto value = Value<final_type>(val);
+  (*ps_out)[name] = make_shared<Value<final_type>>(val);
+}
+
 template <typename T>
 void parse_array_prim_attrib(stringstream &ss, ParamSet *ps_out,
                              const string &name) {
@@ -294,10 +313,10 @@ void parse_tags(tinyxml2::XMLElement *p_element, int level) {
           {param_type_e::STRING, "filename"},
 
           {param_type_e::INT, "ntriangles"},
-          {param_type_e::ARR_VEC3I, "indices"},
-          {param_type_e::ARR_POINT3F, "vertices"},
-          {param_type_e::ARR_VEC3F, "normals"},
-          {param_type_e::ARR_POINT2F, "uv"},
+          {param_type_e::ARR_INT, "indices"},
+          {param_type_e::PTR_ARR_PTR_POINT3F, "vertices"},
+          {param_type_e::PTR_ARR_PTR_NORMAL3F, "normals"},
+          {param_type_e::PTR_ARR_PTR_POINT2F, "uv"},
           {param_type_e::BOOL, "reverse_vertex_order"},
           {param_type_e::BOOL, "compute_normals"},
           {param_type_e::BOOL, "backface_cull"},
@@ -468,15 +487,19 @@ void parse_parameters(tinyxml2::XMLElement *p_element,
       case param_type_e::ARR_VEC3I:
         parse_array_composite_attrib<Vector3i, int, 3>(ss, ps_out, name);
         break;
-      case param_type_e::ARR_NORMAL3F:
-        parse_array_composite_attrib<Normal3f, float, 3>(ss, ps_out, name);
-        break;
       case param_type_e::ARR_POINT3F:
         parse_array_composite_attrib<Point3f, float, 3>(ss, ps_out, name);
         break;
-      // case param_type_e::ARR_COLOR:
-      //     parse_array_composite_attrib<Color, float, 3>( ss, ps_out, name );
-      //     break;
+      // MULTIPLE COMPOSITES PTR
+      case param_type_e::PTR_ARR_PTR_NORMAL3F:
+        parse_ptr_array_ptr_composite_attrib<Normal3f, float, 3>(ss, ps_out, name);
+        break;
+      case param_type_e::PTR_ARR_PTR_POINT2F:
+        parse_ptr_array_ptr_composite_attrib<Point2f, float, 2>(ss, ps_out, name);
+        break;
+      case param_type_e::PTR_ARR_PTR_POINT3F:
+        parse_ptr_array_ptr_composite_attrib<Point3f, float, 3>(ss, ps_out, name);
+        break;
       default:
         RT3_WARNING(string{"parse_params(): unkonwn param type received!"});
         break;

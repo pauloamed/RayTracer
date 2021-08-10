@@ -216,7 +216,7 @@ void API::object(const ParamSet &ps) {
 
   if(type == object_type_t::trianglemesh){
     if(ps.count("filename")){
-      shared_ptr<TriangleMesh> md{make_shared<TriangleMesh>(TriangleMesh())};
+      shared_ptr<TriangleMesh> md{ new TriangleMesh()};
 
       auto status = load_mesh_data(
         retrieve(ps, "filename", string()), 
