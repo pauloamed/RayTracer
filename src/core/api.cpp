@@ -82,6 +82,7 @@ void API::world_end(void) {
       }
     }
 
+
     unique_ptr<PrimList> primList =
         unique_ptr<PrimList>(new PrimList(std::move(the_primitive)));
 
@@ -231,8 +232,8 @@ void API::object(const ParamSet &ps) {
       auto status = load_mesh_data(
         retrieve(ps, "filename", string()), 
         retrieve(ps, "reverse_vertex_order", false), 
-        retrieve(ps, "compute_normals", true),
-        retrieve(ps, "reverse_vertex_order", false), 
+        retrieve(ps, "compute_normals", false),
+        retrieve(ps, "flip_normals", false), 
         md
       );
 
