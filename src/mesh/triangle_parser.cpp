@@ -1,6 +1,4 @@
-#include "../ext/tiny_obj_loader.h"
-
-#include "triangle_mesh.h"
+#include "triangle_parser.h"
 
 
 namespace rt3{
@@ -44,7 +42,7 @@ bool load_mesh_data( const std::string & filename, bool rvo, bool cn, bool fn, s
 
 void extract_obj_data( const tinyobj::attrib_t& attrib,
                        const std::vector<tinyobj::shape_t>& shapes,
-                       bool rvo, bool cn, bool fn, /* OUT */ shared_ptr<TriangleMesh> md ){
+                       bool rvo, bool cn, bool fn, /* OUT */ shared_ptr<TriangleMesh> md){
   
   // Logging 
   {
@@ -100,17 +98,19 @@ void retrieve_normals(const tinyobj::attrib_t& attrib, bool compute_normals, boo
     // Read normals from file. This corresponds to the entire 'for' below.
     // Traverse the normals read from the OBJ file.
     for ( auto idx_n{0u} ; idx_n < n_normals; idx_n++){
-        cout << "   n[" << static_cast<long>(idx_n) << "] = ( "
-            << static_cast<double>(attrib.normals[3 * idx_n + 0]) << ", "
-            << static_cast<double>(attrib.normals[3 * idx_n + 1]) << ", "
-            << static_cast<double>(attrib.normals[3 * idx_n + 2]) << " )\n";
+        // stringstream ss;
+        // ss << "   n[" << static_cast<long>(idx_n) << "] = ( "
+        //     << static_cast<double>(attrib.normals[3 * idx_n + 0]) << ", "
+        //     << static_cast<double>(attrib.normals[3 * idx_n + 1]) << ", "
+        //     << static_cast<double>(attrib.normals[3 * idx_n + 2]) << " )\n";
+        // RT3_MESSAGE(ss.str());
 
         // Store the normal.
         auto normal = make_shared<Normal3f>(Normal3f{{ 
             attrib.normals[ 3 * idx_n + 0 ] * flip,
             attrib.normals[ 3 * idx_n + 1 ] * flip,
             attrib.normals[ 3 * idx_n + 2 ] * flip 
-        }});
+        }}.normalize());
 
 
         md->normals->push_back(normal);
@@ -123,10 +123,12 @@ void retrieve_vertices(const tinyobj::attrib_t& attrib, shared_ptr<TriangleMesh>
   auto n_vertices{ attrib.vertices.size()/3 };
   for ( auto idx_v{0u} ; idx_v < n_vertices; idx_v++)
   {
-      std::cout << "   v[" << static_cast<long>(idx_v) << "] = ( "
-            << static_cast<double>(attrib.vertices[3 * idx_v + 0]) << ", "
-            << static_cast<double>(attrib.vertices[3 * idx_v + 1]) << ", "
-            << static_cast<double>(attrib.vertices[3 * idx_v + 2]) << " )\n";
+      // stringstream ss;
+      // ss << "   v[" << static_cast<long>(idx_v) << "] = ( "
+      //       << static_cast<double>(attrib.vertices[3 * idx_v + 0]) << ", "
+      //       << static_cast<double>(attrib.vertices[3 * idx_v + 1]) << ", "
+      //       << static_cast<double>(attrib.vertices[3 * idx_v + 2]) << " )\n";
+      // RT3_MESSAGE(ss.str());
 
       // Store the vertex in the mesh data structure.
 
@@ -144,9 +146,11 @@ void retrieve_vertices(const tinyobj::attrib_t& attrib, shared_ptr<TriangleMesh>
 void retrieve_textures(const tinyobj::attrib_t& attrib, shared_ptr<TriangleMesh> md){
   auto n_texcoords{ attrib.texcoords.size()/2 };
   for ( auto idx_tc{0u} ; idx_tc < n_texcoords; idx_tc++){
-    cout << "   t[" << static_cast<long>(idx_tc) << "] = ( "
-        << static_cast<double>(attrib.texcoords[2 * idx_tc + 0]) << ", "
-        << static_cast<double>(attrib.texcoords[2 * idx_tc + 1]) << " )\n";
+    // stringstream ss;
+    // ss << "   t[" << static_cast<long>(idx_tc) << "] = ( "
+    //     << static_cast<double>(attrib.texcoords[2 * idx_tc + 0]) << ", "
+    //     << static_cast<double>(attrib.texcoords[2 * idx_tc + 1]) << " )\n";
+    // RT3_MESSAGE(ss.str());
 
     // Store the texture coords.
 
@@ -162,17 +166,18 @@ void retrieve_textures(const tinyobj::attrib_t& attrib, shared_ptr<TriangleMesh>
 
 void retrieve_shapes(const std::vector<tinyobj::shape_t>& shapes, bool rvo, shared_ptr<TriangleMesh> md){
   auto n_shapes{ shapes.size() };
+  // stringstream ss;
   md->n_triangles = 0; // We must reset this here.
   // In case the OBJ file has the triangles organized in several shapes or groups, we
   // ignore this and store all triangles as a single mesh dataset.
   // This is why we need to reset the triangle count here.
   for ( auto idx_s{0u} ; idx_s < n_shapes; idx_s++)
   {
-      cout << "The shape[" << idx_s << "].name = " << shapes[idx_s].name << '\n';
-      cout << "Size of shape["<< idx_s << "].mesh.indices: "
-            << static_cast<unsigned long>(shapes[idx_s].mesh.indices.size()) << '\n';
-      cout << "shape["<< idx_s << "].num_faces: "
-          <<  static_cast<unsigned long>(shapes[idx_s].mesh.num_face_vertices.size()) << '\n';
+      // ss << "The shape[" << idx_s << "].name = " << shapes[idx_s].name << '\n';
+      // ss << "Size of shape["<< idx_s << "].mesh.indices: "
+      //       << static_cast<unsigned long>(shapes[idx_s].mesh.indices.size()) << '\n';
+      // ss << "shape["<< idx_s << "].num_faces: "
+      //     <<  static_cast<unsigned long>(shapes[idx_s].mesh.num_face_vertices.size()) << '\n';
 
       // For each face print out the indices lists.
       size_t index_offset = 0;
@@ -184,17 +189,17 @@ void retrieve_shapes(const std::vector<tinyobj::shape_t>& shapes, bool rvo, shar
           // Number of vertices per face (always 3, in our case)
           size_t fnum = shapes[idx_s].mesh.num_face_vertices[idx_f];
 
-          cout << "  face[" << idx_f << "].fnum = "  << static_cast<unsigned long>(fnum) << '\n';
+          // ss << "  face[" << idx_f << "].fnum = "  << static_cast<unsigned long>(fnum) << '\n';
 
           // TODO: Invert order of vertices if flag is on. (DONE!)
           if ( rvo == true ) {
-              std::cout << "Reverse order\n";
+              // ss << "Reverse order\n";
               // For each vertex in the face print the corresponding indices
               for (int v = fnum-1; v >= 0 ; v--)
               {
                   tinyobj::index_t idx = shapes[idx_s].mesh.indices[index_offset + v];
-                  cout << "    face[" << idx_f << "].v[" << v << "].indices = "
-                      << idx.vertex_index << "/" << idx.normal_index << "/" << idx.texcoord_index << '\n';
+                  // ss << "    face[" << idx_f << "].v[" << v << "].indices = "
+                  //     << idx.vertex_index << "/" << idx.normal_index << "/" << idx.texcoord_index << '\n';
                   // Add the indices to the global list of indices we need to pass on to the mesh object.
                   md->vertex_indices->push_back( idx.vertex_index );
                   md->normal_indices->push_back( idx.normal_index );
@@ -206,8 +211,8 @@ void retrieve_shapes(const std::vector<tinyobj::shape_t>& shapes, bool rvo, shar
               for (size_t v = 0; v < fnum; v++)
               {
                   tinyobj::index_t idx = shapes[idx_s].mesh.indices[index_offset + v];
-                  cout << "    face[" << idx_f << "].v[" << v << "].indices = "
-                      << idx.vertex_index << "/" << idx.normal_index << "/" << idx.texcoord_index << '\n';
+                  // ss << "    face[" << idx_f << "].v[" << v << "].indices = "
+                  //     << idx.vertex_index << "/" << idx.normal_index << "/" << idx.texcoord_index << '\n';
                   // Add the indices to the global list of indices we need to pass on to the mesh object.
                   // This goes to the mesh data structure.
                   md->vertex_indices->push_back( idx.vertex_index );
@@ -220,6 +225,7 @@ void retrieve_shapes(const std::vector<tinyobj::shape_t>& shapes, bool rvo, shar
           index_offset += fnum;
       }
   }
+  // RT3_MESSAGE(ss.str());
 }
 
 }
