@@ -234,7 +234,8 @@ void API::object(const ParamSet &ps) {
     }else{
       render_opt->mesh_primitives.push_back({
         shared_ptr<TriangleMesh>(create_triangle_mesh(ps)), 
-        curr_GS.curr_material});
+        curr_GS.curr_material
+      });
     }
   }else{
     render_opt->primitives.push_back({ps, curr_GS.curr_material});
