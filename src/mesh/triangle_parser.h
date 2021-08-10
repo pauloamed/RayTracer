@@ -1,3 +1,6 @@
+#ifndef TRIANGLE_PARSER_H
+#define TRIANGLE_PARSER_H
+
 #include "../ext/tiny_obj_loader.h"
 
 #include "triangle_mesh.h"
@@ -27,3 +30,5 @@ void retrieve_textures(const tinyobj::attrib_t& attrib, shared_ptr<TriangleMesh>
 
 void retrieve_shapes(const std::vector<tinyobj::shape_t>& shapes, bool rvo, shared_ptr<TriangleMesh> md);
 }
+
+#endif
