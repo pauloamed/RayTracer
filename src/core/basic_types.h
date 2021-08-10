@@ -158,6 +158,13 @@ template<typename T, int size> struct Point :
   Point():StructuredValues<T,size>(){}
   Point(const Point &clone):StructuredValues<T,size>(clone){}
   Point(const vector<T> &_values):StructuredValues<T,size>(_values){}
+
+  Point operator*(real_type t) const{
+      Point p(*this);
+      for(auto &x : p.values) x *= t;
+      return p;
+  }
+
 };
 
 
@@ -174,6 +181,16 @@ Vector<T,size> operator-(const Point<T,size>& x, const Point<T,size>& y){
 
 template<typename T, int size>
 Point<T, size> operator+(const Point<T, size> x, const Vector<T,size> y){
+    Point<T, size> v(x);
+    for(int i = 0; i < size; ++i){
+        v[i] += y.at(i);
+    }
+    // std::cout << "+ " << x.toString() << " " << y.toString() << " " << v.toString() << std::endl;
+    return v;
+}
+
+template<typename T, int size>
+Point<T, size> operator+(const Point<T, size> x, const Point<T,size> y){
     Point<T, size> v(x);
     for(int i = 0; i < size; ++i){
         v[i] += y.at(i);
