@@ -57,7 +57,7 @@ Color BlinnPhongIntegrator::recursiveLi(const Ray& ray, const unique_ptr<Scene>&
 
         if(currRecurStep < maxRecursionSteps){
             Vector3f newDir = (ray.d + (isect->n * (-2 * (ray.d * isect->n)))).normalize();
-            color = color + material->mirror * recursiveLi(Ray(isect->getCorrectedContact() + newDir * EPS, newDir), scene, backgroundColor, currRecurStep + 1);
+            color = color + material->mirror * recursiveLi(Ray(isect->p + newDir * EPS, newDir), scene, backgroundColor, currRecurStep + 1);
         }
 
         return color;

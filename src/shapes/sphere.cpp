@@ -45,7 +45,7 @@ bool Sphere::intersect(const Ray &r, shared_ptr<ObjSurfel> &isect) const{
 
         Vector3f normal = (contact - origin).normalize();
 
-        isect = unique_ptr<ObjSurfel>(new ObjSurfel(contact, normal, r.d * -1, t[0]));
+        isect = unique_ptr<ObjSurfel>(new ObjSurfel(contact + normal * EPS, normal, r.d * -1, t[0]));
         return true;
     }else{
         return false;

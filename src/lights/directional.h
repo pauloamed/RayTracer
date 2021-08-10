@@ -11,7 +11,7 @@ public:
     real_type mininumFreeDist = 10;
 
     DirectionalLight(const Color &c, const Vector3f &scl, const Vector3f &lightDirection):
-        SamplerLight(c, scl), direction(lightDirection){}
+        SamplerLight(c, scl), direction(lightDirection.normalize()){}
 
     
     tuple<Color, unique_ptr<VisibilityTester>, Vector3f> Li(const shared_ptr<Surfel>& hit) override;

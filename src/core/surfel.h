@@ -13,10 +13,6 @@ struct Surfel{
     // se o ray veio da luz, t eh o coef do raio saindo da luz (mas note q o surfel eh a luz, nao a intersect)
     real_type t; 
     
-    virtual Point3f getCorrectedContact(){
-        return p + wo * EPS; 
-    }
-
     Surfel(const Point3f& _p, const Vector3f& _wo, real_type _t):p(_p), wo(_wo.normalize()), t(_t){}
 };
 
@@ -29,10 +25,6 @@ struct ObjSurfel : public Surfel{
         : Surfel(_p, _wo, _t), n{_n}{ 
             n = n.normalize(); 
         };
-
-    Point3f getCorrectedContact() override{
-        return p + n * EPS + wo * EPS; 
-    }
 
     void setPrimitive(const shared_ptr<GeometricPrimitive> &prim){
         primitive = prim;
