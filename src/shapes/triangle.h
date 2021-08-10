@@ -23,11 +23,20 @@ public:
   Triangle( shared_ptr<TriangleMesh> mesh, int tri_id, bool bfc=true )
     : Shape(), mesh{mesh}, backface_cull{bfc}
   {
+
+    auto &v_indexes = *(mesh->vertex_indices);
+    auto &n_indexes = *(mesh->normal_indices);
+    auto &uv_indexes = *(mesh->uvcoord_indices);
+
+    auto &vertices = *(mesh->vertices);
+    auto &normals = *(mesh->normals);
+    auto &uvcoords = *(mesh->uvcoords);
+
     // This is just a shortcut to access this triangle's data stored in the mesh database.
     for(int i = 0; i < 3; ++i){
-      v[i] = mesh->vertices[mesh->vertex_indices[ 3 * tri_id + i]];
-      n[i] = mesh->normals[mesh->normal_indices[ 3 * tri_id + i]];
-      uv[i] = mesh->uvcoords[mesh->uvcoord_indices[ 3 * tri_id + i]];
+      v[i] = vertices[v_indexes[ 3 * tri_id + i]];
+      n[i] = normals[n_indexes[ 3 * tri_id + i]];
+      uv[i] = uvcoords[uv_indexes[ 3 * tri_id + i]];
     }
   }
 
