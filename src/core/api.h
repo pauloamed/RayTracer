@@ -123,6 +123,7 @@ namespace rt3 {
             static Material * make_material( const ParamSet& ps );
 
             static Shape * make_shape( const ParamSet& ps );
+            static vector<Shape *> make_triangles( shared_ptr<TriangleMesh> );
 
             static Light * make_light( const ParamSet& ps );
 

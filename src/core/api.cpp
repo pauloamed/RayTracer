@@ -72,6 +72,16 @@ void API::world_end(void) {
           make_geometric_primitive(std::move(shape), mat)));
     }
 
+    for (auto [mesh_ps, mat] : render_opt->mesh_primitives) {
+      for (Shape * s : make_triangles(mesh_ps)){
+
+        the_primitive.push_back(shared_ptr<Primitive>(
+          make_geometric_primitive(std::move(unique_ptr<Shape>(s)), mat)
+        ));
+
+      }
+    }
+
     unique_ptr<PrimList> primList =
         unique_ptr<PrimList>(new PrimList(std::move(the_primitive)));
 
@@ -99,7 +109,7 @@ void API::world_end(void) {
 
   // Run only if we got film and background.
   if (the_integrator and the_scene) {
-    RT3_MESSAGE("    Parsing scene successfuly done!\n");
+    RT3_MESSAGE("\tParsing scene successfuly done!\n");
     RT3_MESSAGE("[2] Starting ray tracing progress.\n");
 
     // Structure biding, c++17.

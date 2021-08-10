@@ -16,6 +16,7 @@
 #include "../lights/point.h"
 
 #include "../shapes/sphere.h"
+#include "../shapes/triangle.h"
 
 namespace rt3 {
 
@@ -155,6 +156,13 @@ Shape * API::make_shape( const ParamSet& ps ){
         RT3_ERROR("Unknown object type.");
     }
     return shape;
+}
+
+
+vector<Shape *> API::make_triangles( shared_ptr<TriangleMesh> md ){
+    std::cout << ">>> Inside API::make_triangles()\n";
+    vector<Shape *> shapes = create_triangle_list(md); 
+    return shapes;
 }
 
 } // namespace rt3

@@ -53,7 +53,7 @@ public:
 
 
 /// This function creates the internal data structure, required by the RT3.
-vector<shared_ptr<Shape>> create_triangle_list( shared_ptr<TriangleMesh> mesh, bool backface_cull );
+vector<Shape *> create_triangle_list( shared_ptr<TriangleMesh> mesh);
 
 }
 
