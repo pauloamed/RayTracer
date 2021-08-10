@@ -19,14 +19,17 @@ namespace rt3{
     }
 
     bool PrimList::intersect(const Ray &r, shared_ptr<ObjSurfel> &isect ) const{
+        shared_ptr<ObjSurfel> currIsect(nullptr);
         for(auto &prim : primitives)
         {   
-            if(prim->intersect(r, isect)){
-                isect->setPrimitive(std::dynamic_pointer_cast<GeometricPrimitive>(prim));
-                return true;
+            if(prim->intersect(r, currIsect)){
+                if(isect == nullptr || currIsect->t < isect->t){
+                    isect = currIsect;
+                    isect->setPrimitive(std::dynamic_pointer_cast<GeometricPrimitive>(prim));
+                }
             }
         }
-        return false;
+        return (isect != nullptr);
     }
 
 }
