@@ -63,19 +63,19 @@ void API::world_end(void) {
   {
     unique_ptr<Background> the_background{make_background(render_opt->bkg_ps)};
 
-    vector<shared_ptr<Primitive>> the_primitive;
+    vector<shared_ptr<BoundedPrimitive>> the_primitive;
     for (auto [object_ps, mat] : render_opt->primitives) {
 
       unique_ptr<Shape> shape(make_shape(object_ps));
 
-      the_primitive.push_back(shared_ptr<Primitive>(
+      the_primitive.push_back(shared_ptr<BoundedPrimitive>(
           make_geometric_primitive(std::move(shape), mat)));
     }
 
     for (auto [mesh_ps, mat] : render_opt->mesh_primitives) {
       for (Shape * s : make_triangles(mesh_ps)){
 
-        the_primitive.push_back(shared_ptr<Primitive>(
+        the_primitive.push_back(shared_ptr<BoundedPrimitive>(
           make_geometric_primitive(std::move(unique_ptr<Shape>(s)), mat)
         ));
 

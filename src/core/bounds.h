@@ -17,7 +17,6 @@ private:
   // it is a non-degenerated box. Thus, values across the same axis are distincts
   Point3f minPoint, maxPoint; 
 public:
-
   Bounds3f(Point3f minP, Point3f maxP):minPoint(minP), maxPoint(maxP){}
 
   bool intersect_p(const Ray &ray, pair<real_type, real_type> &hits) const;

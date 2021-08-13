@@ -127,7 +127,7 @@ namespace rt3 {
 
             static Light * make_light( const ParamSet& ps );
 
-            static Primitive * make_geometric_primitive( 
+            static GeometricPrimitive * make_geometric_primitive( 
                 unique_ptr<Shape> &&shape, shared_ptr<Material> material );
 
             static Camera * make_camera( const ParamSet& ps_camera, 

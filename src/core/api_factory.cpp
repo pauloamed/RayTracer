@@ -133,7 +133,7 @@ Material * API::make_material( const ParamSet &ps_material)
 }
 
 
-Primitive * API::make_geometric_primitive( 
+GeometricPrimitive * API::make_geometric_primitive( 
         unique_ptr<Shape> &&shape, shared_ptr<Material> material ){
 
     std::cout << ">>> Inside API::make_primitive()\n";
