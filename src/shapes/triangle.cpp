@@ -51,6 +51,20 @@ bool Triangle::intersect(const Ray &r, shared_ptr<ObjSurfel> &isect) const{
 	return true;
 }
 
+Bounds3f Triangle::computeBounds() const{
+	Point3f minPoint(*vert[0]);
+	Point3f maxPoint(*vert[0]);
+
+	for(int i = 1; i < 3; ++i){
+		for(int j = 0; j < 3; ++j){
+			minPoint[j] = min(minPoint[j], (*vert[i]).at(j));
+			maxPoint[j] = max(maxPoint[j], (*vert[i]).at(j));
+		}
+	}
+
+	return Bounds3f(minPoint, maxPoint);
+}
+
 vector<Shape *> create_triangle_list( shared_ptr<TriangleMesh> mesh){
 	// List of shapes (triangles) we need to return to the client.
 	vector<Shape *> tris;

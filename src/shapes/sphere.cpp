@@ -52,6 +52,15 @@ bool Sphere::intersect(const Ray &r, shared_ptr<ObjSurfel> &isect) const{
     }
 }
 
+Bounds3f Sphere::computeBounds() const{
+  Point3f radiusPoint{{radius, radius, radius}};
+
+  Point3f minPoint = origin + radiusPoint;
+  Point3f maxPoint = origin + (radiusPoint * -1);
+
+  return Bounds3f(minPoint, maxPoint);
+}
+
 Sphere *create_sphere(const ParamSet &ps){
     return new Sphere(
         retrieve(ps, "flip", false),

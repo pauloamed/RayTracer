@@ -16,6 +16,7 @@ public:
 
     ~Sphere(){}
 
+    Bounds3f computeBounds() const override;
     bool intersect_p(const Ray &r, real_type maxT) const override;
     bool intersect(const Ray &r, shared_ptr<ObjSurfel> &isect) const override;
 };

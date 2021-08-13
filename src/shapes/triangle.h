@@ -46,7 +46,7 @@ public:
 
 
   /// Return the triangle's bounding box.
-  // Bounds3f object_bound() const;
+  Bounds3f computeBounds() const override;
   /// The regular intersection methods, as defined in the Shape parent class.
   bool _intersect(const Ray &r, real_type &t, real_type &u, real_type &v) const;
 
