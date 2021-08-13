@@ -13,7 +13,11 @@
 using std::array;
 using std::string;
 using std::vector;
+using std::pair;
 using std::copy_n;
+using std::min;
+using std::max;
+using std::swap;
 
 namespace rt3{
 
