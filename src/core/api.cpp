@@ -88,10 +88,10 @@ void API::world_end(void) {
     }
 
 
-    shared_ptr<BVHAccel> primTree = BVHAccel::build(std::move(the_primitive), 1);
+    shared_ptr<Primitive> primitive = make_primitive(render_opt->accelerator_ps, std::move(the_primitive));
 
     the_scene =
-        make_unique<Scene>(std::move(the_background), std::move(primTree), std::move(the_lights));
+        make_unique<Scene>(std::move(the_background), std::move(primitive), std::move(the_lights));
   }
 
   // LOADING INTEGRATOR
@@ -179,6 +179,13 @@ void API::lookat(const ParamSet &ps) {
   VERIFY_SETUP_BLOCK("API::lookat");
 
   render_opt->look_at_ps = ps;
+}
+
+void API::accelerator(const ParamSet &ps) {
+  std::cout << ">>> Inside API::accelerator()\n";
+  VERIFY_SETUP_BLOCK("API::accelerator");
+
+  render_opt->accelerator_ps = ps;
 }
 
 ///////////////////////////////////////////////////////////////////////

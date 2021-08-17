@@ -144,6 +144,26 @@ GeometricPrimitive * API::make_geometric_primitive(
     );
 }
 
+
+shared_ptr<Primitive> API::make_primitive( const ParamSet& ps_accelerator, 
+    vector<shared_ptr<BoundedPrimitive>>&& primitives){
+
+    shared_ptr<Primitive> primitive = nullptr;
+
+    accelerator_type_t type = retrieve(ps_accelerator, "type", accelerator_type_t::list);
+
+    if(type == accelerator_type_t::list){
+        primitive = shared_ptr<Primitive> (new PrimList(std::move(primitives)));
+    }else if(type == accelerator_type_t::bvh){
+        primitive = BVHAccel::build(std::move(primitives), 1);
+    }else{
+        RT3_ERROR("Unknown accerelator type.");
+    }
+
+    return primitive;
+}
+
+
 Shape * API::make_shape( const ParamSet& ps ){
     object_type_t type = retrieve(ps, "type", object_type_t::sphere);
 

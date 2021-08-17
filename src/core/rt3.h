@@ -91,6 +91,10 @@ const vector<string> object_type_t_names = {"sphere", "trianglemesh"};
 enum class light_type_t : int { point, directional, ambient, spot };
 const vector<string> light_type_t_names = {"point", "directional", "ambient", "spot"};
 
+/// List of accelerator types
+enum class accelerator_type_t : int { list, bvh };
+const vector<string> accelerator_type_t_names = {"list", "bvh"};
+
 //==============
 
 // Global Forward Declarations

@@ -64,6 +64,9 @@ namespace rt3 {
         bg_type_t bkg_type{bg_type_t::colors}; // "image", "interpolated"
         ParamSet bkg_ps;
 
+        // Accel
+        ParamSet accelerator_ps;
+
         // the objects/primitives
         vector<pair<ParamSet, shared_ptr<Material>>> primitives;
         vector<pair<shared_ptr<TriangleMesh>, shared_ptr<Material>>> mesh_primitives;
@@ -133,6 +136,9 @@ namespace rt3 {
             static Camera * make_camera( const ParamSet& ps_camera, 
                 const ParamSet& ps_look_at, unique_ptr<Film>&& the_film );
 
+            static shared_ptr<Primitive> make_primitive( const ParamSet& ps_accelerator, 
+                vector<shared_ptr<BoundedPrimitive>>&& primitives);
+
         public:
             //=== API function begins here.
             static void init_engine( const RunningOptions& );
@@ -146,6 +152,8 @@ namespace rt3 {
             static void lookat( const ParamSet& ps );
             static void camera( const ParamSet& ps );
             static void background( const ParamSet& ps );
+
+            static void accelerator( const ParamSet& ps );
 
             static void create_named_material( const ParamSet& ps );
             static void named_material( const ParamSet& ps );

@@ -315,6 +315,17 @@ void parse_tags(tinyxml2::XMLElement *p_element, int level) {
       parse_parameters(p_element, param_list, &ps);
 
       API::named_material(ps);
+    } else if (tag_name == "accelerator") {
+      ParamSet ps;
+
+      vector<std::pair<param_type_e, string>> param_list{
+          {param_type_e::ACCELERATOR_TYPE, "type"},
+          {param_type_e::INT, "max_prims_per_node"},
+      };
+      
+      parse_parameters(p_element, param_list, &ps);
+
+      API::accelerator(ps);
     } else if (tag_name == "object") {
       ParamSet ps;
 
@@ -448,6 +459,9 @@ void parse_parameters(tinyxml2::XMLElement *p_element,
         break;
       case param_type_e::CAMERA_TYPE:
         parse_enum_attrib<camera_type_t>(ss, ps_out, name, camera_type_t_names);
+        break;
+      case param_type_e::ACCELERATOR_TYPE:
+        parse_enum_attrib<accelerator_type_t>(ss, ps_out, name, accelerator_type_t_names);
         break;
       case param_type_e::INTEGRATOR_TYPE:
         parse_enum_attrib<integrator_type_t>(ss, ps_out, name,
