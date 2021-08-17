@@ -63,6 +63,11 @@ void API::world_end(void) {
   {
     unique_ptr<Background> the_background{make_background(render_opt->bkg_ps)};
 
+    vector<shared_ptr<Light>> the_lights;
+    for (auto light_ps : render_opt->lights) {
+      the_lights.push_back(shared_ptr<Light>(make_light(light_ps)));
+    }
+
     vector<shared_ptr<BoundedPrimitive>> the_primitive;
     for (auto [object_ps, mat] : render_opt->primitives) {
 
@@ -83,16 +88,10 @@ void API::world_end(void) {
     }
 
 
-    unique_ptr<PrimList> primList =
-        unique_ptr<PrimList>(new PrimList(std::move(the_primitive)));
-
-    vector<shared_ptr<Light>> the_lights;
-    for (auto light_ps : render_opt->lights) {
-      the_lights.push_back(shared_ptr<Light>(make_light(light_ps)));
-    }
+    shared_ptr<BVHAccel> primTree = BVHAccel::build(std::move(the_primitive), 1);
 
     the_scene =
-        make_unique<Scene>(std::move(the_background), std::move(primList), std::move(the_lights));
+        make_unique<Scene>(std::move(the_background), std::move(primTree), std::move(the_lights));
   }
 
   // LOADING INTEGRATOR
