@@ -57,9 +57,6 @@ Bounds3f Sphere::computeBounds() const{
 
   Point3f maxPoint = origin + radiusPoint;
   Point3f minPoint = origin + (radiusPoint * -1);
-
-//   std::cout << origin.toString() << " " << radius << " " << minPoint.toString() << " " << maxPoint.toString() << "\n";
-
   return Bounds3f(minPoint, maxPoint);
 }
 
