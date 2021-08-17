@@ -18,7 +18,7 @@ struct Surfel{
 
 struct ObjSurfel : public Surfel{
     Normal3f n;       //!< The surface normal.
-    shared_ptr<GeometricPrimitive> primitive=nullptr; //!< Pointer to the primitive.
+    shared_ptr<const GeometricPrimitive> primitive=nullptr; //!< Pointer to the primitive.
     
 
     ObjSurfel(const Point3f& _p, const Normal3f& _n, const Vector3f& _wo, real_type _t)
@@ -26,7 +26,7 @@ struct ObjSurfel : public Surfel{
             n = n.normalize(); 
         };
 
-    void setPrimitive(const shared_ptr<GeometricPrimitive> &prim){
+    void setPrimitive(const shared_ptr<const GeometricPrimitive> &prim){
         primitive = prim;
     }
 };
