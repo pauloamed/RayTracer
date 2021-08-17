@@ -55,6 +55,8 @@ Bounds3f Triangle::computeBounds() const{
 	Point3f minPoint(*vert[0]);
 	Point3f maxPoint(*vert[0]);
 
+	Point3f epsPoint = Point3f({0, 0, 0});
+
 	for(int i = 1; i < 3; ++i){
 		for(int j = 0; j < 3; ++j){
 			minPoint[j] = min(minPoint[j], (*vert[i]).at(j));
@@ -62,7 +64,7 @@ Bounds3f Triangle::computeBounds() const{
 		}
 	}
 
-	return Bounds3f(minPoint, maxPoint);
+	return Bounds3f(minPoint + (epsPoint * -1), maxPoint + epsPoint);
 }
 
 vector<Shape *> create_triangle_list( shared_ptr<TriangleMesh> mesh){
