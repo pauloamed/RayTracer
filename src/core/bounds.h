@@ -16,10 +16,13 @@ private:
   // maxPoint will keep the maximum values for each axis
   // it is a non-degenerated box. Thus, values across the same axis are distincts
   Point3f minPoint, maxPoint; 
+
+
 public:
   Bounds3f(Point3f minP, Point3f maxP):minPoint(minP), maxPoint(maxP){}
 
-  bool intersect_p(const Ray &ray, pair<real_type, real_type> &hits) const;
+  bool box_intersect(const Ray &ray, pair<real_type, real_type> &hits) const;
+  bool intersect_p(const Ray &ray, real_type maxT) const;
 
   static Bounds3f unite(const Bounds3f &a, const Bounds3f &b);
 };
