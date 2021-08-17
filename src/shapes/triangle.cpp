@@ -55,7 +55,7 @@ Bounds3f Triangle::computeBounds() const{
 	Point3f minPoint(*vert[0]);
 	Point3f maxPoint(*vert[0]);
 
-	Point3f epsPoint = Point3f({0, 0, 0});
+	Point3f epsPoint = Point3f({EPS, EPS, EPS});
 
 	for(int i = 1; i < 3; ++i){
 		for(int j = 0; j < 3; ++j){
