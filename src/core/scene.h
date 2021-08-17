@@ -11,10 +11,10 @@ namespace rt3{
 class Scene{
 public:
     unique_ptr<Background> background;
-    unique_ptr<Primitive> primitive;
+    shared_ptr<Primitive> primitive;
     vector<shared_ptr<Light>> lights;
 
-    Scene(unique_ptr<Background> &&bg, unique_ptr<Primitive> &&prim, vector<shared_ptr<Light>> &&sceneLights):
+    Scene(unique_ptr<Background> &&bg, shared_ptr<Primitive> &&prim, vector<shared_ptr<Light>> &&sceneLights):
         background(std::move(bg)), primitive(std::move(prim)), lights(std::move(sceneLights)){}
 
     ~Scene() = default;
