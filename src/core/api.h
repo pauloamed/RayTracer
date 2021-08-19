@@ -147,6 +147,9 @@ namespace rt3 {
             static void clean_world_elements( void );
             static void reset_engine( void );
 
+            static void pop_gs( void );
+            static void push_gs( void );
+
             static void integrator( const ParamSet& ps );
             static void film( const ParamSet& ps );
             static void lookat( const ParamSet& ps );

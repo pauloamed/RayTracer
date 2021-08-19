@@ -315,6 +315,10 @@ void parse_tags(tinyxml2::XMLElement *p_element, int level) {
       parse_parameters(p_element, param_list, &ps);
 
       API::named_material(ps);
+    } else if (tag_name == "push_gs") {
+      
+    } else if (tag_name == "pop_gs") {
+      
     } else if (tag_name == "accelerator") {
       ParamSet ps;
 

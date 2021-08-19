@@ -200,6 +200,14 @@ void API::create_named_material(const ParamSet &ps) {
   curr_GS.named_materials[material_name] = shared_ptr<Material>(make_material(ps));
 }
 
+void API::pop_gs( void ){
+
+}
+
+void API::push_gs( void ){
+
+}
+
 void API::background(const ParamSet &ps) {
   std::cout << ">>> Inside API::background()\n";
   VERIFY_WORLD_BLOCK("API::background");
