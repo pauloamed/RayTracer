@@ -19,6 +19,9 @@ Color BlinnPhongIntegrator::recursiveLi(const Ray& ray, const unique_ptr<Scene>&
     if (!scene->intersect(ray, isect)) {
         return backgroundColor;
     }else{
+
+        if(isect->wo * isect->n < 0) return BLACK;
+
         shared_ptr<BlinnPhongMaterial> material = \
             std::dynamic_pointer_cast<BlinnPhongMaterial>(isect->primitive->get_material());
 
