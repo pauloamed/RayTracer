@@ -244,6 +244,7 @@ void API::object(const ParamSet &ps) {
       );
 
       if(status){
+        md->backface_cull = retrieve(ps, "backface_cull", false);
         render_opt->mesh_primitives.push_back({md, curr_GS.curr_material});
       }else{
         RT3_ERROR("Couldn't load obj file");
