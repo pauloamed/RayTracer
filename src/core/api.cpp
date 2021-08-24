@@ -197,7 +197,7 @@ void API::create_named_material(const ParamSet &ps) {
 
   string material_name = retrieve(ps, "name", string());
 
-  curr_GS.named_materials[material_name] = shared_ptr<Material>(make_material(ps));
+  curr_GS.top().named_materials[material_name] = shared_ptr<Material>(make_material(ps));
 }
 
 void API::pop_gs( void ){
@@ -205,6 +205,18 @@ void API::pop_gs( void ){
 }
 
 void API::push_gs( void ){
+
+}
+
+void API::translate( const ParamSet& ps ){
+
+}
+
+void API::rotate( const ParamSet& ps ){
+
+}
+
+void API::scale( const ParamSet& ps ){
 
 }
 
@@ -222,7 +234,7 @@ void API::material(const ParamSet &ps) {
 
   shared_ptr<Material> new_material(make_material(ps));
 
-  curr_GS.curr_material = new_material;
+  curr_GS.top().curr_material = new_material;
 }
 
 void API::named_material(const ParamSet &ps) {
@@ -230,7 +242,7 @@ void API::named_material(const ParamSet &ps) {
   VERIFY_WORLD_BLOCK("API::named_material");
 
   string material_name = retrieve(ps, "name", string());
-  curr_GS.curr_material = curr_GS.named_materials[material_name];
+  curr_GS.top().curr_material = curr_GS.top().named_materials[material_name];
 }
 
 void API::object(const ParamSet &ps) {
@@ -252,18 +264,18 @@ void API::object(const ParamSet &ps) {
       );
 
       if(status){
-        render_opt->mesh_primitives.push_back({md, curr_GS.curr_material});
+        render_opt->mesh_primitives.push_back({md, curr_GS.top().curr_material});
       }else{
         RT3_ERROR("Couldn't load obj file");
       }
     }else{
       render_opt->mesh_primitives.push_back({
         shared_ptr<TriangleMesh>(create_triangle_mesh(ps)), 
-        curr_GS.curr_material
+        curr_GS.top().curr_material
       });
     }
   }else{
-    render_opt->primitives.push_back({ps, curr_GS.curr_material});
+    render_opt->primitives.push_back({ps, curr_GS.top().curr_material});
   }  
 }
 

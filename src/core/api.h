@@ -79,14 +79,26 @@ namespace rt3 {
     struct GraphicsState
     {
         shared_ptr<Material> curr_material;
-        map<string,shared_ptr<Material>> named_materials;
+
+        void translate(Vector3f t);
+        void rotate(Vector3f t);
+        void scale(Point3f s);
     };
+
+    struct GraphicsContext
+    {
+        map<string,shared_ptr<Material>> named_materials;
+
+
+    };
+
+
 
     /// Static class that manages the render process
     class API
     {
         public:
-            static GraphicsState curr_GS;
+            static stack<GraphicsState> curr_GS;
     
             /// Defines the current state the API may be at a given time
             enum class APIState { Uninitialized,    //!< Initial state, before parsing.
@@ -147,9 +159,6 @@ namespace rt3 {
             static void clean_world_elements( void );
             static void reset_engine( void );
 
-            static void pop_gs( void );
-            static void push_gs( void );
-
             static void integrator( const ParamSet& ps );
             static void film( const ParamSet& ps );
             static void lookat( const ParamSet& ps );
@@ -160,6 +169,13 @@ namespace rt3 {
 
             static void create_named_material( const ParamSet& ps );
             static void named_material( const ParamSet& ps );
+
+            static void pop_gs( void );
+            static void push_gs( void );
+
+            static void translate( const ParamSet& ps );
+            static void rotate( const ParamSet& ps );
+            static void scale( const ParamSet& ps );
             
             static void material( const ParamSet& ps );
             static void object( const ParamSet& ps );
