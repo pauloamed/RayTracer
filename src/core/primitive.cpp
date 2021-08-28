@@ -61,8 +61,14 @@ bool PrimList::intersect_p(const Ray& r, real_type maxT) const{
     return false;
 }
 
+bool BVHAccel::boundedComp(shared_ptr<BoundedPrimitive> a, shared_ptr<BoundedPrimitive> b){
+    return a->getBoundingBox().minPoint.at(0) < b->getBoundingBox().minPoint.at(0);
+}
+
 vector<shared_ptr<BVHAccel>> BVHAccel::createLeaves(vector<shared_ptr<BoundedPrimitive>> &&prim, size_t leafSize){
     vector<shared_ptr<BoundedPrimitive>> startList = std::move(prim);
+
+    sort(startList.begin(), startList.end(), boundedComp);
 
     vector<shared_ptr<BVHAccel>> leaves;
     for(size_t i = 0; i < startList.size(); i += leafSize){

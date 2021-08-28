@@ -8,6 +8,8 @@ namespace rt3{
 /// This struct implements an indexd triangle mesh database.
 struct TriangleMesh {
   int n_triangles; //!< # of triangles in the mesh.
+  bool backface_cull;
+
   // The size of the three lists below should be 3 * nTriangles. Every 3 values we have a triangle.
   shared_ptr<vector<int>> vertex_indices;  //!< The list of indices to the vertex list, for each individual triangle.
   shared_ptr<vector<int>> normal_indices;  //!< The list of indices to the normals list, for each individual triangle.
@@ -25,15 +27,14 @@ struct TriangleMesh {
   {/*empty*/};
 
   TriangleMesh(
-    int n,
+    int n, bool bface,
     shared_ptr<vector<int>> indexes,
     shared_ptr<vector<int>> uv_indexes,
     shared_ptr<vector<shared_ptr<Point3f>>> vertexes,
     shared_ptr<vector<shared_ptr<Normal3f>>> normal,
     shared_ptr<vector<shared_ptr<Point2f>>> uvcrds
-  ):n_triangles(n), vertex_indices(indexes), normal_indices(indexes), uvcoord_indices(uv_indexes), 
+  ):n_triangles(n), backface_cull(bface), vertex_indices(indexes), normal_indices(indexes), uvcoord_indices(uv_indexes), 
   vertices(vertexes), normals(normal), uvcoords(uvcrds){}
-
 
   /// Copy constructor disabled
   TriangleMesh( const TriangleMesh& ) = delete;

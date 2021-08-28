@@ -43,9 +43,10 @@ bool Triangle::intersect(const Ray &r, shared_ptr<ObjSurfel> &isect) const{
 	assert((contact - (r.o + r.d * t)).getNorm() < EPS);
 
 	Normal3f finalNormal = (*n[1] * u) + (*n[2] * v) + (*n[0] * (1 - u - v));
-	// cout << (*n[0]).toString() << " " << u << "\n";
-	// cout << (*n[1]).toString() << " " << v << "\n";
-	// cout << (*n[2]).toString() << " " << (1 - u - v) << "\n";
+	finalNormal = finalNormal.normalize();
+
+	if(mesh->backface_cull && finalNormal * r.d > 0) return false;
+
 
 	isect = unique_ptr<ObjSurfel>(new ObjSurfel(contact, finalNormal, r.d * -1, t));	
 	return true;

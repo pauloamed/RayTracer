@@ -7,8 +7,11 @@ bool Bounds3f::box_intersect(const Ray &ray, pair<real_type, real_type> &hits) c
   hits = {-INF, INF};
 
   for(int i = 0; i < 3; ++i){
-    if(ray.d.at(i) == 0) continue;
-    real_type invDir = 1.0 / ray.d.at(i);
+    real_type invDir;
+
+    if(ray.d.at(i) == 0) invDir = INF;
+    else invDir = 1.0 / ray.d.at(i);
+    
     real_type minT = (minPoint.at(i) - ray.o.at(i)) * invDir;
     real_type maxT = (maxPoint.at(i) - ray.o.at(i)) * invDir;
     if(minT > maxT) swap(minT, maxT);

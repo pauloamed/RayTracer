@@ -59,6 +59,7 @@ class BVHAccel : public AggregatePrimitive{
 
 private:
 	static vector<shared_ptr<BVHAccel>> createLeaves(vector<shared_ptr<BoundedPrimitive>> &&prim, size_t leafSize);
+	static bool boundedComp(shared_ptr<BoundedPrimitive> a, shared_ptr<BoundedPrimitive> b);
 
 public:
 	BVHAccel(vector<shared_ptr<BoundedPrimitive>> &&prim):AggregatePrimitive(std::move(prim)){}

@@ -8,17 +8,17 @@ namespace rt3{
 
 
 class Bounds3f{
-private:
+// private:
   // This is an axis-aligned 3d box. Therefore, for each axis, there are only two possible values.
   // (a box has 8 vertexes = 2^3 (for each of the 3 axis, there are 2 possible values))
 
   // minPoint will keep the minimum values for each axis
   // maxPoint will keep the maximum values for each axis
   // it is a non-degenerated box. Thus, values across the same axis are distincts
-  Point3f minPoint, maxPoint; 
 
 
 public:
+  Point3f minPoint, maxPoint; 
   Bounds3f(Point3f minP, Point3f maxP):minPoint(minP), maxPoint(maxP){}
 
   bool box_intersect(const Ray &ray, pair<real_type, real_type> &hits) const;
