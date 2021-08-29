@@ -30,8 +30,14 @@ public:
     return values[i];
   }
 
-  StructuredValues operator*(const Matrix &m){
+  StructuredValues operator*(const Matrix &m) const{
     return *this;
+  }
+
+  StructuredValues operator*(real_type t) const{
+      StructuredValues v(*this);
+      for(auto &x : v.values) x *= t;
+      return v;
   }
 
   inline T x() const{ return values[0]; }
@@ -54,6 +60,7 @@ public:
 
 template<typename T, int size> struct Vector : 
     public StructuredValues<T, size>{
+      
   private:
     using StructuredValues<T, size>::values;
   public:
@@ -63,50 +70,56 @@ template<typename T, int size> struct Vector :
   Vector():StructuredValues<T,size>(){}
   Vector(const Vector &clone):StructuredValues<T,size>(clone){}
   Vector(const vector<T> &_values):StructuredValues<T,size>(_values){}
+
+  Vector(StructuredValues<T,size> base):StructuredValues<T,size>(base){}
     
-    Vector operator*(real_type t) const{
-        Vector v(*this);
-        for(auto &x : v.values) x *= t;
-        return v;
-    }
 
-    real_type operator*(const Vector &u) const{
-      real_type prod = 0;
-      for(int i = 0; i < size; ++i){
-        prod += this->at(i) * u.at(i);
-      }
-      return prod;
-    }
 
-    Vector normalize() const{
-      Vector v(*this);
-      real_type norm = v.getNorm();
-      return v * (1.0 / norm);
-    }
+  Vector operator*(real_type t) const{
+    return StructuredValues<T,size>::operator*(t);
+  }
 
-    Vector abs() const{
-      Vector v(*this);
-      for(int i = 0; i < size; ++i){
-        v[i] = fabs(v[i]);
-      }
-      return v;
-    }
+  Vector operator*(const Matrix &m) const{
+    return StructuredValues<T,size>::operator*(m);
+  }
 
-    Vector cross(const Vector &x) const{
-      Vector v(*this);
-      v[0] = this->at(1) * x.at(2) - this->at(2) * x.at(1);
-      v[1] = this->at(2) * x.at(0) - this->at(0) * x.at(2);
-      v[2] = this->at(0) * x.at(1) - this->at(1) * x.at(0);
-      return v;
+  real_type operator*(const Vector &u) const{
+    real_type prod = 0;
+    for(int i = 0; i < size; ++i){
+      prod += this->at(i) * u.at(i);
     }
+    return prod;
+  }
 
-    real_type getNorm() const{
-      real_type norm = 0;
-      for(auto x : values){
-        norm += x * x;
-      }
-      return sqrt(norm);
+  Vector normalize() const{
+    Vector v(*this);
+    real_type norm = v.getNorm();
+    return v * (1.0 / norm);
+  }
+
+  Vector abs() const{
+    Vector v(*this);
+    for(int i = 0; i < size; ++i){
+      v[i] = fabs(v[i]);
     }
+    return v;
+  }
+
+  Vector cross(const Vector &x) const{
+    Vector v(*this);
+    v[0] = this->at(1) * x.at(2) - this->at(2) * x.at(1);
+    v[1] = this->at(2) * x.at(0) - this->at(0) * x.at(2);
+    v[2] = this->at(0) * x.at(1) - this->at(1) * x.at(0);
+    return v;
+  }
+
+  real_type getNorm() const{
+    real_type norm = 0;
+    for(auto x : values){
+      norm += x * x;
+    }
+    return sqrt(norm);
+  }
 };
 
 
@@ -118,13 +131,15 @@ template<typename T, int size> struct Point :
   Point():StructuredValues<T,size>(){}
   Point(const Point &clone):StructuredValues<T,size>(clone){}
   Point(const vector<T> &_values):StructuredValues<T,size>(_values){}
+  Point(StructuredValues<T,size> base):StructuredValues<T,size>(base){}
 
   Point operator*(real_type t) const{
-      Point p(*this);
-      for(auto &x : p.values) x *= t;
-      return p;
+    return StructuredValues<T,size>::operator*(t);
   }
 
+  Point operator*(const Matrix &m) const{
+    return StructuredValues<T,size>::operator*(m);
+  }
 };
 
 

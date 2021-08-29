@@ -23,6 +23,10 @@ struct Matrix{
     return a.m == b.m;
   }
 
+  friend bool operator!=(const Matrix &a, const Matrix &b){
+    return a.m != b.m;
+  }
+
   };
 
 }
