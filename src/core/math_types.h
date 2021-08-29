@@ -30,10 +30,6 @@ public:
     return values[i];
   }
 
-  StructuredValues operator*(const Matrix &m) const{
-    return *this;
-  }
-
   StructuredValues operator*(real_type t) const{
       StructuredValues v(*this);
       for(auto &x : v.values) x *= t;
@@ -73,14 +69,8 @@ template<typename T, int size> struct Vector :
 
   Vector(StructuredValues<T,size> base):StructuredValues<T,size>(base){}
     
-
-
   Vector operator*(real_type t) const{
     return StructuredValues<T,size>::operator*(t);
-  }
-
-  Vector operator*(const Matrix &m) const{
-    return StructuredValues<T,size>::operator*(m);
   }
 
   real_type operator*(const Vector &u) const{
@@ -137,9 +127,6 @@ template<typename T, int size> struct Point :
     return StructuredValues<T,size>::operator*(t);
   }
 
-  Point operator*(const Matrix &m) const{
-    return StructuredValues<T,size>::operator*(m);
-  }
 };
 
 
@@ -183,6 +170,26 @@ Vector<T, size> operator+(const Vector<T, size> &x, const Vector<T,size> &y){
     }
     // std::cout << "+ " << x.toString() << " " << y.toString() << " " << v.toString() << std::endl;
     return v;
+}
+
+template<typename T, int size>
+StructuredValues<T, size> customMult(const Matrix &matrix, const StructuredValues<T, size> &element){
+  // (N x M) . (L x 1) = (N x 1) => (L x 1)
+  int n = matrix.size();
+  int m = matrix[0].size();
+  int l = element.size();
+
+  vector<T> ret;
+  for(int i = 0; i < l; ++i){
+    int x = 0;
+    for(int j = 0; j < m; ++j){
+      int fromMatrix = ((i < n)? matrix[i][j] : 1);
+      int fromElement = ((j < l)? element[j] : 1);
+      x += (fromMatrix * fromElement);
+    }
+    ret.push_back(x);
+  }
+  return StructuredValues(ret);
 }
 
 // Point aliases

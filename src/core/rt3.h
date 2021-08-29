@@ -34,6 +34,9 @@ using std::tuple;
 #include <array>
 using std::array;
 
+using std::make_shared;
+using std::make_unique;
+
 #include "error.h"
 #include "math_types.h"
 #include "color.h"

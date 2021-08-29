@@ -29,10 +29,10 @@ public:
   const Matrix &GetMatrix() const;
   const Matrix &GetInverseMatrix() const;
 
-  Point3f operator()(const Point3f &p) ;
-  Vector3f operator()(const Vector3f &v) const;
-  Ray operator()(const Ray &r) const;
-  Bounds3f operator()(const Bounds3f &b) const;  
+  Point3f apply(const Point3f &p) const;
+  Vector3f apply(const Vector3f &v) const;
+  Ray apply(const Ray &r) const;
+  Bounds3f apply(const Bounds3f &b) const;  
   
   Transform update(const Transform &t2) const;
 
@@ -41,6 +41,7 @@ public:
   static Transform getScalingMatrix(const Point3f &v);
   static Transform getIdentityMatrix();
 };
+
 
 const shared_ptr<Transform> IDENTITY = make_shared<Transform>(Transform::getIdentityMatrix());
 

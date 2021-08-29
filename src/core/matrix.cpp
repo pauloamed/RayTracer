@@ -23,9 +23,7 @@ namespace rt3{
   bool Matrix::isIdentity() const{
     assert(m.size() == m[0].size());
     int totActive = 0;
-    for(auto &x : m){
-      totActive += std::accumulate(x.begin(), x.end(), 0);
-    }
+    for(auto &x : m) totActive += std::accumulate(x.begin(), x.end(), 0);
     if(totActive != m.size()) return false;
     for(int i = 0; i < m.size(); ++i){
       if(m[i][i] != 1) return false;
@@ -40,7 +38,23 @@ namespace rt3{
   }
 
   Matrix operator*(const Matrix &a, const Matrix &b){
-    return a;
+    // (N x M) (O x P) = (N x P)
+    int n = a.m.size();
+    int m = a.m[0].size();
+    int o = b.m.size();
+    int p = b.m[0].size();
+    assert(m == o);
+
+    vector<vector<real_type>> newVals(n, vector<real_type>(p));
+    for(int i = 0; i < n; ++i){
+      for(int j = 0; j < p; ++j){
+        for(int k = 0; k < m; ++k){
+          newVals[i][j] += a.m[i][k] * b.m[k][j];
+        }
+      }
+    }
+
+    return Matrix(newVals);
   }
 
 }

@@ -24,23 +24,23 @@ const Matrix &Transform::GetMatrix() const { return m; }
 
 const Matrix &Transform::GetInverseMatrix() const { return mInv; }
 
-Point3f Transform::operator()(const Point3f &p){
-  return p * m;
+Point3f Transform::apply(const Point3f &p) const{
+  return customMult(m, p);
 }
 
-Vector3f Transform::operator()(const Vector3f &v) const{
-  return v * m;
+Vector3f Transform::apply(const Vector3f &v) const{
+  return customMult(m, v);
 }
 
-Ray Transform::operator()(const Ray &r) const{
-  auto newD = r.d * m;
-  auto newO = r.o * m;
+Ray Transform::apply(const Ray &r) const{
+  auto newD = customMult(m, r.d);
+  auto newO = customMult(m, r.o);
   return Ray(newD, newO);
 }
 
-Bounds3f Transform::operator()(const Bounds3f &b) const{
-  auto newMinP = b.minPoint * m;
-  auto newMaxP = b.maxPoint * m;
+Bounds3f Transform::apply(const Bounds3f &b) const{
+  auto newMinP = customMult(m, b.minPoint);
+  auto newMaxP = customMult(m, b.maxPoint);
   return Bounds3f(newMinP, newMaxP);
 }
 
@@ -50,15 +50,27 @@ Transform Transform::update(const Transform &t2) const{
 
 
 Transform Transform::getTranslationMatrix(const Vector3f &v){
-  return Transform();
+  vector<vector<real_type>> m = {
+    {1, 0, 0, v.at(0)},
+    {0, 1, 0, v.at(1)},
+    {0, 0, 1, v.at(2)},
+    {0, 0, 0, 1}
+  };
+  return Transform(Matrix(m));
 }
 
 Transform Transform::getRotationMatrix(const Point3f &v){
   return Transform();
 }
 
-Transform Transform::getScalingMatrix(const Point3f &v){
-  return Transform();
+Transform Transform::getScalingMatrix(const Point3f &p){
+  vector<vector<real_type>> m = {
+    {p.at(0), 0, 0, 0},
+    {0, p.at(1), 0, 0},
+    {0, 0, p.at(2), 0},
+    {0, 0, 0, 1}
+  };
+  return Transform(Matrix(m));
 }
 
 

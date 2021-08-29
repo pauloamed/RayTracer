@@ -82,7 +82,7 @@ namespace rt3 {
             stack<shared_ptr<Transform>> ctm_states;
 
             MatrixTransformationState(){
-                ctm_states.push(make_shared<Transform>(new Transform()));
+                ctm_states.push(shared_ptr<Transform>(new Transform()));
             }
 
             MatrixTransformationState(shared_ptr<Transform> t){
