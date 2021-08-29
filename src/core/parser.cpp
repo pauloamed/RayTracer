@@ -234,6 +234,66 @@ void parse_tags(tinyxml2::XMLElement *p_element, int level) {
       parse_parameters(p_element, param_list, &ps);
 
       API::camera(ps);
+    } else if (tag_name == "push_GS") {
+      API::push_GS();
+    } else if (tag_name == "pop_GS") {
+      API::pop_GS();
+    } else if (tag_name == "push_CTM") {
+      API::push_CTM();
+    } else if (tag_name == "pop_CTM") {
+      API::pop_CTM();
+    } else if (tag_name == "identity") {
+      API::identity();
+    } else if (tag_name == "translate") {
+      ParamSet ps;
+
+      vector<std::pair<param_type_e, string>> param_list{
+          {param_type_e::VEC3F, "value"}
+      };
+
+      parse_parameters(p_element, param_list, &ps);
+
+      API::translate(ps);
+    } else if (tag_name == "scale") {
+      ParamSet ps;
+
+      vector<std::pair<param_type_e, string>> param_list{
+          {param_type_e::POINT3F, "value"}
+      };
+
+      parse_parameters(p_element, param_list, &ps);
+
+      API::scale(ps);      
+    } else if (tag_name == "rotate") {
+      ParamSet ps;
+
+      vector<std::pair<param_type_e, string>> param_list{
+          {param_type_e::POINT3F, "value"}
+      };
+
+      parse_parameters(p_element, param_list, &ps);
+
+      API::rotate(ps);      
+    } else if (tag_name == "save_coord_system") {
+      ParamSet ps;
+
+      vector<std::pair<param_type_e, string>> param_list{
+          {param_type_e::STRING, "name"}
+      };
+
+      parse_parameters(p_element, param_list, &ps);
+
+      API::save_coord_system(ps);       
+    } else if (tag_name == "restore_coord_system") {
+      ParamSet ps;
+
+      vector<std::pair<param_type_e, string>> param_list{
+          {param_type_e::STRING, "name"}
+      };
+
+      parse_parameters(p_element, param_list, &ps);
+
+      API::restore_coord_system(ps);         
     } else if (tag_name == "lookat") {
       ParamSet ps;
 

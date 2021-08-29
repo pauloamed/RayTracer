@@ -33,4 +33,14 @@ namespace rt3{
     return true;
   }
 
+  Matrix Matrix::getIdentity(int n){
+    vector<vector<real_type>> m(n, vector<real_type>(n));
+    for(int i = 0; i < n; ++i) m[i][i] = 1;
+    return Matrix(m);
+  }
+
+  Matrix operator*(const Matrix &a, const Matrix &b){
+    return a;
+  }
+
 }

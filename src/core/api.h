@@ -5,6 +5,7 @@
 #include <string>
 #include "rt3-base.h"
 #include "primitive.h"
+#include "transform.h"
 
 #include "../mesh/triangle_parser.h"
 
@@ -76,20 +77,76 @@ namespace rt3 {
     };
 
     /// Collection of data related to a Graphics state, such as current material, lib of material, etc.
-    struct GraphicsState
-    {
-        stack<shared_ptr<Material>> curr_material;
+    struct GraphicsState{
+        struct MatrixTransformationState{
+            stack<shared_ptr<Transform>> ctm_states;
+
+            MatrixTransformationState(){
+                ctm_states.push(make_shared<Transform>(new Transform()));
+            }
+
+            MatrixTransformationState(shared_ptr<Transform> t){
+                ctm_states.push(t);
+            }
+
+            void persistMatrix(){
+                ctm_states.push(ctm_states.top());
+            }
+
+            void rollbackMatrix(){
+                ctm_states.pop();
+            }
+
+            shared_ptr<Transform> getCTM(){
+                return ctm_states.top();
+            }  
+
+            void set(shared_ptr<Transform> t){
+                ctm_states.top() = t;
+            }  
+
+            void transformCTM(Transform &t){
+                (*ctm_states.top()) = ctm_states.top()->update(t);
+            }
+        };
+
+        struct InternalState{       
+            MatrixTransformationState mts;
+            shared_ptr<Material> material;
+
+            InternalState():material(nullptr){ }
+
+            InternalState(shared_ptr<Material> mat, shared_ptr<Transform> t):
+                mts(t), material(mat){ }
+        
+        };
+
+        stack<InternalState> states;
 
         GraphicsState(){
-            curr_material.push(nullptr);
+            states.push(InternalState());
         }
 
         void setMaterial(shared_ptr<Material> mat){
-            curr_material.top() = mat;
+            states.top().material = mat;
         }
 
-        shared_ptr<Material> getCurrMaterial(){
-            return curr_material.top();
+        shared_ptr<Material> material(){
+            return states.top().material;
+        }
+
+        MatrixTransformationState& mts(){
+            return states.top().mts;
+        }
+
+        void persistState(){
+            // novo estado na ovai ter tudo na pilha nao
+            auto newInternal = InternalState(states.top().material, states.top().mts.getCTM());
+            states.push(newInternal);
+        }
+
+        void rollbackState(){
+            states.pop();
         }
 
     };
@@ -97,10 +154,8 @@ namespace rt3 {
     struct GraphicsContext
     {
         map<string,shared_ptr<Material>> named_materials;
-
-
+        map<string,shared_ptr<Transform>> coords_systems;
     };
-
 
 
     /// Static class that manages the render process
@@ -180,12 +235,17 @@ namespace rt3 {
             static void create_named_material( const ParamSet& ps );
             static void named_material( const ParamSet& ps );
 
-            static void pop_gs( void );
-            static void push_gs( void );
+            static void pop_GS( void );
+            static void push_GS( void );
+            static void pop_CTM( void );
+            static void push_CTM( void );            
 
             static void translate( const ParamSet& ps );
             static void rotate( const ParamSet& ps );
             static void scale( const ParamSet& ps );
+            static void identity( void );
+            static void save_coord_system( const ParamSet& ps );
+            static void restore_coord_system( const ParamSet& ps );
             
             static void material( const ParamSet& ps );
             static void object( const ParamSet& ps );

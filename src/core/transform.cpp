@@ -44,9 +44,28 @@ Bounds3f Transform::operator()(const Bounds3f &b) const{
   return Bounds3f(newMinP, newMaxP);
 }
 
-Transform Transform::operator*(const Transform &t2) const{
-
+Transform Transform::update(const Transform &t2) const{
+  return Transform(m * t2.m);
 }
+
+
+Transform Transform::getTranslationMatrix(const Vector3f &v){
+  return Transform();
+}
+
+Transform Transform::getRotationMatrix(const Point3f &v){
+  return Transform();
+}
+
+Transform Transform::getScalingMatrix(const Point3f &v){
+  return Transform();
+}
+
+
+Transform Transform::getIdentityMatrix(){
+  return Transform();
+}
+
 
 
 }

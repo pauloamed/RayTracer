@@ -19,13 +19,13 @@ struct Matrix{
 
   bool isIdentity() const;
 
-  friend bool operator==(const Matrix &a, const Matrix &b){
-    return a.m == b.m;
-  }
+  friend bool operator==(const Matrix &a, const Matrix &b){ return a.m == b.m; }
 
-  friend bool operator!=(const Matrix &a, const Matrix &b){
-    return a.m != b.m;
-  }
+  friend bool operator!=(const Matrix &a, const Matrix &b){ return a.m != b.m; }
+
+  friend Matrix operator*(const Matrix &a, const Matrix &b);
+
+  static Matrix getIdentity(int n);
 
   };
 

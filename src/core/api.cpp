@@ -201,25 +201,59 @@ void API::create_named_material(const ParamSet &ps) {
   curr_GC.named_materials[material_name] = shared_ptr<Material>(make_material(ps));
 }
 
-void API::pop_gs( void ){
-
+void API::pop_GS( void ){
+  curr_GS.rollbackState();
 }
 
-void API::push_gs( void ){
+void API::push_GS( void ){
+  curr_GS.persistState();
+}
 
+void API::pop_CTM( void ){
+  curr_GS.mts().rollbackMatrix();
+}
+
+void API::push_CTM( void ){
+  curr_GS.mts().persistMatrix();
 }
 
 void API::translate( const ParamSet& ps ){
-
+  Vector3f translVec = retrieve(ps, "value", Vector3f());
+  auto translT = Transform::getTranslationMatrix(translVec);
+  curr_GS.mts().transformCTM(translT);
 }
 
 void API::rotate( const ParamSet& ps ){
-
+  Point3f rotPoint = retrieve(ps, "value", Point3f());
+  auto rotT = Transform::getRotationMatrix(rotPoint);
+  curr_GS.mts().transformCTM(rotT);
 }
 
 void API::scale( const ParamSet& ps ){
-
+  Point3f scalePoint = retrieve(ps, "value", Point3f());
+  auto scaleT = Transform::getScalingMatrix(scalePoint);
+  curr_GS.mts().transformCTM(scaleT);
 }
+
+void API::identity( void ){
+  curr_GS.mts().set(IDENTITY);
+}
+
+void API::save_coord_system( const ParamSet& ps ){
+  string name = retrieve(ps, "name", string());
+  curr_GC.coords_systems[name] = curr_GS.mts().getCTM();
+}
+
+void API::restore_coord_system( const ParamSet& ps ){
+  string name = retrieve(ps, "name", string());
+  if(curr_GC.coords_systems.count(name)){
+    curr_GS.mts().set(curr_GC.coords_systems[name]);
+  }else{
+    RT3_ERROR("Coord system unkown!");
+  }
+}
+
+
 
 void API::background(const ParamSet &ps) {
   std::cout << ">>> Inside API::background()\n";
@@ -266,18 +300,18 @@ void API::object(const ParamSet &ps) {
 
       if(status){
         md->backface_cull = retrieve(ps, "backface_cull", false);
-        render_opt->mesh_primitives.push_back({md, curr_GS.getCurrMaterial()});
+        render_opt->mesh_primitives.push_back({md, curr_GS.material()});
       }else{
         RT3_ERROR("Couldn't load obj file");
       }
     }else{
       render_opt->mesh_primitives.push_back({
         shared_ptr<TriangleMesh>(create_triangle_mesh(ps)), 
-        curr_GS.getCurrMaterial()
+        curr_GS.material()
       });
     }
   }else{
-    render_opt->primitives.push_back({ps, curr_GS.getCurrMaterial()});
+    render_opt->primitives.push_back({ps, curr_GS.material()});
   }  
 }
 
