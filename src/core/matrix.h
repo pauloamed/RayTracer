@@ -5,16 +5,15 @@
 
 namespace rt3{
 
-// template<typename T>
 struct Matrix4x4{
-// private:
-  array<array<real_type, 4>, 4> m;
+  real_type m[4][4];
 
-// public:
+
+  Matrix4x4(){}
 
   Matrix4x4(const vector<vector<real_type>> &matrix){
     for(size_t i = 0; i < matrix.size(); ++i){
-      for(size_t j = 0; j < matrix[i].size(); ++i){
+      for(size_t j = 0; j < matrix[i].size(); ++j){
         m[i][j] = matrix[i][j];
       }
     }

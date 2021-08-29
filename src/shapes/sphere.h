@@ -14,8 +14,8 @@ public:
 
     shared_ptr<Transform> transform;
     
-    Sphere(bool flip_n, Point3f ori, real_type r):
-        flip_normals(flip_n), origin(ori), radius(r){}
+    Sphere(bool flip_n, Point3f ori, real_type r, shared_ptr<Transform> t):
+        flip_normals(flip_n), origin(ori), radius(r), transform(t){}
 
     ~Sphere(){}
 
@@ -25,7 +25,7 @@ public:
 };
 
 
-Sphere *create_sphere(const ParamSet &ps);
+Sphere *create_sphere(const ParamSet &ps, shared_ptr<Transform> t);
 
 }
 

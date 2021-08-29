@@ -5,9 +5,9 @@ namespace rt3{
 
   Matrix4x4 Matrix4x4::transpose() const{
     vector<vector<real_type>> newM;
-    for(size_t i = 0; i < m[0].size(); ++i){
+    for(size_t i = 0; i < 4; ++i){
       vector<real_type> row;
-      for(size_t j = 0; j < m.size(); ++j){
+      for(size_t j = 0; j < 4; ++j){
         row.push_back(m[j][i]);
       }
       newM.push_back(row);
@@ -21,11 +21,10 @@ namespace rt3{
   }
 
   bool Matrix4x4::isIdentity() const{
-    assert(m.size() == m[0].size());
     int totActive = 0;
-    for(auto &x : m) totActive += std::accumulate(x.begin(), x.end(), 0);
-    if(totActive != m.size()) return false;
-    for(size_t i = 0; i < m.size(); ++i){
+    for(auto &x : m) for(int i = 0; i < 4; ++i) totActive += x[i];
+    if(totActive != 4) return false;
+    for(size_t i = 0; i < 4; ++i){
       if(m[i][i] != 1) return false;
     }
     return true;
@@ -39,17 +38,10 @@ namespace rt3{
   }
 
   Matrix4x4 operator*(const Matrix4x4 &a, const Matrix4x4 &b){
-    // (N x M) (O x P) = (N x P)
-    int n = a.m.size();
-    int m = a.m[0].size();
-    int o = b.m.size();
-    int p = b.m[0].size();
-    assert(m == o);
-
-    vector<vector<real_type>> newVals(n, vector<real_type>(p));
-    for(int i = 0; i < n; ++i){
-      for(int j = 0; j < p; ++j){
-        for(int k = 0; k < m; ++k){
+    vector<vector<real_type>> newVals(4, vector<real_type>(4));
+    for(int i = 0; i < 4; ++i){
+      for(int j = 0; j < 4; ++j){
+        for(int k = 0; k < 4; ++k){
           newVals[i][j] += a.m[i][k] * b.m[k][j];
         }
       }

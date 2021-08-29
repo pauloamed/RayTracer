@@ -171,7 +171,7 @@ Shape * API::make_shape( const ParamSet& ps ){
 
     Shape *shape = nullptr;
     if(type == object_type_t::sphere){
-        shape = create_sphere(ps);
+        shape = create_sphere(ps, curr_GS.mts().getCTM());
     }else{
         RT3_ERROR("Unknown object type.");
     }

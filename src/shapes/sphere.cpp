@@ -68,11 +68,12 @@ Bounds3f Sphere::computeBounds() const{
   return transform->apply(Bounds3f(minPoint, maxPoint));
 }
 
-Sphere *create_sphere(const ParamSet &ps){
+Sphere *create_sphere(const ParamSet &ps, shared_ptr<Transform> t){
     return new Sphere(
         retrieve(ps, "flip", false),
         retrieve(ps, "center", Point3f()),
-        retrieve(ps, "radius", real_type(1))
+        retrieve(ps, "radius", real_type(1)),
+        t
     );
 }
 

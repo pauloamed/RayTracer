@@ -179,8 +179,7 @@ Vector<T, size> operator+(const Vector<T, size> &x, const Vector<T,size> &y){
 template<typename T, int size>
 StructuredValues<T, size> customMult(const Matrix4x4 &matrix, const StructuredValues<T, size> &element){
   // (N x M) . (L x 1) = (N x 1) => (L x 1)
-  int n = matrix.m.size();
-  int m = matrix.m[0].size();
+  int n = 4, m = 4;
   int l = size;
 
   vector<T> ret;
