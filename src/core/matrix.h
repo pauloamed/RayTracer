@@ -6,26 +6,32 @@
 namespace rt3{
 
 // template<typename T>
-struct Matrix{
+struct Matrix4x4{
 // private:
-  vector<vector<real_type>> m;
+  array<array<real_type, 4>, 4> m;
 
 // public:
 
-  Matrix(const vector<vector<real_type>> &matrix):m(matrix){}
+  Matrix4x4(const vector<vector<real_type>> &matrix){
+    for(size_t i = 0; i < matrix.size(); ++i){
+      for(size_t j = 0; j < matrix[i].size(); ++i){
+        m[i][j] = matrix[i][j];
+      }
+    }
+  }
 
-  Matrix transpose() const;
-  Matrix inverse() const;
+  Matrix4x4 transpose() const;
+  Matrix4x4 inverse() const;
 
   bool isIdentity() const;
 
-  friend bool operator==(const Matrix &a, const Matrix &b){ return a.m == b.m; }
+  friend bool operator==(const Matrix4x4 &a, const Matrix4x4 &b){ return a.m == b.m; }
 
-  friend bool operator!=(const Matrix &a, const Matrix &b){ return a.m != b.m; }
+  friend bool operator!=(const Matrix4x4 &a, const Matrix4x4 &b){ return a.m != b.m; }
 
-  friend Matrix operator*(const Matrix &a, const Matrix &b);
+  friend Matrix4x4 operator*(const Matrix4x4 &a, const Matrix4x4 &b);
 
-  static Matrix getIdentity(int n);
+  static Matrix4x4 getIdentity();
 
   };
 

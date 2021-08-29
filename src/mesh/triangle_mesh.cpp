@@ -2,7 +2,7 @@
 
 namespace rt3{
 
-TriangleMesh *create_triangle_mesh(const ParamSet &ps){
+TriangleMesh *create_triangle_mesh(const ParamSet &ps, shared_ptr<Transform> transform){
 
   auto n = retrieve(ps, "ntriangles", 1);
   auto backface_cull = retrieve(ps, "backface_cull", false);
@@ -28,12 +28,20 @@ TriangleMesh *create_triangle_mesh(const ParamSet &ps){
     RT3_ERROR("Not implemented.");
   }
 
-  return new TriangleMesh(n, backface_cull, indices, (uv==nullptr? nullptr : indices), vertices, normals, uv);
+  auto tm = new TriangleMesh(n, backface_cull, indices, (uv==nullptr? nullptr : indices), vertices, normals, uv);
+
+  if(transform) tm->applyTransform(transform);
+
+  return tm;
 }
 
 Normal3f compute_normals(shared_ptr<Point3f> a, shared_ptr<Point3f> b, shared_ptr<Point3f> c){
   Vector3f edges[2] = {*a - *b, *c - *a};
   return edges[0].cross(edges[1]);
+}
+
+void TriangleMesh::applyTransform(shared_ptr<Transform> transform){
+
 }
 
 }

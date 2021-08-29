@@ -2,6 +2,7 @@
 #define SPHERE_H
 
 #include "../core/shape.h"
+#include "../core/transform.h"
 
 namespace rt3{
 
@@ -10,6 +11,8 @@ public:
     bool flip_normals;
     Point3f origin;
     real_type radius;
+
+    shared_ptr<Transform> transform;
     
     Sphere(bool flip_n, Point3f ori, real_type r):
         flip_normals(flip_n), origin(ori), radius(r){}

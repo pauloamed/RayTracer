@@ -3,41 +3,42 @@
 
 namespace rt3{
 
-  Matrix Matrix::transpose() const{
+  Matrix4x4 Matrix4x4::transpose() const{
     vector<vector<real_type>> newM;
-    for(int i = 0; i < m[0].size(); ++i){
+    for(size_t i = 0; i < m[0].size(); ++i){
       vector<real_type> row;
-      for(int j = 0; j < m.size(); ++j){
+      for(size_t j = 0; j < m.size(); ++j){
         row.push_back(m[j][i]);
       }
       newM.push_back(row);
     }
-    return Matrix(newM);
+    return Matrix4x4(newM);
   }
 
 
-  Matrix Matrix::inverse() const{
+  Matrix4x4 Matrix4x4::inverse() const{
 
   }
 
-  bool Matrix::isIdentity() const{
+  bool Matrix4x4::isIdentity() const{
     assert(m.size() == m[0].size());
     int totActive = 0;
     for(auto &x : m) totActive += std::accumulate(x.begin(), x.end(), 0);
     if(totActive != m.size()) return false;
-    for(int i = 0; i < m.size(); ++i){
+    for(size_t i = 0; i < m.size(); ++i){
       if(m[i][i] != 1) return false;
     }
     return true;
   }
 
-  Matrix Matrix::getIdentity(int n){
+  Matrix4x4 Matrix4x4::getIdentity(){
+    int n = 4;
     vector<vector<real_type>> m(n, vector<real_type>(n));
     for(int i = 0; i < n; ++i) m[i][i] = 1;
-    return Matrix(m);
+    return Matrix4x4(m);
   }
 
-  Matrix operator*(const Matrix &a, const Matrix &b){
+  Matrix4x4 operator*(const Matrix4x4 &a, const Matrix4x4 &b){
     // (N x M) (O x P) = (N x P)
     int n = a.m.size();
     int m = a.m[0].size();
@@ -54,7 +55,7 @@ namespace rt3{
       }
     }
 
-    return Matrix(newVals);
+    return Matrix4x4(newVals);
   }
 
 }

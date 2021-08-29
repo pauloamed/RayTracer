@@ -3,6 +3,7 @@
 namespace rt3{
     
 bool Sphere::intersect_p(const Ray &r, real_type maxT) const{
+    auto invRay = transform->inverse().apply(r);
 
     Vector3f centerToOrigin = (r.o - origin);
 
@@ -24,6 +25,8 @@ bool Sphere::intersect_p(const Ray &r, real_type maxT) const{
 }
 
 bool Sphere::intersect(const Ray &r, shared_ptr<ObjSurfel> &isect) const{
+    auto invRay = transform->inverse().apply(r);
+
     Vector3f centerToOrigin = (r.o - origin);
     real_type A = r.d * r.d;
     real_type B = 2 * (centerToOrigin * r.d);
@@ -45,7 +48,12 @@ bool Sphere::intersect(const Ray &r, shared_ptr<ObjSurfel> &isect) const{
 
         Vector3f normal = (contact - origin).normalize();
 
-        isect = unique_ptr<ObjSurfel>(new ObjSurfel(contact + normal * EPS, normal, r.d * -1, t[0]));
+        // O que devo transformar de volta?
+        Point3f contactPoint = transform->apply(contact + normal * EPS);
+        normal = transform->apply(normal);
+        Vector3f newDir = transform->apply(r.d * -1);
+
+        isect = unique_ptr<ObjSurfel>(new ObjSurfel(contactPoint, normal, newDir, t[0]));
         return true;
     }else{
         return false;
@@ -57,7 +65,7 @@ Bounds3f Sphere::computeBounds() const{
 
   Point3f maxPoint = origin + radiusPoint;
   Point3f minPoint = origin + (radiusPoint * -1);
-  return Bounds3f(minPoint, maxPoint);
+  return transform->apply(Bounds3f(minPoint, maxPoint));
 }
 
 Sphere *create_sphere(const ParamSet &ps){

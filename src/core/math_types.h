@@ -15,6 +15,10 @@ public:
   StructuredValues(){ values = array<T,size>();}
   StructuredValues(const StructuredValues &clone) = default;
 
+  template <typename _T, int _size>
+  friend StructuredValues<_T, _size> customMult(const Matrix4x4 &matrix, const StructuredValues<_T, _size> &element);
+
+
   StructuredValues(const vector<T> &_values){
     assert(values.size() == size);
     copy_n(_values.begin(), _values.size(), values.begin());
@@ -173,23 +177,23 @@ Vector<T, size> operator+(const Vector<T, size> &x, const Vector<T,size> &y){
 }
 
 template<typename T, int size>
-StructuredValues<T, size> customMult(const Matrix &matrix, const StructuredValues<T, size> &element){
+StructuredValues<T, size> customMult(const Matrix4x4 &matrix, const StructuredValues<T, size> &element){
   // (N x M) . (L x 1) = (N x 1) => (L x 1)
-  int n = matrix.size();
-  int m = matrix[0].size();
-  int l = element.size();
+  int n = matrix.m.size();
+  int m = matrix.m[0].size();
+  int l = size;
 
   vector<T> ret;
   for(int i = 0; i < l; ++i){
     int x = 0;
     for(int j = 0; j < m; ++j){
-      int fromMatrix = ((i < n)? matrix[i][j] : 1);
-      int fromElement = ((j < l)? element[j] : 1);
+      int fromMatrix = ((i < n)? matrix.m[i][j] : 1);
+      int fromElement = ((j < l)? element.at(j) : 1);
       x += (fromMatrix * fromElement);
     }
     ret.push_back(x);
   }
-  return StructuredValues(ret);
+  return StructuredValues<T, size>(ret);
 }
 
 // Point aliases

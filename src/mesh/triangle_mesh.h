@@ -2,6 +2,7 @@
 #define TRIANGLE_MESH_H
 
 #include "../core/rt3-base.h"
+#include "../core/transform.h"
 
 namespace rt3{
 
@@ -42,10 +43,12 @@ struct TriangleMesh {
   TriangleMesh& operator=( const TriangleMesh & ) = delete;
   /// Move constructor.
   TriangleMesh( TriangleMesh && other ) = delete;
+
+  void applyTransform(shared_ptr<Transform> t);
 };
 
 
-TriangleMesh *create_triangle_mesh(const ParamSet &ps);
+TriangleMesh *create_triangle_mesh(const ParamSet &ps, shared_ptr<Transform> transform);
 
 Normal3f compute_normals();
 

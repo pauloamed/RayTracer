@@ -298,6 +298,8 @@ void API::object(const ParamSet &ps) {
         md
       );
 
+      
+
       if(status){
         md->backface_cull = retrieve(ps, "backface_cull", false);
         render_opt->mesh_primitives.push_back({md, curr_GS.material()});
@@ -306,7 +308,7 @@ void API::object(const ParamSet &ps) {
       }
     }else{
       render_opt->mesh_primitives.push_back({
-        shared_ptr<TriangleMesh>(create_triangle_mesh(ps)), 
+        shared_ptr<TriangleMesh>(create_triangle_mesh(ps, curr_GS.mts().getCTM())), 
         curr_GS.material()
       });
     }

@@ -8,26 +8,26 @@ namespace rt3{
 
 class Transform {
 private:
-  Matrix m, mInv;
+  Matrix4x4 m, mInv;
 public:
 
-  Transform():m(Matrix::getIdentity(4)), mInv(m){}
+  Transform():m(Matrix4x4::getIdentity()), mInv(m){}
 
-  Transform(const Matrix &m) : m(m), mInv(m.inverse()) { }
+  Transform(const Matrix4x4 &matrix) : m(matrix), mInv(matrix.inverse()) { }
 
-  Transform(const Matrix &m, const Matrix &mInv) 
+  Transform(const Matrix4x4 &m, const Matrix4x4 &mInv) 
     : m(m), mInv(mInv) {
   }
 
-  Transform inverse(const Transform &t);
-  Transform transpose(const Transform &t);
+  Transform inverse();
+  Transform transpose();
 
   bool operator==(const Transform &t) const;
   bool operator!=(const Transform &t) const;
   bool IsIdentity() const;
 
-  const Matrix &GetMatrix() const;
-  const Matrix &GetInverseMatrix() const;
+  const Matrix4x4 &GetMatrix() const;
+  const Matrix4x4 &GetInverseMatrix() const;
 
   Point3f apply(const Point3f &p) const;
   Vector3f apply(const Vector3f &v) const;

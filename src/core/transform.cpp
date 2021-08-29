@@ -2,12 +2,12 @@
 
 namespace rt3{
 
-Transform Transform::inverse(const Transform &t) {
-    return Transform(t.mInv, t.m);
+Transform Transform::inverse() {
+    return Transform(mInv, m);
 }
 
-Transform Transform::transpose(const Transform &t) {
-    return Transform(t.m.transpose(), t.mInv.transpose());
+Transform Transform::transpose() {
+    return Transform(m.transpose(), mInv.transpose());
 }
 
 bool Transform::operator==(const Transform &t) const {
@@ -20,9 +20,9 @@ bool Transform::operator!=(const Transform &t) const {
 
 bool Transform::IsIdentity() const { return m.isIdentity(); }
 
-const Matrix &Transform::GetMatrix() const { return m; }
+const Matrix4x4 &Transform::GetMatrix() const { return m; }
 
-const Matrix &Transform::GetInverseMatrix() const { return mInv; }
+const Matrix4x4 &Transform::GetInverseMatrix() const { return mInv; }
 
 Point3f Transform::apply(const Point3f &p) const{
   return customMult(m, p);
@@ -56,7 +56,7 @@ Transform Transform::getTranslationMatrix(const Vector3f &v){
     {0, 0, 1, v.at(2)},
     {0, 0, 0, 1}
   };
-  return Transform(Matrix(m));
+  return Transform(Matrix4x4(m));
 }
 
 Transform Transform::getRotationMatrix(const Point3f &v){
@@ -70,7 +70,7 @@ Transform Transform::getScalingMatrix(const Point3f &p){
     {0, 0, p.at(2), 0},
     {0, 0, 0, 1}
   };
-  return Transform(Matrix(m));
+  return Transform(Matrix4x4(m));
 }
 
 
