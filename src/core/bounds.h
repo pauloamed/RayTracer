@@ -1,7 +1,7 @@
 #ifndef BOUNDS_H
 #define BOUNDS_H
 
-#include "basic_types.h"
+#include "math_base.h"
 #include "rt3.h"
 
 namespace rt3{

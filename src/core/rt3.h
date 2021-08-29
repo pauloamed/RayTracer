@@ -35,7 +35,8 @@ using std::tuple;
 using std::array;
 
 #include "error.h"
-#include "basic_types.h"
+#include "math_types.h"
+#include "color.h"
 
 //== Alias to the chosen data structure to implement a dictionary.
 //#define Dictionary std::unordered_map
@@ -108,6 +109,7 @@ class Material;
 class Shape;
 class Surfel;
 class Scene;
+class Matrix;
 class Light;
 
 

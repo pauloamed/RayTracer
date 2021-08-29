@@ -1,60 +1,10 @@
-#ifndef BASIC_TYPES_H
-#define BASIC_TYPES_H
+#ifndef MATH_TYPES_H
+#define MATH_TYPES_H
 
-#include <array>
-#include <vector>
-#include <string>
-#include <algorithm>
-#include <math.h>
-#include <assert.h>
-#include "error.h"
-#include <sstream>
-
-using std::array;
-using std::string;
-using std::vector;
-using std::pair;
-using std::copy_n;
-using std::min;
-using std::max;
-using std::swap;
+#include "math_base.h"
+#include "matrix.h"
 
 namespace rt3{
-
-//=== aliases
-typedef float real_type;
-typedef size_t size_type;
-typedef std::tuple<bool, std::string> result_type;
-
-/*! Linear interpolation.
- * \param t The parameter, in [0,1].
- * \param v1 The initial interpolation value.
- * \param v2 The final interpolation value.
- * \return The interpolated value.
- */
-//
-inline float Lerp(float t, float v1, float v2) {
-  return (1.f - t) * v1 + t * v2;
-}
-
-/// Clamp T to [low,high].
-template <typename T, typename U, typename V>
-inline T Clamp(T val, U low, V high) {
-  if (val < low)
-    return low;
-  else if (val > high)
-    return high;
-  else
-    return val;
-}
-
-/// Degrees to radians.
-inline real_type Radians(real_type deg) { return ((real_type)M_PI / 180.f) * deg; }
-
-/// Radians to degreees.
-inline real_type Degrees(real_type rad) { return (180.f / (real_type)M_PI) * rad; }
-
-
 
 // wrapper class for structured point values
 template <typename T, int size> class StructuredValues {
@@ -80,6 +30,10 @@ public:
     return values[i];
   }
 
+  StructuredValues operator*(const Matrix &m){
+    return *this;
+  }
+
   inline T x() const{ return values[0]; }
   inline T y() const{ return values[1]; }
   inline T z() const{ 
@@ -99,11 +53,12 @@ public:
 };
 
 template<typename T, int size> struct Vector : 
-    StructuredValues<T, size>{
+    public StructuredValues<T, size>{
   private:
     using StructuredValues<T, size>::values;
   public:
   using StructuredValues<T, size>::StructuredValues;
+
   
   Vector():StructuredValues<T,size>(){}
   Vector(const Vector &clone):StructuredValues<T,size>(clone){}
@@ -156,9 +111,10 @@ template<typename T, int size> struct Vector :
 
 
 template<typename T, int size> struct Point : 
-    StructuredValues<T, size>{
+    public StructuredValues<T, size>{
 
   using StructuredValues<T, size>::StructuredValues;
+
   Point():StructuredValues<T,size>(){}
   Point(const Point &clone):StructuredValues<T,size>(clone){}
   Point(const vector<T> &_values):StructuredValues<T,size>(_values){}
@@ -228,64 +184,6 @@ using Normal3f = Vector<float, 3>;
 // List of points
 using ListPoint3f = std::vector<Point3f>;
 
-// Other types
-
-class Color : public StructuredValues<real_type, 3>{
-public:
-
-  Color():StructuredValues<real_type,3>(){}
-
-  Color(const vector<real_type> &v):StructuredValues<real_type, 3>(v){}
-
-  Color clamp(){
-    Color newColor(*this);
-    for(auto &x : newColor.values){
-      x = Clamp<real_type, real_type, real_type>(x, 0, 1);
-    }
-    return newColor;
-  }
-
-  static inline Color interpolate_color(const float t, const Color &a, const Color &b){
-    return Color{{
-      (real_type) Lerp(t, a.x(), b.x()),
-      (real_type) Lerp(t, a.y(), b.y()),
-      (real_type) Lerp(t, a.z(), b.z()),
-    }};
-  }
-
-  static inline Color make_color_from_real(const vector<real_type> &v){
-    return Color(v);
-  }
-
-  static inline Color make_color_from_int(vector<real_type> v){
-    for(auto &x : v) x /= 255;
-    return make_color_from_real(v);
-  }
-};
-
-Color operator+(const Color &x, const Color &y);
-
-Color operator*(const Color &x, const Color &y);
-
-Color operator*(const Color &x, real_type y);
-
-const Color BLACK = Color({0, 0, 0});
-
-class ColorInt : public StructuredValues<int, 3>{
-public:
-
-  ColorInt():StructuredValues<int,3>(){}
-
-  ColorInt(const Color &c):ColorInt(){
-    for(int i = 0; i < 3; ++i){
-      values[i] = c.at(i) * 255;
-    }
-  }
-};
-
-
-
-
 
 class Ray {
 public:
@@ -297,38 +195,7 @@ public:
     }
 };
 
-
-struct ScreenWindow{
-    real_type left, right;
-    real_type bottom, top;
-
-    ScreenWindow() = default;
-
-    ScreenWindow(real_type l, real_type r, real_type b, real_type t):
-    left(l), right(r), bottom(b), top(t){}
-
-    ScreenWindow(const vector<real_type> &vals):
-      ScreenWindow(vals[0], vals[1], vals[2], vals[3]){}
-
-    real_type width() const { return right - left; }
-    real_type height() const { return top - bottom; }
-};
-
-
-
-template<typename T>
-T fastExp(T x, int exp){
-    T ans = T(1);
-    while(exp > 0){
-        if(exp%2) ans = ans * x; 
-        exp >>= 1;
-        x = x * x;
-    }
-    return ans;
 }
-
-
-} // namespace rt3
 
 
 #endif

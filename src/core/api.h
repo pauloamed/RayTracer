@@ -78,11 +78,20 @@ namespace rt3 {
     /// Collection of data related to a Graphics state, such as current material, lib of material, etc.
     struct GraphicsState
     {
-        shared_ptr<Material> curr_material;
+        stack<shared_ptr<Material>> curr_material;
 
-        void translate(Vector3f t);
-        void rotate(Vector3f t);
-        void scale(Point3f s);
+        GraphicsState(){
+            curr_material.push(nullptr);
+        }
+
+        void setMaterial(shared_ptr<Material> mat){
+            curr_material.top() = mat;
+        }
+
+        shared_ptr<Material> getCurrMaterial(){
+            return curr_material.top();
+        }
+
     };
 
     struct GraphicsContext
@@ -98,7 +107,7 @@ namespace rt3 {
     class API
     {
         public:
-            static stack<GraphicsState> curr_GS;
+            static GraphicsState curr_GS;
     
             /// Defines the current state the API may be at a given time
             enum class APIState { Uninitialized,    //!< Initial state, before parsing.
@@ -108,6 +117,7 @@ namespace rt3 {
 
             /// Stores the running options collect in main().
             static RunningOptions curr_run_opt;
+            static GraphicsContext curr_GC;
         private:
             /// Current API state
             static APIState curr_state;

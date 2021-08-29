@@ -2,7 +2,7 @@
 #define PRIMITIVE_H
 
 #include "rt3.h"
-#include "basic_types.h"
+#include "math_base.h"
 #include "shape.h"
 
 

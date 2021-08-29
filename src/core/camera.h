@@ -3,6 +3,7 @@
 
 #include "rt3.h"
 #include "film.h"
+#include "screen_window.h"
 
 namespace rt3{
 

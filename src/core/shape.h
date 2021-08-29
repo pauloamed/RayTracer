@@ -1,7 +1,7 @@
 #ifndef SHAPE_H
 #define SHAPE_H
 
-#include "basic_types.h"
+#include "math_base.h"
 #include "paramset.h"
 #include "surfel.h"
 #include "bounds.h"
