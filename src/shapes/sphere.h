@@ -8,8 +8,8 @@ namespace rt3{
 
 class Sphere : public Shape{
 private:
-    real_type bhaskara(const Ray &r, real_type &A, real_type &B, real_type &C) const;
-    real_type getT(real_type A, real_type B, real_type delta) const;
+    real_type bhaskara(const Ray &r, real_type &A, real_type &B) const;
+    bool getT(const Ray &r, real_type &t) const;
 public:
     bool flip_normals;
     Point3f origin;

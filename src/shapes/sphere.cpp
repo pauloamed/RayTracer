@@ -2,10 +2,10 @@
 
 namespace rt3{
     
-real_type Sphere::bhaskara(const Ray &r, real_type &A) const{
+real_type Sphere::bhaskara(const Ray &r, real_type &A, real_type &B) const{
     Vector3f centerToOrigin = (r.o - origin);
     A = r.d * r.d;
-    real_type B = 2 * (centerToOrigin * r.d);
+    B = 2 * (centerToOrigin * r.d);
     real_type C = (centerToOrigin * centerToOrigin) - (radius * radius);
     real_type delta = (B * B) - (4 * A * C);
 
@@ -15,8 +15,8 @@ real_type Sphere::bhaskara(const Ray &r, real_type &A) const{
 
 bool Sphere::getT(const Ray &r, real_type &t) const{
     
-    real_type A;
-    delta = bhaskara(r, A);
+    real_type A, B;
+    real_type delta = bhaskara(r, A, B);
     if(delta >= -0.0001){
         real_type roots[2] = {
             (-B - sqrt(delta)) / (2 * A),
