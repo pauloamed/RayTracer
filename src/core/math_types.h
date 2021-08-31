@@ -184,15 +184,18 @@ StructuredValues<T, size> customMult(const Matrix4x4 &matrix, const StructuredVa
 
   vector<T> ret;
   for(int i = 0; i < l; ++i){
-    int x = 0;
+    real_type x = 0;
     for(int j = 0; j < m; ++j){
-      int fromMatrix = ((i < n)? matrix.m[i][j] : 1);
-      int fromElement = ((j < l)? element.at(j) : 1);
+      real_type fromMatrix = ((i < n)? matrix.m[i][j] : 1);
+      real_type fromElement = ((j < l)? element.at(j) : 1);
       x += (fromMatrix * fromElement);
     }
     ret.push_back(x);
   }
-  return StructuredValues<T, size>(ret);
+
+  auto structRet = StructuredValues<T, size>(ret);
+
+  return structRet;
 }
 
 // Point aliases
