@@ -2,62 +2,65 @@
 
 namespace rt3{
     
-bool Sphere::intersect_p(const Ray &r, real_type maxT) const{
-    auto invRay = transform->inverse().apply(r);
-
+real_type Sphere::bhaskara(const Ray &r, real_type &A) const{
     Vector3f centerToOrigin = (r.o - origin);
-
-    real_type A = r.d * r.d;
-    real_type B = 2 * (centerToOrigin * r.d);
-    real_type C = (centerToOrigin * centerToOrigin) - radius * radius;
-
-    real_type delta = B * B - 4 * A * C;
-    if(delta >= -0.0001){
-        real_type t[2] = {
-            (-B - sqrt(delta)) / (2 * A),
-            (-B + sqrt(delta)) / (2 * A),
-        };
-        if(t[0] > t[1]) swap(t[0], t[1]);
-        if(t[0] > 0) return t[0] < maxT;
-        else if(t[1] > 0) return t[1] < maxT;
-        else return false;
-    }else return false;
-}
-
-bool Sphere::intersect(const Ray &r, shared_ptr<ObjSurfel> &isect) const{
-    auto invRay = transform->inverse().apply(r);
-
-    Vector3f centerToOrigin = (r.o - origin);
-    real_type A = r.d * r.d;
+    A = r.d * r.d;
     real_type B = 2 * (centerToOrigin * r.d);
     real_type C = (centerToOrigin * centerToOrigin) - (radius * radius);
     real_type delta = (B * B) - (4 * A * C);
 
+    return delta;
+}
+
+
+bool Sphere::getT(const Ray &r, real_type &t) const{
+    
+    real_type A;
+    delta = bhaskara(r, A);
     if(delta >= -0.0001){
-        real_type t[2] = {
+        real_type roots[2] = {
             (-B - sqrt(delta)) / (2 * A),
             (-B + sqrt(delta)) / (2 * A),
         };
-        if(t[0] > t[1]) swap(t[0], t[1]);
+        if(roots[0] > roots[1]) swap(roots[0], roots[1]);
+        if(roots[0] < 0){
+            if(roots[1] < 0) return false;
+            else{
+                t = roots[1];
+                return true;
+            }
+        }else{
+            t = roots[0];
+            return true;
+        }
+    }else return false;
+}
 
-        Point3f contact;
 
-        if(t[0] > 0) contact = r(t[0]);
-        else if(t[1] > 0) contact = r(t[1]);
-        else return false;
+bool Sphere::intersect_p(const Ray &r, real_type maxT) const{
+    auto invRay = transform->inverse().apply(r);
+    real_type t;
+    if(!getT(invRay, t)) return false;
+    return t < maxT;
+}
 
-        Vector3f normal = (contact - origin).normalize();
 
-        // O que devo transformar de volta?
-        Point3f contactPoint = transform->apply(contact + normal * EPS);
-        normal = transform->apply(normal);
-        Vector3f newDir = transform->apply(r.d * -1);
+bool Sphere::intersect(const Ray &r, shared_ptr<ObjSurfel> &isect) const{
+    auto invRay = transform->inverse().apply(r);
 
-        isect = unique_ptr<ObjSurfel>(new ObjSurfel(contactPoint, normal, newDir, t[0]));
-        return true;
-    }else{
-        return false;
-    }
+    real_type t;
+    if(!getT(invRay, t)) return false;
+        
+    Point3f contact = invRay(t);
+    Vector3f normal = (contact - origin).normalize();
+
+    isect = unique_ptr<ObjSurfel>(new ObjSurfel(
+        transform->apply(contact + normal * EPS), // contact point
+        transform->apply(normal), // normal
+        transform->apply(invRay.d * -1), // inv ray dir
+        t // t
+    ));
+    return true;
 }
 
 Bounds3f Sphere::computeBounds() const{
