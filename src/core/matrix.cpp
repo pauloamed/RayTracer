@@ -50,4 +50,14 @@ namespace rt3{
     return Matrix4x4(newVals);
   }
 
+  string Matrix4x4::toString() const{
+    std::stringstream ss;
+    for(int i = 0; i < 4; ++i){
+      for(int j = 0; j < 4; ++j){
+        ss << m[i][j] << " ";
+      }ss << "\n";
+    }
+    return ss.str();
+  }
+
 }

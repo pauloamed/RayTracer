@@ -32,6 +32,8 @@ struct Matrix4x4{
 
   static Matrix4x4 getIdentity();
 
+  string toString() const;
+
   };
 
 }
