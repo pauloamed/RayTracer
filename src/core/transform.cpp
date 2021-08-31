@@ -33,14 +33,14 @@ Vector3f Transform::apply(const Vector3f &v) const{
 }
 
 Ray Transform::apply(const Ray &r) const{
-  auto newD = customMult(m, r.d);
-  auto newO = customMult(m, r.o);
-  return Ray(newD, newO);
+  Vector3f newD = customMult(m, r.d);
+  Point3f newO = customMult(m, r.o);
+  return Ray(newO, newD);
 }
 
 Bounds3f Transform::apply(const Bounds3f &b) const{
-  auto newMinP = customMult(m, b.minPoint);
-  auto newMaxP = customMult(m, b.maxPoint);
+  Point3f newMinP = customMult(m, b.minPoint);
+  Point3f newMaxP = customMult(m, b.maxPoint);
   return Bounds3f(newMinP, newMaxP);
 }
 

@@ -7,9 +7,8 @@
 namespace rt3{
 
 class Transform {
-private:
-  Matrix4x4 m, mInv;
 public:
+  Matrix4x4 m, mInv;
 
   Transform():m(Matrix4x4::getIdentity()), mInv(m){}
 
