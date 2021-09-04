@@ -234,13 +234,13 @@ void parse_tags(tinyxml2::XMLElement *p_element, int level) {
       parse_parameters(p_element, param_list, &ps);
 
       API::camera(ps);
-    } else if (tag_name == "push_GS") {
+    } else if (tag_name == "push_gs") {
       API::push_GS();
-    } else if (tag_name == "pop_GS") {
+    } else if (tag_name == "pop_gs") {
       API::pop_GS();
-    } else if (tag_name == "push_CTM") {
+    } else if (tag_name == "push_ctm") {
       API::push_CTM();
-    } else if (tag_name == "pop_CTM") {
+    } else if (tag_name == "pop_ctm") {
       API::pop_CTM();
     } else if (tag_name == "identity") {
       API::identity();
