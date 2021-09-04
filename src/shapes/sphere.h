@@ -15,10 +15,12 @@ public:
     Point3f origin;
     real_type radius;
 
-    shared_ptr<Transform> transform;
+    shared_ptr<Transform> transform, inv_transform;
     
     Sphere(bool flip_n, Point3f ori, real_type r, shared_ptr<Transform> t):
-        flip_normals(flip_n), origin(ori), radius(r), transform(t){}
+        flip_normals(flip_n), origin(ori), radius(r), transform(t), 
+        inv_transform(make_shared<Transform>(transform->inverse())){
+    }
 
     ~Sphere(){}
 

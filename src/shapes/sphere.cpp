@@ -38,7 +38,7 @@ bool Sphere::getT(const Ray &r, real_type &t) const{
 
 
 bool Sphere::intersect_p(const Ray &r, real_type maxT) const{
-    auto invRay = transform->inverse().apply(r);
+    auto invRay = inv_transform->apply(r);
     real_type t;
     if(!getT(invRay, t)) return false;
     return t < maxT;
@@ -46,7 +46,7 @@ bool Sphere::intersect_p(const Ray &r, real_type maxT) const{
 
 
 bool Sphere::intersect(const Ray &r, shared_ptr<ObjSurfel> &isect) const{
-    auto invRay = transform->inverse().apply(r);
+    auto invRay = inv_transform->apply(r);
 
     real_type t;
     if(!getT(invRay, t)) return false;
