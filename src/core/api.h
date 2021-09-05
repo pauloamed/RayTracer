@@ -70,7 +70,7 @@ namespace rt3 {
 
         // the objects/primitives
         vector<tuple<ParamSet, shared_ptr<Material>, shared_ptr<Transform>>> primitives;
-        vector<pair<shared_ptr<TriangleMesh>, shared_ptr<Material>>> mesh_primitives;
+        vector<tuple<shared_ptr<TriangleMesh>, shared_ptr<Material>, shared_ptr<Transform>>> mesh_primitives;
 
         // the lights
         vector<ParamSet> lights;
@@ -155,6 +155,7 @@ namespace rt3 {
     {
         map<string,shared_ptr<Material>> named_materials;
         map<string,shared_ptr<Transform>> coords_systems;
+        map<string,shared_ptr<TriangleMesh>> meshes;
     };
 
 

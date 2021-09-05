@@ -61,7 +61,7 @@ void extract_obj_data( const tinyobj::attrib_t& attrib,
   retrieve_normals(attrib, cn, fn, md);
 
   // Read the complete list of texture coordinates.
-  retrieve_textures(attrib, md);
+  // retrieve_textures(attrib, md);
 
   // Read mesh connectivity and store it as lists of indices to the real data.
   retrieve_shapes(shapes, rvo, md);
@@ -78,9 +78,9 @@ void extract_obj_data( const tinyobj::attrib_t& attrib,
   std::copy( md->normal_indices->begin(), md->normal_indices->end(), std::ostream_iterator< int > ( std::cout, " " ) );
   cout << "]\n";
 
-  cout << "   + UV coords [ ";
-  std::copy( md->uvcoord_indices->begin(), md->uvcoord_indices->end(), std::ostream_iterator< int > ( std::cout, " " ) );
-  cout << "]\n";
+  // cout << "   + UV coords [ ";
+  // std::copy( md->uvcoord_indices->begin(), md->uvcoord_indices->end(), std::ostream_iterator< int > ( std::cout, " " ) );
+  // cout << "]\n";
   }
 }
 
@@ -159,7 +159,7 @@ void retrieve_textures(const tinyobj::attrib_t& attrib, shared_ptr<TriangleMesh>
         attrib.texcoords[ 2 * idx_tc + 1 ]
     }});    
 
-    md->uvcoords->push_back( texture );
+    // md->uvcoords->push_back( texture );
   }
 }
 
@@ -203,7 +203,7 @@ void retrieve_shapes(const std::vector<tinyobj::shape_t>& shapes, bool rvo, shar
                   // Add the indices to the global list of indices we need to pass on to the mesh object.
                   md->vertex_indices->push_back( idx.vertex_index );
                   md->normal_indices->push_back( idx.normal_index );
-                  md->uvcoord_indices->push_back( idx.texcoord_index );
+                  // md->uvcoord_indices->push_back( idx.texcoord_index );
               }
           }
           else { // Keep the original vertex order
@@ -217,7 +217,7 @@ void retrieve_shapes(const std::vector<tinyobj::shape_t>& shapes, bool rvo, shar
                   // This goes to the mesh data structure.
                   md->vertex_indices->push_back( idx.vertex_index );
                   md->normal_indices->push_back( idx.normal_index );
-                  md->uvcoord_indices->push_back( idx.texcoord_index );
+                  // md->uvcoord_indices->push_back( idx.texcoord_index );
               }
           }
 

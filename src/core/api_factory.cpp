@@ -179,7 +179,7 @@ Shape * API::make_shape( const ParamSet& ps, shared_ptr<Transform> transform ){
 }
 
 
-vector<Shape *> API::make_triangles( shared_ptr<TriangleMesh> md ){
+vector<Shape *> API::make_triangles( shared_ptr<TriangleMesh> md){
     std::cout << ">>> Inside API::make_triangles()\n";
     vector<Shape *> shapes = create_triangle_list(md); 
     return shapes;

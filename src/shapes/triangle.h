@@ -11,7 +11,6 @@ class Triangle : public Shape {
 private:
   shared_ptr<const Point3f> vert[3];
   shared_ptr<const Normal3f> n[3];
-  shared_ptr<const Point2f> uv[3];
 
   shared_ptr<TriangleMesh> mesh; //!< This is the **indexed triangle mesh database** this triangle is linked to.
 
@@ -28,7 +27,7 @@ public:
     
     auto &vertices = *(mesh->vertices);
     auto &normals = *(mesh->normals);
-    auto &uvcoords = *(mesh->uvcoords);
+    // auto &uvcoords = *(mesh->uvcoords);
 
     // This is just a shortcut to access this triangle's data stored in the mesh database.
     for(int i = 0; i < 3; ++i){
@@ -36,12 +35,6 @@ public:
       n[i] = normals[n_indexes[ 3 * tri_id + i]];
     }
 
-    if(mesh->uvcoord_indices){
-      auto &uv_indexes = *(mesh->uvcoord_indices);
-      for(int i = 0; i < 3; ++i){
-        uv[i] = uvcoords[uv_indexes[ 3 * tri_id + i]];
-      }
-    }
   }
 
 

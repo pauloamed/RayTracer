@@ -82,8 +82,13 @@ void API::world_end(void) {
     }
 
     // TRIANGLES MESHES
-    for (auto [mesh_ps, mat] : render_opt->mesh_primitives) {
-      for (Shape * s : make_triangles(mesh_ps)){
+    for (auto [mesh_ps, mat, transform] : render_opt->mesh_primitives) {
+
+      // criar mesh nova e aplicar transforms
+      shared_ptr<TriangleMesh> newMesh = mesh_ps->createCopy();
+      newMesh->applyTransform(transform);
+
+      for (Shape * s : make_triangles(newMesh)){
 
         the_primitive.push_back(shared_ptr<BoundedPrimitive>(
           make_geometric_primitive(std::move(unique_ptr<Shape>(s)), mat)
@@ -293,28 +298,39 @@ void API::object(const ParamSet &ps) {
 
   if(type == object_type_t::trianglemesh){
     if(ps.count("filename")){
-      shared_ptr<TriangleMesh> md{ new TriangleMesh()};
+      string filename = retrieve(ps, "filename", string());
 
-      auto status = load_mesh_data(
-        retrieve(ps, "filename", string()), 
-        retrieve(ps, "reverse_vertex_order", false), 
-        retrieve(ps, "compute_normals", false),
-        retrieve(ps, "flip_normals", false), 
-        md
-      );
+      if(curr_GC.meshes.count(filename) == 0){
+        shared_ptr<TriangleMesh> md{ new TriangleMesh()};
 
-      
+        auto status = load_mesh_data(
+          retrieve(ps, "filename", string()), 
+          retrieve(ps, "reverse_vertex_order", false), 
+          retrieve(ps, "compute_normals", false),
+          retrieve(ps, "flip_normals", false), 
+          md
+        );      
 
-      if(status){
-        md->backface_cull = retrieve(ps, "backface_cull", false);
-        render_opt->mesh_primitives.push_back({md, curr_GS.material()});
-      }else{
-        RT3_ERROR("Couldn't load obj file");
+        if(status){
+          md->backface_cull = retrieve(ps, "backface_cull", false);
+        }else{
+          RT3_ERROR("Couldn't load obj file");
+        }
+
+        curr_GC.meshes[filename] = md;
       }
+
+      render_opt->mesh_primitives.push_back({
+        curr_GC.meshes[filename], 
+        curr_GS.material(),
+        curr_GS.mts().getCTM()
+      });
+
     }else{
       render_opt->mesh_primitives.push_back({
-        shared_ptr<TriangleMesh>(create_triangle_mesh(ps, curr_GS.mts().getCTM())), 
-        curr_GS.material()
+        shared_ptr<TriangleMesh>(create_triangle_mesh(ps)), 
+        curr_GS.material(),
+        curr_GS.mts().getCTM()
       });
     }
   }else{
