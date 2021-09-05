@@ -40,7 +40,7 @@ bool Triangle::intersect(const Ray &r, shared_ptr<ObjSurfel> &isect) const{
 
 	Point3f contact = ((*vert[1] * u) + (*vert[2] * v) + (*vert[0] * (1 - u - v)));
 	// normal tem que ser uma media das normais
-	assert((contact - (r.o + r.d * t)).getNorm() < EPS);
+	// assert((contact - (r.o + r.d * t)).getNorm() < EPS);
 
 	Normal3f finalNormal = (*n[1] * u) + (*n[2] * v) + (*n[0] * (1 - u - v));
 	finalNormal = finalNormal.normalize();
@@ -53,19 +53,7 @@ bool Triangle::intersect(const Ray &r, shared_ptr<ObjSurfel> &isect) const{
 }
 
 Bounds3f Triangle::computeBounds() const{
-	Point3f minPoint(*vert[0]);
-	Point3f maxPoint(*vert[0]);
-
-	Point3f epsPoint = Point3f({EPS, EPS, EPS});
-
-	for(int i = 1; i < 3; ++i){
-		for(int j = 0; j < 3; ++j){
-			minPoint[j] = min(minPoint[j], (*vert[i]).at(j));
-			maxPoint[j] = max(maxPoint[j], (*vert[i]).at(j));
-		}
-	}
-
-	return Bounds3f(minPoint + (epsPoint * -1), maxPoint + epsPoint);
+	return Bounds3f::createBox({*vert[0], *vert[1], *vert[2]});
 }
 
 vector<Shape *> create_triangle_list( shared_ptr<TriangleMesh> mesh){

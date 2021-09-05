@@ -69,7 +69,7 @@ namespace rt3 {
         ParamSet accelerator_ps;
 
         // the objects/primitives
-        vector<pair<ParamSet, shared_ptr<Material>>> primitives;
+        vector<tuple<ParamSet, shared_ptr<Material>, shared_ptr<Transform>>> primitives;
         vector<pair<shared_ptr<TriangleMesh>, shared_ptr<Material>>> mesh_primitives;
 
         // the lights
@@ -90,7 +90,7 @@ namespace rt3 {
             }
 
             void persistMatrix(){
-                ctm_states.push(ctm_states.top());
+                ctm_states.push(make_shared<Transform>(*ctm_states.top()));
             }
 
             void rollbackMatrix(){
@@ -141,7 +141,7 @@ namespace rt3 {
 
         void persistState(){
             // novo estado na ovai ter tudo na pilha nao
-            auto newInternal = InternalState(states.top().material, states.top().mts.getCTM());
+            auto newInternal = InternalState(states.top().material, make_shared<Transform>(*states.top().mts.getCTM()));
             states.push(newInternal);
         }
 
@@ -202,7 +202,7 @@ namespace rt3 {
 
             static Material * make_material( const ParamSet& ps );
 
-            static Shape * make_shape( const ParamSet& ps );
+            static Shape * make_shape( const ParamSet& p, shared_ptr<Transform> transform );
             static vector<Shape *> make_triangles( shared_ptr<TriangleMesh> );
 
             static Light * make_light( const ParamSet& ps );

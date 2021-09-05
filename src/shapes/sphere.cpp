@@ -41,6 +41,11 @@ bool Sphere::intersect_p(const Ray &r, real_type maxT) const{
     auto invRay = inv_transform->apply(r);
     real_type t;
     if(!getT(invRay, t)) return false;
+
+		Point3f contact = invRay(t);
+		contact = transform->apply(contact);
+		t = (contact - r.o).getNorm();
+
     return t < maxT;
 }
 
@@ -52,12 +57,15 @@ bool Sphere::intersect(const Ray &r, shared_ptr<ObjSurfel> &isect) const{
     if(!getT(invRay, t)) return false;
         
     Point3f contact = invRay(t);
-    Vector3f normal = (contact - origin).normalize();
+    Normal3f normal = (contact - origin).normalize();
+
+		contact = transform->apply(contact);
+		t = (contact - r.o).getNorm();
 
     isect = unique_ptr<ObjSurfel>(new ObjSurfel(
         transform->apply(contact + normal * EPS), // contact point
-        transform->apply(normal), // normal
-        transform->apply(invRay.d * -1), // inv ray dir
+        transform->apply(normal),
+        r.d * -1, // original ray dir
         t // t
     ));
     return true;
@@ -66,8 +74,9 @@ bool Sphere::intersect(const Ray &r, shared_ptr<ObjSurfel> &isect) const{
 Bounds3f Sphere::computeBounds() const{
   Point3f radiusPoint{{radius, radius, radius}};
 
-  Point3f maxPoint = origin + radiusPoint;
   Point3f minPoint = origin + (radiusPoint * -1);
+  Point3f maxPoint = origin + radiusPoint;
+
   return transform->apply(Bounds3f(minPoint, maxPoint));
 }
 

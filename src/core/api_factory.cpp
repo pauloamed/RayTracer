@@ -164,14 +164,14 @@ shared_ptr<Primitive> API::make_primitive( const ParamSet& ps_accelerator,
 }
 
 
-Shape * API::make_shape( const ParamSet& ps ){
+Shape * API::make_shape( const ParamSet& ps, shared_ptr<Transform> transform ){
     object_type_t type = retrieve(ps, "type", object_type_t::sphere);
 
     std::cout << ">>> Inside API::make_shape()\n";
 
     Shape *shape = nullptr;
     if(type == object_type_t::sphere){
-        shape = create_sphere(ps, curr_GS.mts().getCTM());
+        shape = create_sphere(ps, transform);
     }else{
         RT3_ERROR("Unknown object type.");
     }

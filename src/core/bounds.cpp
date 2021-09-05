@@ -45,6 +45,39 @@ Bounds3f Bounds3f::unite(const Bounds3f &a, const Bounds3f &b){
   return x;
 }
 
+Bounds3f Bounds3f::createBox(const vector<Point3f> &p){
+	Point3f minPoint(p.front());
+	Point3f maxPoint(p.front());
+
+	Point3f epsPoint = Point3f({EPS, EPS, EPS});
+
+	for(int i = 1; i < (int) p.size(); ++i){
+		for(int j = 0; j < 3; ++j){
+			minPoint[j] = min(minPoint[j], p[i].at(j));
+			maxPoint[j] = max(maxPoint[j], p[i].at(j));
+		}
+	}
+
+	return Bounds3f(minPoint + (epsPoint * -1), maxPoint + epsPoint);
+}
+
+
+vector<Point3f> Bounds3f::getPoints() const{
+  vector<Point3f> allPoints;
+  vector<Point3f> corners = {minPoint, maxPoint};
+
+  for(int i = 0; i < 8; ++i){
+    Point3f currPoint = minPoint;
+    for(int j = 0; j < 3; ++j){
+      bool isOn = (i & (1 << j));
+      currPoint[j] = corners[isOn].at(j);
+    }
+    allPoints.push_back(currPoint);
+  }
+
+
+  return allPoints;
+}
 
 
 }

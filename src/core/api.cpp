@@ -1,4 +1,5 @@
 #include "api.h"
+#include "../materials/blinn_phong.h"
 
 namespace rt3 {
 
@@ -64,20 +65,23 @@ void API::world_end(void) {
   {
     unique_ptr<Background> the_background{make_background(render_opt->bkg_ps)};
 
+    // LIGHTS
     vector<shared_ptr<Light>> the_lights;
     for (auto light_ps : render_opt->lights) {
       the_lights.push_back(shared_ptr<Light>(make_light(light_ps)));
     }
 
+    // SIMPLE SHAPES
     vector<shared_ptr<BoundedPrimitive>> the_primitive;
-    for (auto [object_ps, mat] : render_opt->primitives) {
+    for (auto [object_ps, mat, transform] : render_opt->primitives) {
 
-      unique_ptr<Shape> shape(make_shape(object_ps));
+      unique_ptr<Shape> shape(make_shape(object_ps, transform));
 
       the_primitive.push_back(shared_ptr<BoundedPrimitive>(
           make_geometric_primitive(std::move(shape), mat)));
     }
 
+    // TRIANGLES MESHES
     for (auto [mesh_ps, mat] : render_opt->mesh_primitives) {
       for (Shape * s : make_triangles(mesh_ps)){
 
@@ -224,8 +228,9 @@ void API::translate( const ParamSet& ps ){
 }
 
 void API::rotate( const ParamSet& ps ){
-  Point3f rotPoint = retrieve(ps, "value", Point3f());
-  auto rotT = Transform::getRotationMatrix(rotPoint);
+  Vector3f rotAxis = retrieve(ps, "axis", Vector3f());
+  real_type degrees= retrieve(ps, "angle", real_type(0));
+  auto rotT = Transform::getRotationMatrix(rotAxis, degrees);
   curr_GS.mts().transformCTM(rotT);
 }
 
@@ -313,7 +318,7 @@ void API::object(const ParamSet &ps) {
       });
     }
   }else{
-    render_opt->primitives.push_back({ps, curr_GS.material()});
+    render_opt->primitives.push_back({ps, curr_GS.material(), curr_GS.mts().getCTM()});
   }  
 }
 

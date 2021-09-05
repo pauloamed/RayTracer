@@ -25,7 +25,7 @@ bool BVHAccel::intersect_p( const Ray& r, real_type maxT ) const{
 
 bool BVHAccel::intersect(const Ray &r, shared_ptr<ObjSurfel> &isect ) const{
     pair<real_type, real_type> t;
-    if(!boundingBox.box_intersect(r, t)) return false;
+    // if(!boundingBox.box_intersect(r, t)) return false;
 
     shared_ptr<ObjSurfel> currIsect(nullptr);
     for(auto &prim : primitives)

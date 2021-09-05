@@ -23,7 +23,9 @@ public:
 
   bool box_intersect(const Ray &ray, pair<real_type, real_type> &hits) const;
   bool intersect_p(const Ray &ray, real_type maxT) const;
+  vector<Point3f> getPoints() const;
 
+  static Bounds3f createBox(const vector<Point3f> &p);
   static Bounds3f unite(const Bounds3f &a, const Bounds3f &b);
 };
 

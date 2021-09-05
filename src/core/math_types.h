@@ -176,42 +176,27 @@ Vector<T, size> operator+(const Vector<T, size> &x, const Vector<T,size> &y){
     return v;
 }
 
-template<typename T, int size>
-StructuredValues<T, size> customMult(const Matrix4x4 &matrix, const StructuredValues<T, size> &element){
-  // (N x M) . (L x 1) = (N x 1) => (L x 1)
-  int n = 4, m = 4;
-  int l = size;
-
-  vector<T> ret;
-  for(int i = 0; i < l; ++i){
-    real_type x = 0;
-    for(int j = 0; j < m; ++j){
-      real_type fromMatrix = ((i < n)? matrix.m[i][j] : 1);
-      real_type fromElement = ((j < l)? element.at(j) : 1);
-      x += (fromMatrix * fromElement);
-    }
-    ret.push_back(x);
-  }
-
-  auto structRet = StructuredValues<T, size>(ret);
-
-  return structRet;
-}
-
 // Point aliases
 using Point3i = Point<int, 3>;
 using Point2i = Point<int, 2>;
-using Point2f = Point<float, 2>;
-using Point3f = Point<float, 3>;
+using Point2f = Point<real_type, 2>;
+using Point3f = Point<real_type, 3>;
 
 // Vector aliases
-using Vector3f = Vector<float, 3>;
+using Vector3f = Vector<real_type, 3>;
 using Vector3i = Vector<int, 3>;
-using Normal3f = Vector<float, 3>;
+
 
 // List of points
 using ListPoint3f = std::vector<Point3f>;
 
+class Normal3f : public Vector3f {
+public:
+  Normal3f():Vector3f(){}
+  Normal3f(const vector<real_type> &_values):Vector3f(_values){}
+  Normal3f(Vector3f base):Vector3f(base){}
+
+};
 
 class Ray {
 public:

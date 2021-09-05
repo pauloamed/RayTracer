@@ -12,7 +12,7 @@ TriangleMesh *create_triangle_mesh(const ParamSet &ps, shared_ptr<Transform> tra
   auto normals = retrieve(ps, "normals", shared_ptr<vector<shared_ptr<Normal3f>>>(new vector<shared_ptr<Normal3f>>));
   auto uv = retrieve(ps, "uv", shared_ptr<vector<shared_ptr<Point2f>>>(nullptr));
 
-  if(indices->size() % 3 != 0 || indices->size() != n * 3){
+  if(indices->size() % 3 != 0 || (int) indices->size() != n * 3){
     RT3_ERROR("Indices size doesnt match num. of triangles!");
   }
  

@@ -30,14 +30,16 @@ public:
 
   Point3f apply(const Point3f &p) const;
   Vector3f apply(const Vector3f &v) const;
+  Normal3f apply(const Normal3f &n) const;
+
   Ray apply(const Ray &r) const;
   Bounds3f apply(const Bounds3f &b) const;  
   
   Transform update(const Transform &t2) const;
 
   static Transform getTranslationMatrix(const Vector3f &v);
-  static Transform getRotationMatrix(const Point3f &v);
-  static Transform getScalingMatrix(const Point3f &v);
+  static Transform getRotationMatrix(const Vector3f v, const real_type degrees);
+  static Transform getScalingMatrix(const Point3f &p);
   static Transform getIdentityMatrix();
 };
 

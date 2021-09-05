@@ -25,6 +25,7 @@ namespace rt3{
     vector<vector<real_type>> inv(4, vector<real_type>(4));
     for(int i = 0; i < 4; ++i) inv[i][i] = 1;
 
+
     int r = 0;
     // processa coluna por coluna
     for(int c = 0; c < 4; ++c){ 
@@ -46,6 +47,14 @@ namespace rt3{
       r++;
     }
 
+    // norms
+    for(int i = 0; i < 4; i++){
+      for(int j = 0; j < 4; ++j){
+        inv[i][j] /= temp[i][i];
+      }
+		 }
+
+    
     return Matrix4x4(inv);
   }
 
