@@ -21,14 +21,17 @@ tuple<Color, unique_ptr<VisibilityTester>, Vector3f> DirectionalLight::Li(const 
     };
 }
 
-DirectionalLight* create_directional_light( const ParamSet &ps ){
+DirectionalLight* create_directional_light( const ParamSet &ps, Bounds3f worldBox ){
     Point3f from = retrieve(ps, "from", Point3f());
     Point3f to = retrieve(ps, "to", Point3f());
+
+    real_type worldDiag = (worldBox.minPoint - worldBox.maxPoint).getNorm();
 
     return new DirectionalLight(
         retrieve(ps, "L", Color()),
         retrieve(ps, "scale", Vector3f()),
-        (to - from).normalize()
+        (to - from).normalize(),
+        worldDiag
     );
 }
 

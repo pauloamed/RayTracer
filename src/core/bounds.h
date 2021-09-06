@@ -19,6 +19,7 @@ class Bounds3f{
 
 public:
   Point3f minPoint, maxPoint; 
+  Bounds3f():minPoint(Point3f({INF, INF, INF})), maxPoint(Point3f({-INF, -INF, -INF})){}
   Bounds3f(Point3f minP, Point3f maxP):minPoint(minP), maxPoint(maxP){}
 
   bool box_intersect(const Ray &ray, pair<real_type, real_type> &hits) const;
