@@ -91,7 +91,7 @@ Integrator * API::make_integrator( const ParamSet &ps_integrator,
 }
 
 
-Light * API::make_light( const ParamSet &ps_light )
+Light * API::make_light( const ParamSet &ps_light, Bounds3f worldBox )
 {
     std::cout << ">>> Inside API::make_light()\n";
     Light* light = nullptr;
@@ -100,7 +100,7 @@ Light * API::make_light( const ParamSet &ps_light )
     if(type == light_type_t::ambient){
         light = create_ambient_light(ps_light);
     }else if(type == light_type_t::directional){
-        light = create_directional_light(ps_light);
+        light = create_directional_light(ps_light, worldBox);
     }else if(type == light_type_t::point){
         light = create_point_light(ps_light);
     }else if(type == light_type_t::spot){

@@ -10,7 +10,7 @@ using std::ostringstream;
 using std::string;
 
 #include "../core/rt3.h"
-#include "../core/api.h"
+#include "../api/api.h"
 
 using namespace rt3;
 

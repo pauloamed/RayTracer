@@ -4,7 +4,7 @@
  */
 
 #include "parser.h"
-#include "api.h"
+#include "../api/api.h"
 #include "paramset.h"
 #include "rt3.h"
 
@@ -195,8 +195,7 @@ void parse_tags(tinyxml2::XMLElement *p_element, int level) {
           {param_type_e::BG_TYPE, "type"},
           {param_type_e::STRING, "filename"}, // Texture file name.
           {param_type_e::MAPPING, "mapping"}, // Type of mapping required.
-          {param_type_e::COLOR,
-           "color"}, // Single color for the entire background.
+          {param_type_e::COLOR, "color"}, // Single color for the entire background.
           {param_type_e::COLOR, "tl"}, // Top-left corner
           {param_type_e::COLOR, "tr"}, // Top-right corner
           {param_type_e::COLOR, "bl"}, // Bottom-left corner
@@ -234,6 +233,26 @@ void parse_tags(tinyxml2::XMLElement *p_element, int level) {
       parse_parameters(p_element, param_list, &ps);
 
       API::camera(ps);
+    } else if (tag_name == "object_instance_call") {
+      ParamSet ps;
+
+      vector<std::pair<param_type_e, string>> param_list{
+          {param_type_e::STRING, "name"}
+      };
+      parse_parameters(p_element, param_list, &ps);
+
+      API::instantiate_obj(ps);
+    } else if (tag_name == "object_instance_begin") {
+      ParamSet ps;
+
+      vector<std::pair<param_type_e, string>> param_list{
+          {param_type_e::STRING, "name"}
+      };
+      parse_parameters(p_element, param_list, &ps);
+
+      API::start_obj_instance(ps);
+    } else if (tag_name == "object_instance_end") {
+      API::finish_obj_instance();
     } else if (tag_name == "push_gs") {
       API::push_GS();
     } else if (tag_name == "pop_gs") {

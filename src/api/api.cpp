@@ -8,6 +8,7 @@ RunningOptions API::curr_run_opt;
 unique_ptr<RenderOptions> API::render_opt;
 GraphicsState API::curr_GS;
 GraphicsContext API::curr_GC;
+ObjectManager API::objM;
 
 //=== API's public methods implementation
 void API::init_engine(const RunningOptions &opt) {
@@ -26,8 +27,7 @@ void API::init_engine(const RunningOptions &opt) {
 }
 
 void API::clean_world_elements(void){
-  render_opt->primitives.clear();
-  render_opt->lights.clear();
+  objM.reset();
 }
 
 void API::clean_up(void) {
@@ -65,30 +65,31 @@ void API::world_end(void) {
   {
     unique_ptr<Background> the_background{make_background(render_opt->bkg_ps)};
 
-    // LIGHTS
-    vector<shared_ptr<Light>> the_lights;
-    for (auto light_ps : render_opt->lights) {
-      the_lights.push_back(shared_ptr<Light>(make_light(light_ps)));
-    }
-
     // SIMPLE SHAPES
+
+    Bounds3f worldBox;
+
     vector<shared_ptr<BoundedPrimitive>> the_primitive;
-    for (auto [object_ps, mat, transform] : render_opt->primitives) {
+    for (auto [object_ps, mat, transform] : objM.globalPrimitives) {
 
       unique_ptr<Shape> shape(make_shape(object_ps, transform));
+
+      worldBox = Bounds3f::unite(worldBox, shape->computeBounds());
 
       the_primitive.push_back(shared_ptr<BoundedPrimitive>(
           make_geometric_primitive(std::move(shape), mat)));
     }
 
     // TRIANGLES MESHES
-    for (auto [mesh_ps, mat, transform] : render_opt->mesh_primitives) {
+    for (auto [mesh_ps, mat, transform] : objM.globalMeshPrimitives) {
 
       // criar mesh nova e aplicar transforms
       shared_ptr<TriangleMesh> newMesh = mesh_ps->createCopy();
       newMesh->applyTransform(transform);
 
       for (Shape * s : make_triangles(newMesh)){
+
+        worldBox = Bounds3f::unite(worldBox, s->computeBounds());
 
         the_primitive.push_back(shared_ptr<BoundedPrimitive>(
           make_geometric_primitive(std::move(unique_ptr<Shape>(s)), mat)
@@ -97,8 +98,13 @@ void API::world_end(void) {
       }
     }
 
-
     shared_ptr<Primitive> primitive = make_primitive(render_opt->accelerator_ps, std::move(the_primitive));
+
+    // LIGHTS
+    vector<shared_ptr<Light>> the_lights;
+    for (auto light_ps : objM.globalLights) {
+      the_lights.push_back(shared_ptr<Light>(make_light(light_ps, worldBox)));
+    }
 
     the_scene =
         make_unique<Scene>(std::move(the_background), std::move(primitive), std::move(the_lights));
@@ -218,6 +224,20 @@ void API::push_GS( void ){
   curr_GS.persistState();
 }
 
+void API::start_obj_instance( const ParamSet &ps ){
+  string objName = retrieve(ps, "name", string());
+  objM.startBuilding(objName);
+}
+
+void API::finish_obj_instance( void ){
+ objM.finishBuilding();
+}
+
+void API::instantiate_obj( const ParamSet &ps ){
+  string objName = retrieve(ps, "name", string());
+  objM.instantiate(objName, curr_GS.mts().getCTM());
+}
+
 void API::pop_CTM( void ){
   curr_GS.mts().rollbackMatrix();
 }
@@ -320,21 +340,25 @@ void API::object(const ParamSet &ps) {
         curr_GC.meshes[filename] = md;
       }
 
-      render_opt->mesh_primitives.push_back({
+      objM.addMeshPrimitive(
         curr_GC.meshes[filename], 
         curr_GS.material(),
         curr_GS.mts().getCTM()
-      });
+      );
 
     }else{
-      render_opt->mesh_primitives.push_back({
+      objM.addMeshPrimitive(
         shared_ptr<TriangleMesh>(create_triangle_mesh(ps)), 
         curr_GS.material(),
         curr_GS.mts().getCTM()
-      });
+      );
     }
   }else{
-    render_opt->primitives.push_back({ps, curr_GS.material(), curr_GS.mts().getCTM()});
+    objM.addSimplePrimitive(
+      ps, 
+      curr_GS.material(), 
+      curr_GS.mts().getCTM()
+    );
   }  
 }
 
@@ -342,7 +366,7 @@ void API::light(const ParamSet &ps) {
   std::cout << ">>> Inside API::light()\n";
   VERIFY_WORLD_BLOCK("API::light");
 
-  render_opt->lights.push_back(ps);
+  objM.addLight(ps);
 }
 
 } // namespace rt3

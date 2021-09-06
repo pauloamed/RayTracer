@@ -1,7 +1,7 @@
 #include "film.h"
 #include "paramset.h"
 #include "image_io.h"
-#include "api.h"
+#include "../api/api.h"
 
 #include <cmath>
 

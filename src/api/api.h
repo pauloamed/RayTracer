@@ -3,9 +3,11 @@
 
 #include <chrono>
 #include <string>
-#include "rt3-base.h"
-#include "primitive.h"
-#include "transform.h"
+#include "../core/rt3-base.h"
+#include "../core/primitive.h"
+#include "../core/transform.h"
+#include "object_manager.h"
+#include "graphics_managers.h"
 
 #include "../mesh/triangle_parser.h"
 
@@ -67,96 +69,10 @@ namespace rt3 {
 
         // Accel
         ParamSet accelerator_ps;
-
-        // the objects/primitives
-        vector<tuple<ParamSet, shared_ptr<Material>, shared_ptr<Transform>>> primitives;
-        vector<tuple<shared_ptr<TriangleMesh>, shared_ptr<Material>, shared_ptr<Transform>>> mesh_primitives;
-
-        // the lights
-        vector<ParamSet> lights;
     };
 
-    /// Collection of data related to a Graphics state, such as current material, lib of material, etc.
-    struct GraphicsState{
-        struct MatrixTransformationState{
-            stack<shared_ptr<Transform>> ctm_states;
 
-            MatrixTransformationState(){
-                ctm_states.push(shared_ptr<Transform>(new Transform()));
-            }
 
-            MatrixTransformationState(shared_ptr<Transform> t){
-                ctm_states.push(t);
-            }
-
-            void persistMatrix(){
-                ctm_states.push(make_shared<Transform>(*ctm_states.top()));
-            }
-
-            void rollbackMatrix(){
-                ctm_states.pop();
-            }
-
-            shared_ptr<Transform> getCTM(){
-                return ctm_states.top();
-            }  
-
-            void set(shared_ptr<Transform> t){
-                ctm_states.top() = t;
-            }  
-
-            void transformCTM(Transform &t){
-                (*ctm_states.top()) = ctm_states.top()->update(t);
-            }
-        };
-
-        struct InternalState{       
-            MatrixTransformationState mts;
-            shared_ptr<Material> material;
-
-            InternalState():material(nullptr){ }
-
-            InternalState(shared_ptr<Material> mat, shared_ptr<Transform> t):
-                mts(t), material(mat){ }
-        
-        };
-
-        stack<InternalState> states;
-
-        GraphicsState(){
-            states.push(InternalState());
-        }
-
-        void setMaterial(shared_ptr<Material> mat){
-            states.top().material = mat;
-        }
-
-        shared_ptr<Material> material(){
-            return states.top().material;
-        }
-
-        MatrixTransformationState& mts(){
-            return states.top().mts;
-        }
-
-        void persistState(){
-            // novo estado na ovai ter tudo na pilha nao
-            auto newInternal = InternalState(states.top().material, make_shared<Transform>(*states.top().mts.getCTM()));
-            states.push(newInternal);
-        }
-
-        void rollbackState(){
-            states.pop();
-        }
-
-    };
-
-    struct GraphicsContext
-    {
-        map<string,shared_ptr<Material>> named_materials;
-        map<string,shared_ptr<Transform>> coords_systems;
-        map<string,shared_ptr<TriangleMesh>> meshes;
-    };
 
 
     /// Static class that manages the render process
@@ -164,6 +80,8 @@ namespace rt3 {
     {
         public:
             static GraphicsState curr_GS;
+
+            static ObjectManager objM;
     
             /// Defines the current state the API may be at a given time
             enum class APIState { Uninitialized,    //!< Initial state, before parsing.
@@ -206,7 +124,7 @@ namespace rt3 {
             static Shape * make_shape( const ParamSet& p, shared_ptr<Transform> transform );
             static vector<Shape *> make_triangles( shared_ptr<TriangleMesh> );
 
-            static Light * make_light( const ParamSet& ps );
+            static Light * make_light( const ParamSet& ps, Bounds3f worldBox );
 
             static GeometricPrimitive * make_geometric_primitive( 
                 unique_ptr<Shape> &&shape, shared_ptr<Material> material );
@@ -252,6 +170,9 @@ namespace rt3 {
             static void object( const ParamSet& ps );
             static void light( const ParamSet& ps );
             
+            static void start_obj_instance( const ParamSet& ps );
+            static void instantiate_obj( const ParamSet& ps );
+            static void finish_obj_instance( void );
             
             static void world_begin( void );
             static void world_end( void );
